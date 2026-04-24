@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const boardsRouter = require('./src/routes/boards');
+const columnsRouter = require('./src/routes/columns');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/', boardsRouter);
+app.use('/', columnsRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'KanbanBoard API is running' });
