@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const boardsRouter = require('./src/routes/boards');
 const columnsRouter = require('./src/routes/columns');
+const cardsRouter = require('./src/routes/cards');
 const labelsRouter = require('./src/routes/labels');
 const commentsRouter = require('./src/routes/comments');
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/', boardsRouter);
 app.use('/', columnsRouter);
+app.use('/', cardsRouter);
 app.use('/', labelsRouter);
 app.use('/', commentsRouter);
 
