@@ -3,23 +3,22 @@ const pool = require('../db');
 
 const router = express.Router();
 
-const buildCardPositionUpdateQuery = (cards) => {
-  const values = [];
-  const placeholders = cards.map((card, index) => {
-    values.push(card.id, card.columnId, card.position);
-    const baseIndex = index * 3;
-    return `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3})`;
-  });
+const resequenceColumn = async (client, columnId, cardIds) => {
+  if (cardIds.length === 0) {
+    return;
+  }
 
-  return {
-    text:
-      `UPDATE cards AS c
-       SET column_id = v.column_id,
-           position = v.position
-       FROM (VALUES ${placeholders.join(', ')}) AS v(id, column_id, position)
-       WHERE c.id = v.id`,
-    values,
-  };
+  await client.query('UPDATE cards SET position = position + 1000000 WHERE column_id = $1', [
+    columnId,
+  ]);
+
+  for (let index = 0; index < cardIds.length; index += 1) {
+    await client.query('UPDATE cards SET position = $1 WHERE id = $2 AND column_id = $3', [
+      index + 1,
+      cardIds[index],
+      columnId,
+    ]);
+  }
 };
 
 router.get('/columns/:columnId/cards', async (req, res) => {
@@ -124,9 +123,8 @@ router.patch('/cards/:cardId/move', async (req, res) => {
 
     const currentCard = cardResult.rows[0];
     const targetColumnId = Number(columnId);
-    const targetPositionInput = Number(position);
+    const targetPositionInput = Number.isFinite(Number(position)) ? Number(position) : 1;
     const sourceColumnId = currentCard.column_id;
-    const sourcePosition = currentCard.position;
 
     const currentColumnCardsResult = await client.query(
       'SELECT id FROM cards WHERE column_id = $1 AND id <> $2 ORDER BY position ASC',
@@ -140,65 +138,32 @@ router.patch('/cards/:cardId/move', async (req, res) => {
             targetColumnId,
           ]);
 
-    const sourceColumnCards = currentColumnCardsResult.rows.map((row) => ({
-      id: row.id,
-      columnId: sourceColumnId,
-    }));
-
     if (sourceColumnId === targetColumnId) {
-      const targetPosition = Math.max(1, Math.min(targetPositionInput, sourceColumnCards.length + 1));
-      const reorderedCards = [...sourceColumnCards];
-      const sourceIndex = reorderedCards.findIndex((card) => card.id === currentCard.id);
+      const targetPosition = Math.max(1, Math.min(targetPositionInput, currentColumnCardsResult.rows.length + 1));
+      const reorderedCards = currentColumnCardsResult.rows.map((row) => row.id);
+      reorderedCards.splice(targetPosition - 1, 0, currentCard.id);
 
-      if (sourceIndex !== -1) {
-        reorderedCards.splice(sourceIndex, 1);
-      }
-
-      reorderedCards.splice(targetPosition - 1, 0, {
-        id: currentCard.id,
-        columnId: targetColumnId,
-      });
-
-      const updates = reorderedCards.map((card, index) => ({
-        id: card.id,
-        columnId: card.columnId,
-        position: index + 1,
-      }));
-
-      const updateQuery = buildCardPositionUpdateQuery(updates);
-      await client.query(updateQuery.text, updateQuery.values);
+      await resequenceColumn(client, sourceColumnId, reorderedCards);
     } else {
       const targetPosition = Math.max(1, Math.min(targetPositionInput, targetColumnCardsResult.rows.length + 1));
 
-      const sourceUpdates = sourceColumnCards.map((card, index) => ({
-        id: card.id,
-        columnId: sourceColumnId,
-        position: index + 1,
-      }));
+      const sourceCardIds = currentColumnCardsResult.rows.map((row) => row.id);
+      const targetCardIds = targetColumnCardsResult.rows.map((row) => row.id);
 
-      const targetCards = targetColumnCardsResult.rows.map((row) => ({
-        id: row.id,
-        columnId: targetColumnId,
-      }));
+      targetCardIds.splice(targetPosition - 1, 0, currentCard.id);
 
-      targetCards.splice(targetPosition - 1, 0, {
-        id: currentCard.id,
-        columnId: targetColumnId,
-      });
+      await client.query('UPDATE cards SET column_id = $1, position = 0 WHERE id = $2', [
+        targetColumnId,
+        currentCard.id,
+      ]);
 
-      const targetUpdates = targetCards.map((card, index) => ({
-        id: card.id,
-        columnId: card.columnId,
-        position: index + 1,
-      }));
+      await client.query('UPDATE cards SET position = position + 1000000 WHERE column_id IN ($1, $2)', [
+        sourceColumnId,
+        targetColumnId,
+      ]);
 
-      if (sourceUpdates.length > 0) {
-        const sourceUpdateQuery = buildCardPositionUpdateQuery(sourceUpdates);
-        await client.query(sourceUpdateQuery.text, sourceUpdateQuery.values);
-      }
-
-      const targetUpdateQuery = buildCardPositionUpdateQuery(targetUpdates);
-      await client.query(targetUpdateQuery.text, targetUpdateQuery.values);
+      await resequenceColumn(client, sourceColumnId, sourceCardIds);
+      await resequenceColumn(client, targetColumnId, targetCardIds);
     }
 
     const updatedCardResult = await client.query('SELECT * FROM cards WHERE id = $1', [cardId]);
