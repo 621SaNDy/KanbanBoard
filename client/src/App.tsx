@@ -1,11 +1,14 @@
-import './App.css'
+import "./App.css"
+import DraggableCard from "./DraggableCard"
 
 function App() {
   return (
     <>
-      <section id="center">
-        <h1>hejka</h1>
-      </section>
+      <div id="grid">
+        <DraggableCard/>
+        <DraggableCard/>
+        <DraggableCard/>
+      </div>
     </>
   )
 }
