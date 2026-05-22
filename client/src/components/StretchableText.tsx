@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { tintColor } from "../utilities/tintColor";
 
-type StretchTextProps = {
+type StretchableTextProps = {
   text: string;
   className?: string;
   color?: string;
@@ -11,10 +13,10 @@ type StretchTextProps = {
 export function StretchableText({
   text,
   className = "",
-  color = "",
+  color = "#000",
   fontFamily = "inherit",
   fontWeight = 900,
-}: StretchTextProps) {
+}: StretchableTextProps) {
   const textRef = useRef<SVGTextElement>(null);
 
   const [box, setBox] = useState({ x: 0, y: 0, width: 5000, height: 5000 });
@@ -53,20 +55,22 @@ export function StretchableText({
       width="100%"
       height="100%"
       preserveAspectRatio="none"
-      viewBox={`${box.x} ${box.y} ${box.width} ${box.height}`}
+      viewBox={`${box.x} ${box.y + box.height * 0.1} ${box.width} ${box.height - box.height * 0.2}`}
     >
-      <text
+      <motion.text
+        initial={{ fill: tintColor(color, -0.25) }}
+        animate={{ fill: color }}
+        transition={{ duration: 0.5, delay: 1 }}
         ref={textRef}
         x="0"
         y="0"
         dominantBaseline="hanging"
-        fill={color}
         fontSize="1000"
         fontFamily={fontFamily}
         fontWeight={fontWeight}
       >
         {text}
-      </text>
+      </motion.text>
     </svg>
   );
 }
