@@ -5,7 +5,7 @@ import { Label, type LabelData } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
 import { useState } from "react";
 
-type StretchableCardProps = {
+export type CardData = {
   color: string;
   title: string;
   description?: string;
@@ -14,14 +14,14 @@ type StretchableCardProps = {
   comments?: string[];
 };
 
-export function StretchableCard({
+export function Card({
   color,
   title,
   description,
   deadline,
   labels,
   comments,
-}: StretchableCardProps) {
+}: CardData) {
   const [areCommentsOpen, setCommentsOpen] = useState(false);
 
   return (
@@ -36,7 +36,6 @@ export function StretchableCard({
         boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
       }}
       style={{
-        width: 250,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
