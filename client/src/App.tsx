@@ -5,6 +5,8 @@ function App() {
   const cards = [
     {
       title: "Zrobić wygląd strony, ewentualnie iść się zabić",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id omnis aliquam nobis magnam incidunt totam iure, nihil cum eos qui sit aperiam ad voluptatem repellendus nulla sapiente alias cumque in?",
+      deadline: "01-06-2025 00:00",
       color: "#c32327",
       labels: [
         { name: "zarazka", color: "#10adaa" },
@@ -42,7 +44,9 @@ function App() {
       }}
     >
       <Column title="To do" cards={cards} />
+      <Column title="Pending" cards={cards} />
       <Column title="In progress" cards={cards} />
+      <Column title="In review" cards={cards} />
       <Column title="Completed" cards={cards} />
     </div>
   );

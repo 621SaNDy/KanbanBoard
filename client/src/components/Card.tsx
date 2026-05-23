@@ -26,15 +26,15 @@ export function Card({
 
   return (
     <motion.div
-      drag
-      dragElastic={0.2}
-      dragTransition={{ power: 0.3 }}
-      initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
-      animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
-      whileDrag={{
-        rotate: "3deg",
-        boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
-      }}
+      // drag
+      // dragElastic={0.2}
+      // dragTransition={{ power: 0.3 }}
+      // initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
+      // animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
+      // whileDrag={{
+      //   rotate: "3deg",
+      //   boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
+      // }}
       style={{
         display: "flex",
         flexDirection: "column",
