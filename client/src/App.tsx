@@ -24,20 +24,23 @@ function App() {
             { name: "zarazka", color: "#10adaa" },
             { name: "święte piekło", color: "#c72055" },
             { name: "cholibcia", color: "#dac71c" },
+            { name: "cholibcia", color: "#dac71c" },
+            { name: "cholibcia", color: "#dac71c" },
+            { name: "cholibcia", color: "#dac71c" },
           ]}
         />
         <StretchableCard
           color="#f27238"
           title="Przetestować zmiany"
           description="Albo nie. W sumie po co testować zmiany?"
-          due="30-05-2025 15:00"
+          deadline="30-05-2025 15:00"
           labels={[{ name: "nuuuuuuuuuuuuuudy", color: "#25ad10" }]}
         />
         <StretchableCard
           color="#fcb632"
           title="Czy to działa?"
           description="Wszystko leży, nic nie działa, ekran zalany błędami... Może pytanie Klaudiusza nie było dobrym pomysłem...?"
-          due="21-06-2025"
+          deadline="21-06-2025"
           comments={["wtf", "Co tu się dzieje???"]}
         />
       </div>
