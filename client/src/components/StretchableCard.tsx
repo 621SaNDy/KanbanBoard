@@ -12,6 +12,7 @@ type StretchableCardProps = {
   description?: string;
   due?: string;
   labels?: LabelData[];
+  comments?: string[];
 };
 
 export function StretchableCard({
@@ -20,6 +21,7 @@ export function StretchableCard({
   description,
   due,
   labels,
+  comments,
 }: StretchableCardProps) {
   return (
     <motion.div
@@ -32,83 +34,154 @@ export function StretchableCard({
         boxShadow: "0 0 20px #00000033",
       }}
       style={{
-        backgroundColor: color,
         width: 250,
-        borderRadius: 5,
-        position: "relative",
-        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-          padding: 10,
-        }}
-      >
-        <StretchableText
-          text={title.split(" ")[0]}
-          color={tintColor(color, -0.08)}
-          fontFamily="Dugas Pro Black"
-          fontWeight={100}
-        />
-      </div>
-
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
         style={{
+          backgroundColor: color,
+          borderRadius: 3,
           position: "relative",
-          zIndex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 7.5,
+          overflow: "hidden",
         }}
       >
         <div
           style={{
-            paddingInline: 20,
-            paddingTop: 15,
-            display: "flex",
-            flexDirection: "column",
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            padding: 10,
           }}
         >
-          <h3 style={{ color: tintColor(color, -0.7) }}>{title}</h3>
-          {description && <p>{description}</p>}
+          <StretchableText
+            text={title.split(" ")[0]}
+            color={tintColor(color, -0.05)}
+            fontFamily="Dugas Pro Black"
+            fontWeight={100}
+          />
         </div>
 
-        {labels && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: 7.5,
+          }}
+        >
           <div
             style={{
               paddingInline: 20,
+              paddingTop: 15,
               display: "flex",
-              gap: 7.5,
-              flexWrap: "wrap",
+              flexDirection: "column",
             }}
           >
-            {labels.map((data) => (
-              <Label name={data.name} color={data.color} />
+            <h3 style={{ color: tintColor(color, -0.7) }}>{title}</h3>
+            {description && <p>{description}</p>}
+          </div>
+
+          {labels && (
+            <div
+              style={{
+                paddingInline: 20,
+                display: "flex",
+                gap: 7.5,
+                flexWrap: "wrap",
+              }}
+            >
+              {labels.map((data) => (
+                <Label name={data.name} color={data.color} />
+              ))}
+            </div>
+          )}
+
+          <div
+            style={{
+              paddingInline: 20,
+              paddingBottom: 15,
+              display: "flex",
+              gap: 5,
+              justifyContent: "end",
+            }}
+          >
+            {due && <p style={{ flex: 1 }}>{due}</p>}
+            <motion.a
+              onClick={() => {}}
+              style={{ color: tintColor(color, -0.8) }}
+              whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+            >
+              <PencilSquareRemixIcon height="1em" />
+            </motion.a>
+            <motion.a
+              onClick={() => {}}
+              style={{ color: tintColor(color, -0.8) }}
+              whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+            >
+              <RecycleBinRemixIcon height="1em" />
+            </motion.a>
+            <motion.a
+              onClick={() => {}}
+              style={{ color: tintColor(color, -0.8) }}
+              whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+            >
+              <ChatBubbleTextSquareRemixIcon height="1em" />
+            </motion.a>
+          </div>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        style={{
+          backgroundColor: tintColor(color, -0.04),
+          width: 240,
+          borderInline: `5px solid ${color}`,
+          borderBottom: `5px solid ${color}`,
+          borderRadius: "0 0 3px 3px",
+          padding: 5,
+          display: "flex",
+          flexDirection: "column",
+          gap: 7.5,
+          fontSize: "0.95em",
+        }}
+      >
+        {comments && (
+          <div
+            style={{
+              paddingInline: 5,
+              display: "flex",
+              flexDirection: "column",
+              gap: 5,
+            }}
+          >
+            {comments.map((comment) => (
+              <p>{comment}</p>
             ))}
           </div>
         )}
-
-        <div
-          style={{
-            paddingInline: 20,
-            paddingBottom: 15,
-            display: "flex",
-            gap: 5,
-            justifyContent: "end",
-          }}
-        >
-          {due && <p style={{ flex: 1 }}>{due}</p>}
-          <PencilSquareRemixIcon height="1em" />
-          <RecycleBinRemixIcon height="1em" />
-          <ChatBubbleTextSquareRemixIcon height="1em" />
-        </div>
+        <motion.input
+          whileFocus={{ scale: 1.05, boxShadow: "0 0 10px #0004" }}
+          placeholder="Write a comment..."
+          style={
+            {
+              backgroundColor: tintColor(color, -0.12),
+              border: "none",
+              borderRadius: 2,
+              paddingBlock: 3,
+              paddingInline: 5,
+              boxShadow: "0 0 10px transparent",
+              color: tintColor(color, 0.8),
+              "--placeholder-color": tintColor(color, 0.3),
+            } as React.CSSProperties
+          }
+        />
       </motion.div>
     </motion.div>
   );
