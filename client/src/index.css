@@ -1,16 +1,16 @@
 @font-face {
   font-family: "Dugas Pro Black";
-  src: url("../public/font/DugasPro-Black.ttf");
+  src: url("/font/DugasPro-Black.ttf");
 }
 
 @font-face {
   font-family: "Morganite";
-  src: url("../public/font/Morganite-Bold.ttf");
+  src: url("/font/Morganite-Bold.ttf");
 }
 
 @font-face {
   font-family: "Pathway Gothic One";
-  src: url("../public/font/PathwayGothicOne-Regular.ttf");
+  src: url("/font/PathwayGothicOne-Regular.ttf");
 }
 
 :root {
@@ -23,6 +23,10 @@
   box-sizing: border-box;
 }
 
+body {
+  background-color: #f6dcac;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Morganite", sans-serif;
   font-variant: small-caps;
@@ -31,9 +35,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h3 {
-  font-size: 3.5em;
+  font-size: 3em;
 }
 
 p {
   font-family: "Pathway Gothic One", sans-serif;
+}
+
+#grid {
+  padding: 10px;
 }

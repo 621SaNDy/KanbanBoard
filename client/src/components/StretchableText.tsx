@@ -58,7 +58,7 @@ export function StretchableText({
       viewBox={`${box.x} ${box.y + box.height * 0.1} ${box.width} ${box.height - box.height * 0.2}`}
     >
       <motion.text
-        initial={{ fill: tintColor(color, -0.25) }}
+        initial={{ fill: tintColor(color, -0.35) }}
         animate={{ fill: color }}
         transition={{ duration: 0.5, delay: 1 }}
         ref={textRef}
