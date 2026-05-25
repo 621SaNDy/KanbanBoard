@@ -1,9 +1,9 @@
-import { motion } from "motion/react";
+import { motion, useDragControls } from "motion/react";
 import { StretchableText } from "./StretchableText";
 import { tintColor } from "../utilities/tintColor";
 import { Label, type LabelData } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export type CardData = {
   color: string;
@@ -23,18 +23,49 @@ export function Card({
   comments,
 }: CardData) {
   const [areCommentsOpen, setCommentsOpen] = useState(false);
+  const [isBigTextMode, setBigTextMode] = useState(false);
+  const dragControls = useDragControls();
+  const headerRef = useRef<HTMLHeadingElement>(null);
+
+  const handleMouseDown = () => {
+    setBigTextMode(true);
+  };
+
+  const handleDrag = (event: React.PointerEvent) => {
+    dragControls.start(event, { snapToCursor: false });
+  };
+
+  const handleEditTitle = () => {
+    alert("zaraza edit");
+  };
+
+  const handleEditDescription = () => {
+    alert("hejka descr");
+  };
+
+  const handleEditDeadline = () => {
+    alert("bruh dead");
+  };
+
+  const handleMouseUp = () => {
+    setBigTextMode(false);
+  };
 
   return (
     <motion.div
-      // drag
-      // dragElastic={0.2}
-      // dragTransition={{ power: 0.3 }}
-      // initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
-      // animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
-      // whileDrag={{
-      //   rotate: "3deg",
-      //   boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
-      // }}
+      drag
+      dragElastic={0.2}
+      dragTransition={{ power: 0.3 }}
+      dragListener={false}
+      dragControls={dragControls}
+      initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
+      animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
+      whileDrag={{
+        boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
+        zIndex: 9999,
+      }}
+      onDrag={handleMouseDown}
+      onMouseUp={handleMouseUp}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -55,16 +86,21 @@ export function Card({
       >
         <StretchableText
           text={title.split(" ")[0]}
-          color={tintColor(color, -0.05)}
+          color={tintColor(color, isBigTextMode ? -0.5 : -0.05)}
           fontFamily="Dugas Pro Black"
           fontWeight={100}
         />
       </div>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
+        // initial={{ opacity: 0 }}
+        animate={{
+          opacity: isBigTextMode ? 0 : 1,
+          height: isBigTextMode
+            ? Math.max(100, headerRef.current?.offsetHeight ?? 0)
+            : "auto",
+        }}
+        transition={{ duration: 0.2 /*delay: 1*/ }}
         style={{
           width: "100%",
           position: "relative",
@@ -82,8 +118,17 @@ export function Card({
             flexDirection: "column",
           }}
         >
-          <h3 style={{ color: tintColor(color, -0.7) }}>{title}</h3>
-          {description && <p>{description}</p>}
+          <h3
+            ref={headerRef}
+            onDoubleClick={handleEditTitle}
+            onPointerDown={handleDrag}
+            style={{ color: tintColor(color, -0.7), userSelect: "none" }}
+          >
+            {title}
+          </h3>
+          {description && (
+            <p onDoubleClick={handleEditDescription}>{description}</p>
+          )}
         </div>
 
         {deadline && labels && (
@@ -95,8 +140,8 @@ export function Card({
               flex: 1,
             }}
           >
-            {labels.map((data) => (
-              <Label name={data.name} color={data.color} />
+            {labels.map((data, index) => (
+              <Label key={index} name={data.name} color={data.color} />
             ))}
           </div>
         )}
@@ -107,7 +152,7 @@ export function Card({
             display: "flex",
             gap: 5,
             justifyContent: "end",
-            alignItems: "end"
+            alignItems: "end",
           }}
         >
           {!deadline && labels && (
@@ -119,13 +164,20 @@ export function Card({
                 flex: 1,
               }}
             >
-              {labels.map((data) => (
-                <Label name={data.name} color={data.color} />
+              {labels.map((data, index) => (
+                <Label key={index} name={data.name} color={data.color} />
               ))}
             </div>
           )}
 
-          {deadline && <p style={{ flex: 1, fontStyle: "italic" }}>{deadline}</p>}
+          {deadline && (
+            <p
+              onDoubleClick={handleEditDeadline}
+              style={{ flex: 1, fontStyle: "italic" }}
+            >
+              {deadline}
+            </p>
+          )}
 
           <motion.a
             onClick={() => setCommentsOpen(!areCommentsOpen)}

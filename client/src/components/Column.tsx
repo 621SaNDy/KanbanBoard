@@ -9,16 +9,6 @@ type ColumnData = {
 };
 
 export function Column({ title, cards }: ColumnData) {
-  type ColumnItem = CardData & { id: string };
-
-  // TODO add ID to CardData as the DB has it already
-  const [items, setItems] = useState<ColumnItem[]>(
-    cards.map((card, index) => ({
-      id: (card as ColumnItem).id ?? (index + 1).toString(),
-      ...card,
-    })),
-  );
-
   return (
     <div
       style={{
@@ -27,7 +17,7 @@ export function Column({ title, cards }: ColumnData) {
         gap: 10,
         flexDirection: "column",
         padding: 10,
-        backgroundColor: "#e6cc9e",
+        backgroundColor: "#dfd8ce",
         borderRadius: 15,
       }}
     >
@@ -36,7 +26,7 @@ export function Column({ title, cards }: ColumnData) {
           paddingTop: 10,
           paddingInline: 10,
           textAlign: "center",
-          backgroundColor: "#dbbf8e",
+          backgroundColor: "#cec6ba",
           borderRadius: 10,
         }}
       >
@@ -53,25 +43,17 @@ export function Column({ title, cards }: ColumnData) {
         title={title}
         /> */}
 
-      <Reorder.Group
-        values={items}
-        onReorder={setItems}
-        as="div"
-        style={{ display: "flex", flexDirection: "column", gap: 10 }}
-      >
-        {items.map((data) => (
-          <Reorder.Item drag key={data.id} value={data} as="div">
-            <Card
-              title={data.title}
-              color={data.color}
-              description={data.description}
-              deadline={data.deadline}
-              labels={data.labels}
-              comments={data.comments}
-            />
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
+      {cards.map((data, index) => (
+        <Card
+          key={index}
+          title={data.title}
+          color={data.color}
+          description={data.description}
+          deadline={data.deadline}
+          labels={data.labels}
+          comments={data.comments}
+        />
+      ))}
     </div>
   );
 }

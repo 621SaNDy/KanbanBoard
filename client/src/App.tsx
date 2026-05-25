@@ -4,8 +4,8 @@ import { Column } from "./components/Column";
 function App() {
   const cards = [
     {
-      title: "Zrobić wygląd strony, ewentualnie iść się zabić",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id omnis aliquam nobis magnam incidunt totam iure, nihil cum eos qui sit aperiam ad voluptatem repellendus nulla sapiente alias cumque in?",
+      title: "Zrobić wygląd strony, ewentualnie iść się zabić albo coś, jakby bruuuuuuh, czemu ja sobie to tak utrudniam? XD",
+      description: "Lorem ipsum dolor sit amet?",
       deadline: "01-06-2025 00:00",
       color: "#c32327",
       labels: [
@@ -31,6 +31,18 @@ function App() {
       deadline: "21-06-2025",
       color: "#fcb632",
       comments: ["wtf", "Co tu się dzieje???"],
+    },
+    {
+      title: "Przepisać WSZYSTKO od zera",
+      description:
+        "Zaraza, wygląda na to, że tak tego nie zrobimy...",
+      deadline: "26-05-2025",
+      color: "#0b7978",
+    },
+    {
+      title: "Przeanalizować możliwości wyrzucenia projektu do kosza",
+      color: "#811638",
+      labels: [{name: "bruh", color: "#aaaaaa"}]
     },
   ];
 
