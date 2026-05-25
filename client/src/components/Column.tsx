@@ -53,15 +53,9 @@ export function Column({ title, cards }: ColumnData) {
         title={title}
         /> */}
 
-      <Reorder.Group
-        values={items}
-        onReorder={setItems}
-        as="div"
-        style={{ display: "flex", flexDirection: "column", gap: 10 }}
-      >
-        {items.map((data) => (
-          <Reorder.Item drag key={data.id} value={data} as="div">
+      {items.map((data, index) => (
             <Card
+          key={index}
               title={data.title}
               color={data.color}
               description={data.description}
@@ -69,9 +63,7 @@ export function Column({ title, cards }: ColumnData) {
               labels={data.labels}
               comments={data.comments}
             />
-          </Reorder.Item>
         ))}
-      </Reorder.Group>
     </div>
   );
 }

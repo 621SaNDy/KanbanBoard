@@ -3,7 +3,7 @@ import { StretchableText } from "./StretchableText";
 import { tintColor } from "../utilities/tintColor";
 import { Label, type LabelData } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type CardData = {
   color: string;
@@ -23,6 +23,38 @@ export function Card({
   comments,
 }: CardData) {
   const [areCommentsOpen, setCommentsOpen] = useState(false);
+  const [isMouseMoving, setMouseMoving] = useState(false);
+  const [mouseMoveStart, setMouseMoveStart] = useState<[number, number] | null>(null);
+  const [baseHeight, setBaseHeight] = useState(0);
+  const [height, setHeight] = useState<number | null>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setMouseMoving(true);
+    setMouseMoveStart([e.clientX, e.clientY]);
+    setBaseHeight(boxRef.current!.offsetHeight); 
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isMouseMoving) {
+      // console.log(e.clientX, e.clientY);
+      if (height != null && mouseMoveStart != null) {
+        setHeight(baseHeight + (e.clientY - mouseMoveStart[1]));
+        console.log((baseHeight + (e.clientY - mouseMoveStart[1])).toString());
+      }
+    }
+  }
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    setMouseMoving(false);
+    setMouseMoveStart(null);
+    setHeight(boxRef.current!.offsetHeight);
+  }
+
+  useEffect(() => {
+    setBaseHeight(boxRef.current!.offsetHeight)
+    setHeight(boxRef.current!.offsetHeight)
+  }, [])
 
   return (
     <motion.div
@@ -32,7 +64,6 @@ export function Card({
       // initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
       // animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
       // whileDrag={{
-      //   rotate: "3deg",
       //   boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
       // }}
       style={{
@@ -42,7 +73,12 @@ export function Card({
         backgroundColor: color,
         borderRadius: 10,
         position: "relative",
+        userSelect: "none",
       }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      ref={boxRef}
     >
       <div
         style={{
@@ -55,7 +91,7 @@ export function Card({
       >
         <StretchableText
           text={title.split(" ")[0]}
-          color={tintColor(color, -0.05)}
+          color={tintColor(color, -0.03)}
           fontFamily="Dugas Pro Black"
           fontWeight={100}
         />
@@ -73,6 +109,7 @@ export function Card({
           flexDirection: "column",
           gap: 7.5,
           paddingInline: 15,
+          height: height ?? "auto"
         }}
       >
         <div
