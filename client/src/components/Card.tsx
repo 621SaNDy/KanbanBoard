@@ -5,20 +5,24 @@ import { Label, type LabelData } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
 import { useRef, useState } from "react";
 
+// TODO match type to returned from API, remove color and fetch labels/comments
+// Maybe make a different type?
 export type CardData = {
+  id: number;
   color: string;
   title: string;
   description?: string;
-  deadline?: string;
+  dueDate?: string;
   labels?: LabelData[];
   comments?: string[];
 };
 
 export function Card({
+  id,
   color,
   title,
   description,
-  deadline,
+  dueDate,
   labels,
   comments,
 }: CardData) {
@@ -65,7 +69,7 @@ export function Card({
         zIndex: 9999,
       }}
       onDrag={handleShrinkOnDrag}
-      onPointerUp={handleExpandOnDragEnd}
+      onDragEnd={handleExpandOnDragEnd}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -131,7 +135,7 @@ export function Card({
           )}
         </div>
 
-        {deadline && labels && (
+        {dueDate && labels && (
           <div
             style={{
               display: "flex",
@@ -140,8 +144,8 @@ export function Card({
               flex: 1,
             }}
           >
-            {labels.map((data, index) => (
-              <Label key={index} name={data.name} color={data.color} />
+            {labels.map(({ name, color }, index) => (
+              <Label key={index} name={name} color={color} />
             ))}
           </div>
         )}
@@ -155,7 +159,7 @@ export function Card({
             alignItems: "end",
           }}
         >
-          {!deadline && labels && (
+          {!dueDate && labels && (
             <div
               style={{
                 display: "flex",
@@ -170,12 +174,12 @@ export function Card({
             </div>
           )}
 
-          {deadline && (
+          {dueDate && (
             <p
               onDoubleClick={handleEditDeadline}
               style={{ flex: 1, fontStyle: "italic" }}
             >
-              {deadline}
+              {dueDate}
             </p>
           )}
 

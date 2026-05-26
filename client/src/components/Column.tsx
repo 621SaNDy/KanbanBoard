@@ -2,12 +2,16 @@ import { motion } from "motion/react";
 import { Card, type CardData } from "./Card";
 import { useState } from "react";
 
-type ColumnData = {
-  title: string;
+export type ColumnData = {
+  id: number;
+  name: string;
+  position: number;
   cards: CardData[];
 };
 
-export function Column({ title, cards }: ColumnData) {
+export function Column({ id, name, cards }: ColumnData) {
+  const [items, setItems] = useState<CardData[]>(cards);
+
   return (
     <div
       style={{
@@ -29,25 +33,31 @@ export function Column({ title, cards }: ColumnData) {
           borderRadius: 10,
         }}
       >
-        <h2>{title}</h2>
+        <h2>{name}</h2>
       </div>
 
-      <motion.div layout style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 10
-      }}>
-        {cards.map((data, index) => (
-          <Card
-            key={index}
-            title={data.title}
-            color={data.color}
-            description={data.description}
-            deadline={data.deadline}
-            labels={data.labels}
-            comments={data.comments}
-          />
-        ))}
+      <motion.div
+        layout
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
+        {items.map(
+          ({ id, title, color, description, dueDate, labels, comments }) => (
+            <Card
+              key={id}
+              id={id}
+              title={title}
+              color={color}
+              description={description}
+              dueDate={dueDate}
+              labels={labels}
+              comments={comments}
+            />
+          ),
+        )}
       </motion.div>
     </div>
   );
