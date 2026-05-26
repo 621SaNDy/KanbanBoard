@@ -4,7 +4,7 @@ import { Column } from "./components/Column";
 function App() {
   const cards = [
     {
-      title: "Zrobić wygląd strony, ewentualnie iść się zabić albo coś, jakby bruuuuuuh, czemu ja sobie to tak utrudniam? XD",
+      title: "Zrobić wygląd strony, ewentualnie iść się zabić albo coś, jakby bruuuuuuh, czemu ja sobie to tak utrudniam?",
       description: "Lorem ipsum dolor sit amet?",
       deadline: "01-06-2025 00:00",
       color: "#c32327",
@@ -34,17 +34,20 @@ function App() {
     },
     {
       title: "Przepisać WSZYSTKO od zera",
-      description:
-        "Zaraza, wygląda na to, że tak tego nie zrobimy...",
+      description: "Zaraza, wygląda na to, że tak tego nie zrobimy...",
       deadline: "26-05-2025",
       color: "#0b7978",
     },
     {
       title: "Przeanalizować możliwości wyrzucenia projektu do kosza",
       color: "#811638",
-      labels: [{name: "bruh", color: "#aaaaaa"}]
+      labels: [{ name: "bruh", color: "#aaaaaa" }],
     },
   ];
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    console.log(e.clientX, e.clientY);
+  };
 
   return (
     <div
@@ -54,6 +57,7 @@ function App() {
         gap: 10,
         padding: 10,
       }}
+      onPointerMove={handlePointerMove}
     >
       <Column title="To do" cards={cards} />
       <Column title="Pending" cards={cards} />

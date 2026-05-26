@@ -1,6 +1,5 @@
-import { Reorder } from "motion/react";
+import { motion } from "motion/react";
 import { Card, type CardData } from "./Card";
-import { StretchableText } from "./StretchableText";
 import { useState } from "react";
 
 type ColumnData = {
@@ -15,8 +14,8 @@ export function Column({ title, cards }: ColumnData) {
         flex: 1,
         display: "flex",
         gap: 10,
-        flexDirection: "column",
         padding: 10,
+        flexDirection: "column",
         backgroundColor: "#dfd8ce",
         borderRadius: 15,
       }}
@@ -31,29 +30,25 @@ export function Column({ title, cards }: ColumnData) {
         }}
       >
         <h2>{title}</h2>
-        {/* <StretchableText
-          color="#7c6b4e"
-          fontFamily="Dugas Pro Black"
-          text={title}
-        /> */}
       </div>
 
-      {/* <Card
-        color="#e6cc9e"
-        title={title}
-        /> */}
-
-      {cards.map((data, index) => (
-        <Card
-          key={index}
-          title={data.title}
-          color={data.color}
-          description={data.description}
-          deadline={data.deadline}
-          labels={data.labels}
-          comments={data.comments}
-        />
-      ))}
+      <motion.div layout style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10
+      }}>
+        {cards.map((data, index) => (
+          <Card
+            key={index}
+            title={data.title}
+            color={data.color}
+            description={data.description}
+            deadline={data.deadline}
+            labels={data.labels}
+            comments={data.comments}
+          />
+        ))}
+      </motion.div>
     </div>
   );
 }

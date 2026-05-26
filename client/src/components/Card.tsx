@@ -27,11 +27,11 @@ export function Card({
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
 
-  const handleMouseDown = () => {
+  const handleShrinkOnDrag = () => {
     setBigTextMode(true);
   };
 
-  const handleDrag = (event: React.PointerEvent) => {
+  const handleStartDrag = (event: React.PointerEvent) => {
     dragControls.start(event, { snapToCursor: false });
   };
 
@@ -47,7 +47,7 @@ export function Card({
     alert("bruh dead");
   };
 
-  const handleMouseUp = () => {
+  const handleExpandOnDragEnd = () => {
     setBigTextMode(false);
   };
 
@@ -64,8 +64,8 @@ export function Card({
         boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
         zIndex: 9999,
       }}
-      onDrag={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      onDrag={handleShrinkOnDrag}
+      onPointerUp={handleExpandOnDragEnd}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -121,7 +121,7 @@ export function Card({
           <h3
             ref={headerRef}
             onDoubleClick={handleEditTitle}
-            onPointerDown={handleDrag}
+            onPointerDown={handleStartDrag}
             style={{ color: tintColor(color, -0.7), userSelect: "none" }}
           >
             {title}

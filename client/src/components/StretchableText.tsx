@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { tintColor } from "../utilities/tintColor";
 
 type StretchableTextProps = {
   text: string;
@@ -60,7 +59,7 @@ export function StretchableText({
       <motion.text
         // initial={{ fill: tintColor(color, -0.35) }}
         animate={{ fill: color }}
-        transition={{ duration: 0.2, /*delay: 1*/ }}
+        transition={{ duration: 0.2 /*delay: 1*/ }}
         ref={textRef}
         x="0"
         y="0"
@@ -68,6 +67,7 @@ export function StretchableText({
         fontSize="1000"
         fontFamily={fontFamily}
         fontWeight={fontWeight}
+        style={{ userSelect: "none" }}
       >
         {text}
       </motion.text>
