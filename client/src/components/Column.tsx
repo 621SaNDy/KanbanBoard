@@ -1,16 +1,33 @@
 import { motion } from "motion/react";
-import { Card, type CardData } from "./Card";
+import { Card } from "./Card";
 import { useState } from "react";
+import type { CardModel, ColumnModel } from "../types/models";
 
-export type ColumnData = {
-  id: number;
-  name: string;
-  position: number;
-  cards: CardData[];
+type ColumnProps = ColumnModel & {
+  remove: (columnId: number) => void;
 };
 
-export function Column({ id, name, cards }: ColumnData) {
-  const [items, setItems] = useState<CardData[]>(cards);
+export function Column({ id, name, cards, remove }: ColumnProps) {
+  const [items, setItems] = useState<CardModel[]>(cards);
+
+  const addCard = () => {
+    const card: CardModel = {
+      id: Math.round(Math.random() * 1000),
+      title: "hejak",
+      description: "ueueueueueue eueueueueueu",
+      dueDate: "nima",
+      position: 1,
+      labels: [
+        { id: 1, name: "bybybyb", color: "#ff00ff" },
+        { id: 2, name: "heh", color: "#00ffff" },
+      ],
+    };
+    setItems([card, ...items]);
+  };
+
+  const removeCard = (cardId: number) => {
+    setItems(items.filter(({ id }: CardModel) => id !== cardId));
+  };
 
   return (
     <div
@@ -34,10 +51,11 @@ export function Column({ id, name, cards }: ColumnData) {
         }}
       >
         <h2>{name}</h2>
+        <button onClick={addCard}>czard</button>
+        <button onClick={() => remove(id)}>kolum ziuuu</button>
       </div>
 
       <motion.div
-        layout
         style={{
           display: "flex",
           flexDirection: "column",
@@ -45,16 +63,17 @@ export function Column({ id, name, cards }: ColumnData) {
         }}
       >
         {items.map(
-          ({ id, title, color, description, dueDate, labels, comments }) => (
+          ({ id, title, description, dueDate, position, labels, comments }) => (
             <Card
               key={id}
               id={id}
               title={title}
-              color={color}
               description={description}
               dueDate={dueDate}
+              position={position}
               labels={labels}
               comments={comments}
+              remove={removeCard}
             />
           ),
         )}

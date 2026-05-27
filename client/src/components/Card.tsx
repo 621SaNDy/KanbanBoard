@@ -1,35 +1,29 @@
 import { motion, useDragControls } from "motion/react";
 import { StretchableText } from "./StretchableText";
 import { tintColor } from "../utilities/tintColor";
-import { Label, type LabelData } from "./Label";
+import { Label } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
 import { useRef, useState } from "react";
+import type { CardModel } from "../types/models";
 
-// TODO match type to returned from API, remove color and fetch labels/comments
-// Maybe make a different type?
-export type CardData = {
-  id: number;
-  color: string;
-  title: string;
-  description?: string;
-  dueDate?: string;
-  labels?: LabelData[];
-  comments?: string[];
+type CardProps = CardModel & {
+  remove: (id: number) => void;
 };
 
 export function Card({
   id,
-  color,
   title,
   description,
   dueDate,
   labels,
   comments,
-}: CardData) {
+  remove,
+}: CardProps) {
   const [areCommentsOpen, setCommentsOpen] = useState(false);
   const [isBigTextMode, setBigTextMode] = useState(false);
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
+  const color = "#d6cbc1";
 
   const handleShrinkOnDrag = () => {
     setBigTextMode(true);
@@ -144,8 +138,8 @@ export function Card({
               flex: 1,
             }}
           >
-            {labels.map(({ name, color }, index) => (
-              <Label key={index} name={name} color={color} />
+            {labels.map(({ id, name, color }) => (
+              <Label key={id} id={id} name={name} color={color} />
             ))}
           </div>
         )}
@@ -168,8 +162,8 @@ export function Card({
                 flex: 1,
               }}
             >
-              {labels.map((data, index) => (
-                <Label key={index} name={data.name} color={data.color} />
+              {labels.map(({ id, name, color }) => (
+                <Label key={id} id={id} name={name} color={color} />
               ))}
             </div>
           )}
@@ -193,6 +187,7 @@ export function Card({
             whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
           >
             <ChatBubbleTextSquareRemixIcon height="1em" />
+            <button onClick={() => remove(id)}>czard ziuuu</button>
           </motion.a>
         </div>
       </motion.div>

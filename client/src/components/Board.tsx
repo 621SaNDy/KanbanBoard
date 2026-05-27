@@ -1,17 +1,30 @@
 import { useState } from "react";
-import { Column, type ColumnData } from "./Column";
+import { Column } from "./Column";
+import type { BoardModel, ColumnModel } from "../types/models";
 
-type BoardData = {
-  id: number;
-  name: string;
-  columns: ColumnData[];
+type BoardProps = BoardModel & {
+  remove: (id: number) => void;
 };
 
-export function Board({ id, name, columns }: BoardData) {
-  const [items, setItems] = useState<ColumnData[]>(columns);
+export function Board({ id, name, columns, remove }: BoardProps) {
+  const [items, setItems] = useState<ColumnModel[]>(columns);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     console.log(e.clientX, e.clientY);
+  };
+
+  const addColumn = () => {
+    const column: ColumnModel = {
+      id: Math.round(Math.random() * 1000),
+      name: "hejak",
+      position: 2,
+      cards: [],
+    };
+    setItems([...items, column]);
+  };
+
+  const removeColumn = (columnId: number) => {
+    setItems(items.filter(({ id }: ColumnModel) => id !== columnId));
   };
 
   return (
@@ -31,8 +44,12 @@ export function Board({ id, name, columns }: BoardData) {
           name={name}
           position={position}
           cards={cards}
+          remove={removeColumn}
         />
       ))}
+
+      <button onClick={addColumn}>kolum</button>
+      <button onClick={() => remove(id)}>bord ziuuu</button>
     </div>
   );
 }

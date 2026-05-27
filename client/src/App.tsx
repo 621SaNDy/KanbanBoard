@@ -1,15 +1,17 @@
+import { useState } from "react";
 import "./App.css";
 import { Board } from "./components/Board";
+import type { BoardModel } from "./types/models";
 
 function App() {
-  return (
-    <Board
-      id={1}
-      name="zaraza"
-      columns={[
+  const boards: BoardModel[] = [
+    {
+      id: 1,
+      name: "bórd",
+      columns: [
         {
           id: 1,
-          name: "zigga",
+          name: "board",
           position: 1,
           cards: [
             {
@@ -18,14 +20,14 @@ function App() {
                 "Zrobić wygląd strony, ewentualnie iść się zabić albo coś, jakby bruuuuuuh, czemu ja sobie to tak utrudniam?",
               description: "Lorem ipsum dolor sit amet?",
               dueDate: "01-06-2025 00:00",
-              color: "#c32327",
+              position: 1,
               labels: [
-                { name: "zarazka", color: "#10adaa" },
-                { name: "święte piekło", color: "#c72055" },
-                { name: "cholibcia", color: "#dac71c" },
-                { name: "cholibcia", color: "#dac71c" },
-                { name: "cholibcia", color: "#dac71c" },
-                { name: "cholibcia", color: "#dac71c" },
+                { id: 1, name: "zarazka", color: "#10adaa" },
+                { id: 2, name: "święte piekło", color: "#c72055" },
+                { id: 3, name: "cholibcia", color: "#dac71c" },
+                { id: 4, name: "cholibcia", color: "#dac71c" },
+                { id: 5, name: "cholibcia", color: "#dac71c" },
+                { id: 6, name: "cholibcia", color: "#dac71c" },
               ],
             },
             {
@@ -33,8 +35,8 @@ function App() {
               title: "Przetestować zmiany",
               description: "Albo nie. W sumie po co testować zmiany?",
               dueDate: "30-05-2025 15:00",
-              color: "#f27238",
-              labels: [{ name: "nuuuuuuuuuuuuuudy", color: "#25ad10" }],
+              position: 2,
+              labels: [{ id: 1, name: "nuuuuuuuuuuuuuudy", color: "#25ad10" }],
             },
             {
               id: 3,
@@ -42,26 +44,42 @@ function App() {
               description:
                 "Wszystko leży, nic nie działa, ekran zalany błędami... Może pytanie Klaudiusza nie było dobrym pomysłem...?",
               dueDate: "21-06-2025",
-              color: "#fcb632",
-              comments: ["wtf", "Co tu się dzieje???"],
-            },
-            {
-              id: 4,
-              title: "Przepisać WSZYSTKO od zera",
-              description: "Zaraza, wygląda na to, że tak tego nie zrobimy...",
-              dueDate: "26-05-2025",
-              color: "#0b7978",
-            },
-            {
-              id: 5,
-              title: "Przeanalizować możliwości wyrzucenia projektu do kosza",
-              color: "#811638",
-              labels: [{ name: "bruh", color: "#aaaaaa" }],
+              position: 3,
             },
           ],
         },
-      ]}
-    />
+      ],
+    },
+  ];
+
+  const [items, setItems] = useState(boards);
+
+  const addBoard = () => {
+    const board: BoardModel = {
+      id: Math.round(Math.random() * 1000),
+      name: "zarózka",
+      columns: [],
+    };
+    setItems([...items, board]);
+  };
+
+  const removeBoard = (boardId: number) => {
+    setItems(items.filter(({ id }: BoardModel) => id !== boardId));
+  };
+
+  return (
+    <>
+      {items.map(({ id, name, columns }) => (
+        <Board
+          key={id}
+          id={id}
+          name={name}
+          columns={columns}
+          remove={removeBoard}
+        />
+      ))}
+      <button onClick={addBoard}>bord</button>
+    </>
   );
 }
 
