@@ -1,17 +1,20 @@
-import { useState } from "react";
-import type { BoardModel } from "../types/models";
+import { useEffect, useState } from "react";
+import type { BoardModel, BoardWithColumnsModel } from "../types/models";
 import { Board } from "./Board";
+import { fetchServer } from "../utilities/fetchServer";
 
-type BoardSelectorProps = {
-  boards: BoardModel[];
-};
+type BoardSelectorProps = {};
 
-export function BoardSelector({ boards }: BoardSelectorProps) {
-  const [items, setItems] = useState<BoardModel[]>(boards);
+export function BoardSelector({}: BoardSelectorProps) {
+  const [items, setItems] = useState<BoardModel[]>([]);
   const [newBoardName, setNewBoardName] = useState("");
 
+  const fetchBoards = async () => {
+    return await fetchServer("/boards");
+  };
+
   const addBoard = () => {
-    const board: BoardModel = {
+    const board: BoardWithColumnsModel = {
       id: Math.round(Math.random() * 1000),
       name: newBoardName,
       columns: [],
@@ -23,16 +26,18 @@ export function BoardSelector({ boards }: BoardSelectorProps) {
     setItems(items.filter(({ id }: BoardModel) => id !== boardId));
   };
 
+  useEffect(() => {
+    const loadBoards = async () => {
+      const boards: BoardModel[] = await fetchBoards();
+      setItems(boards);
+    };
+    loadBoards();
+  }, []);
+
   return (
     <>
-      {items.map(({ id, name, columns }) => (
-        <Board
-          key={id}
-          id={id}
-          name={name}
-          columns={columns}
-          remove={removeBoard}
-        />
+      {items.map(({ id, name }) => (
+        <Board key={id} id={id} name={name} remove={removeBoard} />
       ))}
       <input
         type="text"

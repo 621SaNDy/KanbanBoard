@@ -1,9 +1,9 @@
 import "./App.css";
-import type { BoardModel } from "./types/models";
+import type { BoardWithColumnsModel } from "./types/models";
 import { BoardSelector } from "./components/BoardSelector";
 
 function App() {
-  const boards: BoardModel[] = [
+  const boards: BoardWithColumnsModel[] = [
     {
       id: 1,
       name: "bórd",
@@ -53,7 +53,7 @@ function App() {
 
   return (
     <>
-      <BoardSelector boards={boards} />
+      <BoardSelector />
     </>
   );
 }

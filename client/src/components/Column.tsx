@@ -1,14 +1,15 @@
 import { motion } from "motion/react";
 import { Card } from "./Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CardModel, ColumnModel } from "../types/models";
+import { fetchServer } from "../utilities/fetchServer";
 
 type ColumnProps = ColumnModel & {
   remove: (columnId: number) => void;
 };
 
-export function Column({ id, name, cards, remove }: ColumnProps) {
-  const [items, setItems] = useState<CardModel[]>(cards);
+export function Column({ id, name, remove }: ColumnProps) {
+  const [items, setItems] = useState<CardModel[]>([]);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [newCardDesctiption, setNewCardDescription] = useState<
     string | undefined
@@ -16,6 +17,10 @@ export function Column({ id, name, cards, remove }: ColumnProps) {
   const [newCardDueDate, setNewCardDueDate] = useState<string | undefined>(
     undefined,
   );
+
+  const fetchCards = async () => {
+    return fetchServer(`/columns/${id}/cards`);
+  };
 
   const addCard = () => {
     const card: CardModel = {
@@ -35,6 +40,14 @@ export function Column({ id, name, cards, remove }: ColumnProps) {
   const removeCard = (cardId: number) => {
     setItems(items.filter(({ id }: CardModel) => id !== cardId));
   };
+
+  useEffect(() => {
+    const loadCards = async () => {
+      const cards: CardModel[] = await fetchCards();
+      setItems(cards);
+    };
+    loadCards();
+  });
 
   return (
     <div
