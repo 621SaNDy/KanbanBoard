@@ -14,7 +14,7 @@ export function Card({
   id,
   title,
   description,
-  dueDate,
+  due_date: dueDate,
   labels,
   comments,
   remove,

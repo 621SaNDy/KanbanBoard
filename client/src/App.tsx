@@ -18,7 +18,7 @@ function App() {
               title:
                 "Zrobić wygląd strony, ewentualnie iść się zabić albo coś, jakby bruuuuuuh, czemu ja sobie to tak utrudniam?",
               description: "Lorem ipsum dolor sit amet?",
-              dueDate: "01-06-2025 00:00",
+              due_date: "01-06-2025 00:00",
               position: 1,
               labels: [
                 { id: 1, name: "zarazka", color: "#10adaa" },
@@ -33,7 +33,7 @@ function App() {
               id: 2,
               title: "Przetestować zmiany",
               description: "Albo nie. W sumie po co testować zmiany?",
-              dueDate: "30-05-2025 15:00",
+              due_date: "30-05-2025 15:00",
               position: 2,
               labels: [{ id: 1, name: "nuuuuuuuuuuuuuudy", color: "#25ad10" }],
             },
@@ -42,7 +42,7 @@ function App() {
               title: "Czy to działa?",
               description:
                 "Wszystko leży, nic nie działa, ekran zalany błędami... Może pytanie Klaudiusza nie było dobrym pomysłem...?",
-              dueDate: "21-06-2025",
+              due_date: "21-06-2025",
               position: 3,
             },
           ],

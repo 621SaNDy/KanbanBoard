@@ -8,11 +8,12 @@ type BoardSelectorProps = {
 
 export function BoardSelector({ boards }: BoardSelectorProps) {
   const [items, setItems] = useState<BoardModel[]>(boards);
+  const [newBoardName, setNewBoardName] = useState("");
 
   const addBoard = () => {
     const board: BoardModel = {
       id: Math.round(Math.random() * 1000),
-      name: "zarózka",
+      name: newBoardName,
       columns: [],
     };
     setItems([...items, board]);
@@ -33,6 +34,12 @@ export function BoardSelector({ boards }: BoardSelectorProps) {
           remove={removeBoard}
         />
       ))}
+      <input
+        type="text"
+        placeholder="bornejm"
+        value={newBoardName}
+        onChange={(e) => setNewBoardName(e.target.value)}
+      />
       <button onClick={addBoard}>bord</button>
     </>
   );

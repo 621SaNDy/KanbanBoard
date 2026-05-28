@@ -9,13 +9,20 @@ type ColumnProps = ColumnModel & {
 
 export function Column({ id, name, cards, remove }: ColumnProps) {
   const [items, setItems] = useState<CardModel[]>(cards);
+  const [newCardTitle, setNewCardTitle] = useState("");
+  const [newCardDesctiption, setNewCardDescription] = useState<
+    string | undefined
+  >(undefined);
+  const [newCardDueDate, setNewCardDueDate] = useState<string | undefined>(
+    undefined,
+  );
 
   const addCard = () => {
     const card: CardModel = {
       id: Math.round(Math.random() * 1000),
-      title: "hejak",
-      description: "ueueueueueue eueueueueueu",
-      dueDate: "nima",
+      title: newCardTitle,
+      description: newCardDesctiption,
+      due_date: newCardDueDate,
       position: 1,
       labels: [
         { id: 1, name: "bybybyb", color: "#ff00ff" },
@@ -51,8 +58,56 @@ export function Column({ id, name, cards, remove }: ColumnProps) {
         }}
       >
         <h2>{name}</h2>
-        <button onClick={addCard}>czard</button>
-        <button onClick={() => remove(id)}>kolum ziuuu</button>
+        <button
+          style={{
+            padding: 5,
+            backgroundColor: "#c1b9ae",
+            border: "none",
+            borderRadius: 5,
+          }}
+          onClick={() => remove(id)}
+        >
+          kolum ziuuu
+        </button>
+      </div>
+
+      <div
+        style={{
+          padding: 10,
+          textAlign: "center",
+          backgroundColor: "#cec6ba",
+          borderRadius: 10,
+        }}
+      >
+        <input
+          type="text"
+          placeholder="titel"
+          value={newCardTitle}
+          onChange={(e) => setNewCardTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="deskripszyn"
+          value={newCardDesctiption}
+          onChange={(e) => setNewCardDescription(e.target.value)}
+        />
+        <input
+          type="datetime-local"
+          placeholder="dejdlajn"
+          value={newCardDueDate}
+          onChange={(e) => setNewCardDueDate(e.target.value)}
+        />
+        <button
+          style={{
+            padding: 5,
+            backgroundColor: "#c1b9ae",
+            border: "none",
+            borderRadius: 5,
+          }}
+          onClick={addCard}
+        >
+          czard
+        </button>
       </div>
 
       <motion.div
@@ -63,13 +118,21 @@ export function Column({ id, name, cards, remove }: ColumnProps) {
         }}
       >
         {items.map(
-          ({ id, title, description, dueDate, position, labels, comments }) => (
+          ({
+            id,
+            title,
+            description,
+            due_date: dueDate,
+            position,
+            labels,
+            comments,
+          }) => (
             <Card
               key={id}
               id={id}
               title={title}
               description={description}
-              dueDate={dueDate}
+              due_date={dueDate}
               position={position}
               labels={labels}
               comments={comments}

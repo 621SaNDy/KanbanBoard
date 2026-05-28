@@ -8,6 +8,7 @@ type BoardProps = BoardModel & {
 
 export function Board({ id, name, columns, remove }: BoardProps) {
   const [items, setItems] = useState<ColumnModel[]>(columns);
+  const [newColumnName, setNewColumnName] = useState("");
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     console.log(e.clientX, e.clientY);
@@ -16,7 +17,7 @@ export function Board({ id, name, columns, remove }: BoardProps) {
   const addColumn = () => {
     const column: ColumnModel = {
       id: Math.round(Math.random() * 1000),
-      name: "hejak",
+      name: newColumnName,
       position: 2,
       cards: [],
     };
@@ -37,6 +38,7 @@ export function Board({ id, name, columns, remove }: BoardProps) {
       }}
       onPointerMove={handlePointerMove}
     >
+      <h1>{name}</h1>
       {items.map(({ id, name, position, cards }) => (
         <Column
           key={id}
@@ -48,6 +50,12 @@ export function Board({ id, name, columns, remove }: BoardProps) {
         />
       ))}
 
+      <input
+        type="text"
+        placeholder="kolumnejm"
+        value={newColumnName}
+        onChange={(e) => setNewColumnName(e.target.value)}
+      />
       <button onClick={addColumn}>kolum</button>
       <button onClick={() => remove(id)}>bord ziuuu</button>
     </div>
