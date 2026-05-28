@@ -1,3 +1,7 @@
+export type BoardRequest = {
+  name: string;
+};
+
 export type BoardModel = {
   id: number;
   name: string;
@@ -9,7 +13,7 @@ export type BoardWithColumnsModel = {
   columns: ColumnWithCardsModel[];
 };
 
-export type BoardRequest = {
+export type ColumnRequest = {
   name: string;
 };
 
@@ -26,8 +30,10 @@ export type ColumnWithCardsModel = {
   cards: CardModel[];
 };
 
-export type ColumnRequest = {
-  name: string;
+export type CardRequest = {
+  title: string;
+  description?: string;
+  due_date?: string;
 };
 
 export type CardModel = {
@@ -40,10 +46,9 @@ export type CardModel = {
   comments?: CommentModel[];
 };
 
-export type CardRequest = {
-  title: string;
-  description?: string;
-  due_date?: string;
+export type LabelRequest = {
+  name: string;
+  color: string;
 };
 
 export type LabelModel = {
@@ -52,16 +57,11 @@ export type LabelModel = {
   color: string;
 };
 
-export type LabelRequest = {
-  name: string;
-  color: string;
+export type CommentRequest = {
+  content: string;
 };
 
 export type CommentModel = {
   id: number;
-  content: string;
-};
-
-export type CommentRequest = {
   content: string;
 };

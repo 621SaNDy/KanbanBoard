@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { BoardModel, BoardWithColumnsModel } from "../types/models";
+import type { BoardModel, BoardRequest } from "../types/models";
 import { Board } from "./Board";
-import { fetchServer } from "../utilities/fetchServer";
+import { ServerConnection } from "../utilities/ServerConnection";
 
 type BoardSelectorProps = {};
 
@@ -9,28 +9,25 @@ export function BoardSelector({}: BoardSelectorProps) {
   const [items, setItems] = useState<BoardModel[]>([]);
   const [newBoardName, setNewBoardName] = useState("");
 
-  const fetchBoards = async () => {
-    return await fetchServer("/boards");
+  const loadBoards = async () => {
+    const boards: BoardModel[] = await ServerConnection.get("/boards");
+    setItems(boards);
   };
 
-  const addBoard = () => {
-    const board: BoardWithColumnsModel = {
-      id: Math.round(Math.random() * 1000),
+  const addBoard = async () => {
+    const board: BoardRequest = {
       name: newBoardName,
-      columns: [],
     };
-    setItems([...items, board]);
+    await ServerConnection.post("/boards", board);
+    loadBoards();
   };
 
-  const removeBoard = (boardId: number) => {
-    setItems(items.filter(({ id }: BoardModel) => id !== boardId));
+  const removeBoard = async (boardId: number) => {
+    await ServerConnection.delete(`/boards/${boardId}`);
+    loadBoards();
   };
 
   useEffect(() => {
-    const loadBoards = async () => {
-      const boards: BoardModel[] = await fetchBoards();
-      setItems(boards);
-    };
     loadBoards();
   }, []);
 

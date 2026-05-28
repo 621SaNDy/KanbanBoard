@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Column } from "./Column";
-import type {
-  BoardModel,
-  ColumnModel,
-  ColumnWithCardsModel,
-} from "../types/models";
-import { fetchServer } from "../utilities/fetchServer";
+import type { BoardModel, ColumnModel, ColumnRequest } from "../types/models";
+import { ServerConnection } from "../utilities/ServerConnection";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
@@ -15,33 +11,29 @@ export function Board({ id, name, remove }: BoardProps) {
   const [items, setItems] = useState<ColumnModel[]>([]);
   const [newColumnName, setNewColumnName] = useState("");
 
-  const fetchColumns = async () => {
-    return await fetchServer(`/boards/${id}/columns`);
+  const loadColumns = async () => {
+    const columns = await ServerConnection.get(`/boards/${id}/columns`);
+    setItems(columns);
+  };
+
+  const addColumn = async () => {
+    const column: ColumnRequest = {
+      name: newColumnName,
+    };
+    await ServerConnection.post(`/boards/${id}/columns`, column);
+    loadColumns();
+  };
+
+  const removeColumn = async (columnId: number) => {
+    await ServerConnection.delete(`/columns/${columnId}`);
+    loadColumns();
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     console.log(e.clientX, e.clientY);
   };
 
-  const addColumn = () => {
-    const column: ColumnWithCardsModel = {
-      id: Math.round(Math.random() * 1000),
-      name: newColumnName,
-      position: 2,
-      cards: [],
-    };
-    setItems([...items, column]);
-  };
-
-  const removeColumn = (columnId: number) => {
-    setItems(items.filter(({ id }: ColumnModel) => id !== columnId));
-  };
-
   useEffect(() => {
-    const loadColumns = async () => {
-      const columns: ColumnModel[] = await fetchColumns();
-      setItems(columns);
-    };
     loadColumns();
   }, []);
 

@@ -1,8 +1,8 @@
 import { motion } from "motion/react";
 import { Card } from "./Card";
 import { useEffect, useState } from "react";
-import type { CardModel, ColumnModel } from "../types/models";
-import { fetchServer } from "../utilities/fetchServer";
+import type { CardModel, CardRequest, ColumnModel } from "../types/models";
+import { ServerConnection } from "../utilities/ServerConnection";
 
 type ColumnProps = ColumnModel & {
   remove: (columnId: number) => void;
@@ -11,41 +11,30 @@ type ColumnProps = ColumnModel & {
 export function Column({ id, name, remove }: ColumnProps) {
   const [items, setItems] = useState<CardModel[]>([]);
   const [newCardTitle, setNewCardTitle] = useState("");
-  const [newCardDesctiption, setNewCardDescription] = useState<
-    string | undefined
-  >(undefined);
-  const [newCardDueDate, setNewCardDueDate] = useState<string | undefined>(
-    undefined,
-  );
+  const [newCardDescription, setNewCardDescription] = useState<string>("");
+  const [newCardDueDate, setNewCardDueDate] = useState<string>("");
 
-  const fetchCards = async () => {
-    return fetchServer(`/columns/${id}/cards`);
+  const loadCards = async () => {
+    const cards = await ServerConnection.get(`/columns/${id}/cards`);
+    setItems(cards);
   };
 
-  const addCard = () => {
-    const card: CardModel = {
-      id: Math.round(Math.random() * 1000),
+  const addCard = async () => {
+    const card: CardRequest = {
       title: newCardTitle,
-      description: newCardDesctiption,
+      description: newCardDescription,
       due_date: newCardDueDate,
-      position: 1,
-      labels: [
-        { id: 1, name: "bybybyb", color: "#ff00ff" },
-        { id: 2, name: "heh", color: "#00ffff" },
-      ],
     };
-    setItems([card, ...items]);
+    await ServerConnection.post(`/columns/${id}/cards`, card);
+    loadCards();
   };
 
-  const removeCard = (cardId: number) => {
-    setItems(items.filter(({ id }: CardModel) => id !== cardId));
+  const removeCard = async (cardId: number) => {
+    await ServerConnection.delete(`/cards/${cardId}`);
+    loadCards();
   };
 
   useEffect(() => {
-    const loadCards = async () => {
-      const cards: CardModel[] = await fetchCards();
-      setItems(cards);
-    };
     loadCards();
   });
 
@@ -101,7 +90,7 @@ export function Column({ id, name, remove }: ColumnProps) {
         <input
           type="text"
           placeholder="deskripszyn"
-          value={newCardDesctiption}
+          value={newCardDescription}
           onChange={(e) => setNewCardDescription(e.target.value)}
         />
         <input
