@@ -32,6 +32,9 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
       due_date: newCardDueDate,
     };
     await ServerConnection.post(`/columns/${id}/cards`, card);
+    setNewCardTitle("");
+    setNewCardDescription("");
+    setNewCardDueDate("");
     loadCards();
   };
 

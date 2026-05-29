@@ -34,6 +34,7 @@ export function Board({ id, name, remove }: BoardProps) {
   const addColumn = async () => {
     const column: ColumnRequest = { name: newColumnName };
     await ServerConnection.post(`/boards/${id}/columns`, column);
+    setNewColumnName("");
     loadColumns();
   };
 
@@ -48,6 +49,8 @@ export function Board({ id, name, remove }: BoardProps) {
       color: newLabelColor,
     };
     await ServerConnection.post(`/boards/${id}/labels`, label);
+    setNewLabelName("");
+    setNewLabelColor("");
     loadLabels();
   };
 
@@ -90,12 +93,22 @@ export function Board({ id, name, remove }: BoardProps) {
       <div style={{ display: "flex", flexDirection: "column" }}>
         <input
           type="text"
+          placeholder="kolumnejm"
+          value={newColumnName}
+          onChange={(e) => setNewColumnName(e.target.value)}
+        />
+        <button onClick={addColumn}>kolum</button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <input
+          type="text"
           placeholder="nejm labejle"
           value={newLabelName}
           onChange={(e) => setNewLabelName(e.target.value)}
         />
         <input
-          type="text"
+          type="color"
           placeholder="kolór labejle"
           value={newLabelColor}
           onChange={(e) => setNewLabelColor(e.target.value)}
@@ -112,15 +125,6 @@ export function Board({ id, name, remove }: BoardProps) {
         ))}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <input
-          type="text"
-          placeholder="kolumnejm"
-          value={newColumnName}
-          onChange={(e) => setNewColumnName(e.target.value)}
-        />
-        <button onClick={addColumn}>kolum</button>
-      </div>
       <button onClick={() => remove(id)}>bord ziuuu</button>
     </div>
   );

@@ -3,6 +3,7 @@ import { StretchableText } from "./StretchableText";
 import { tintColor } from "../utilities/tintColor";
 import { Label } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
+import CalendarMarkRemixIcon from "@iconify-react/streamline-flex/calendar-mark-remix";
 import RecycleBinRemix from "@iconify-react/streamline-flex/recycle-bin-remix";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -69,6 +70,7 @@ export function Card({
       await ServerConnection.post(`/cards/${id}/comments`, {
         content: newCommentContent,
       });
+      setNewCommentContent("");
       loadComments();
     }
   };
@@ -248,9 +250,9 @@ export function Card({
           {due_date && (
             <p
               onDoubleClick={handleEditDeadline}
-              style={{ flex: 1, fontStyle: "italic" }}
+              style={{ flex: 1, display: "flex", alignItems: "center", gap: 3 }}
             >
-              Due at {DateUtility.getAbsoluteDate(due_date)}
+              <CalendarMarkRemixIcon height="1em"/> {DateUtility.getAbsoluteDate(due_date)}
             </p>
           )}
 
@@ -291,7 +293,7 @@ export function Card({
       >
         {areCommentsOpen && (
           <>
-            <motion.input
+            <input
               placeholder="Write a comment..."
               style={
                 {
@@ -303,6 +305,7 @@ export function Card({
                   "--placeholder-color": tintColor(color, 0.3),
                 } as React.CSSProperties
               }
+              value={newCommentContent}
               onChange={(e) => setNewCommentContent(e.target.value)}
               onKeyDown={handleNewComment}
             />

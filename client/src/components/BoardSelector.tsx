@@ -17,6 +17,7 @@ export function BoardSelector({}: BoardSelectorProps) {
   const addBoard = async () => {
     const board: BoardRequest = { name: newBoardName };
     await ServerConnection.post("/boards", board);
+    setNewBoardName("");
     loadBoards();
   };
 
