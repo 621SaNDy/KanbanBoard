@@ -6,18 +6,16 @@ import { ServerConnection } from "../utilities/ServerConnection";
 type BoardSelectorProps = {};
 
 export function BoardSelector({}: BoardSelectorProps) {
-  const [items, setItems] = useState<BoardModel[]>([]);
+  const [boards, setBoards] = useState<BoardModel[]>([]);
   const [newBoardName, setNewBoardName] = useState("");
 
   const loadBoards = async () => {
-    const boards: BoardModel[] = await ServerConnection.get("/boards");
-    setItems(boards);
+    const newBoards: BoardModel[] = await ServerConnection.get("/boards");
+    setBoards(newBoards);
   };
 
   const addBoard = async () => {
-    const board: BoardRequest = {
-      name: newBoardName,
-    };
+    const board: BoardRequest = { name: newBoardName };
     await ServerConnection.post("/boards", board);
     loadBoards();
   };
@@ -33,7 +31,7 @@ export function BoardSelector({}: BoardSelectorProps) {
 
   return (
     <>
-      {items.map(({ id, name }) => (
+      {boards.map(({ id, name }) => (
         <Board key={id} id={id} name={name} remove={removeBoard} />
       ))}
       <input

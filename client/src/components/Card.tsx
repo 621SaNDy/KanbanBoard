@@ -4,11 +4,20 @@ import { tintColor } from "../utilities/tintColor";
 import { Label } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
 import RecycleBinRemix from "@iconify-react/streamline-flex/recycle-bin-remix";
-import { useRef, useState } from "react";
-import type { CardModel } from "../types/models";
+import { useEffect, useRef, useState } from "react";
+import {
+  type CommentModel,
+  type CardModel,
+  type LabelModel,
+  type LabelBindRequest,
+} from "../types/models";
 import { DateUtility } from "../utilities/DateUtility";
+import { ServerConnection } from "../utilities/ServerConnection";
+import { LabelButton } from "./LabelButton";
+import { Comment } from "./Comment";
 
 type CardProps = CardModel & {
+  availableLabels: LabelModel[];
   remove: (id: number) => void;
 };
 
@@ -17,15 +26,52 @@ export function Card({
   title,
   description,
   due_date,
-  labels,
-  comments,
+  availableLabels,
   remove,
 }: CardProps) {
+  const [labels, setLabels] = useState<LabelModel[]>([]);
+  const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
+  const [newCommentContent, setNewCommentContent] = useState("");
   const [isBigTextMode, setBigTextMode] = useState(false);
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
   const color = "#d6cbc1";
+
+  const loadLabels = async () => {
+    const newLabels = await ServerConnection.get(`/cards/${id}/labels`);
+    setLabels(newLabels);
+  };
+
+  const loadComments = async () => {
+    const newComments = await ServerConnection.get(`/cards/${id}/comments`);
+    setComments(newComments);
+  };
+
+  const addLabel = async (labelId: number) => {
+    const label: LabelBindRequest = { labelId: labelId };
+    await ServerConnection.post(`/cards/${id}/labels`, label);
+    loadLabels();
+  };
+
+  const removeLabel = async (labelId: number) => {
+    await ServerConnection.delete(`/cards/${id}/labels/${labelId}`);
+    loadLabels();
+  };
+
+  const removeComment = async (commentId: number) => {
+    await ServerConnection.delete(`/cards/${id}/comments/${commentId}`);
+    loadComments();
+  };
+
+  const handleNewComment = async (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      await ServerConnection.post(`/cards/${id}/comments`, {
+        content: newCommentContent,
+      });
+      loadComments();
+    }
+  };
 
   const handleShrinkOnDrag = () => {
     setBigTextMode(true);
@@ -50,6 +96,11 @@ export function Card({
   const handleExpandOnDragEnd = () => {
     setBigTextMode(false);
   };
+
+  useEffect(() => {
+    loadLabels();
+    loadComments();
+  });
 
   return (
     <motion.div
@@ -131,6 +182,18 @@ export function Card({
           )}
         </div>
 
+        <div style={{ display: "flex", gap: 5 }}>
+          {availableLabels.map(({ id, name, color }) => (
+            <LabelButton
+              key={id}
+              id={id}
+              name={name}
+              color={color}
+              click={addLabel}
+            />
+          ))}
+        </div>
+
         {due_date && labels && (
           <div
             style={{
@@ -141,7 +204,13 @@ export function Card({
             }}
           >
             {labels.map(({ id, name, color }) => (
-              <Label key={id} id={id} name={name} color={color} />
+              <Label
+                key={id}
+                id={id}
+                name={name}
+                color={color}
+                remove={removeLabel}
+              />
             ))}
           </div>
         )}
@@ -165,7 +234,13 @@ export function Card({
               }}
             >
               {labels.map(({ id, name, color }) => (
-                <Label key={id} id={id} name={name} color={color} />
+                <Label
+                  key={id}
+                  id={id}
+                  name={name}
+                  color={color}
+                  remove={removeLabel}
+                />
               ))}
             </div>
           )}
@@ -206,31 +281,40 @@ export function Card({
       </motion.div>
       <motion.div
         style={{
-          backgroundColor: tintColor(color, -0.04),
-          borderRadius: "0 0 3px 3px",
-          width: 244,
-          // paddingInline: 5,
-          // paddingBottom: 5,
           display: "flex",
           flexDirection: "column",
           gap: 7.5,
+          width: "100%",
           fontSize: "0.95em",
+          zIndex: 10000,
         }}
       >
         {areCommentsOpen && (
-          <motion.input
-            placeholder="Write a comment..."
-            style={
-              {
-                backgroundColor: tintColor(color, -0.08),
-                border: "none",
-                borderRadius: "0 0 2px 2px",
-                padding: 5,
-                color: tintColor(color, 0.8),
-                "--placeholder-color": tintColor(color, 0.3),
-              } as React.CSSProperties
-            }
-          />
+          <>
+            <motion.input
+              placeholder="Write a comment..."
+              style={
+                {
+                  backgroundColor: tintColor(color, -0.08),
+                  border: "none",
+                  borderRadius: "0 0 2px 2px",
+                  padding: 5,
+                  color: tintColor(color, 0.8),
+                  "--placeholder-color": tintColor(color, 0.3),
+                } as React.CSSProperties
+              }
+              onChange={(e) => setNewCommentContent(e.target.value)}
+              onKeyDown={handleNewComment}
+            />
+            {comments.map(({ id, content }) => (
+              <Comment
+                key={id}
+                id={id}
+                content={content}
+                remove={removeComment}
+              />
+            ))}
+          </>
         )}
       </motion.div>
     </motion.div>

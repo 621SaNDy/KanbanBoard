@@ -1,25 +1,38 @@
 import { useEffect, useState } from "react";
 import { Column } from "./Column";
-import type { BoardModel, ColumnModel, ColumnRequest } from "../types/models";
+import {
+  type LabelModel,
+  type BoardModel,
+  type ColumnModel,
+  type ColumnRequest,
+  type LabelRequest,
+} from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
+import { Label } from "./Label";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
 };
 
 export function Board({ id, name, remove }: BoardProps) {
-  const [items, setItems] = useState<ColumnModel[]>([]);
+  const [columns, setColumns] = useState<ColumnModel[]>([]);
+  const [labels, setLabels] = useState<LabelModel[]>([]);
   const [newColumnName, setNewColumnName] = useState("");
+  const [newLabelName, setNewLabelName] = useState("");
+  const [newLabelColor, setNewLabelColor] = useState("");
 
   const loadColumns = async () => {
-    const columns = await ServerConnection.get(`/boards/${id}/columns`);
-    setItems(columns);
+    const newColumns = await ServerConnection.get(`/boards/${id}/columns`);
+    setColumns(newColumns);
+  };
+
+  const loadLabels = async () => {
+    const newLabels = await ServerConnection.get(`/boards/${id}/labels`);
+    setLabels(newLabels);
   };
 
   const addColumn = async () => {
-    const column: ColumnRequest = {
-      name: newColumnName,
-    };
+    const column: ColumnRequest = { name: newColumnName };
     await ServerConnection.post(`/boards/${id}/columns`, column);
     loadColumns();
   };
@@ -29,12 +42,27 @@ export function Board({ id, name, remove }: BoardProps) {
     loadColumns();
   };
 
+  const addLabel = async () => {
+    const label: LabelRequest = {
+      name: newLabelName,
+      color: newLabelColor,
+    };
+    await ServerConnection.post(`/boards/${id}/labels`, label);
+    loadLabels();
+  };
+
+  const removeLabel = async (labelId: number) => {
+    await ServerConnection.delete(`/boards/${id}/labels/${labelId}`);
+    loadLabels();
+  };
+
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     console.log(e.clientX, e.clientY);
   };
 
   useEffect(() => {
     loadColumns();
+    loadLabels();
   }, []);
 
   return (
@@ -48,23 +76,51 @@ export function Board({ id, name, remove }: BoardProps) {
       onPointerMove={handlePointerMove}
     >
       <h1>{name}</h1>
-      {items.map(({ id, name, position }) => (
+      {columns.map(({ id, name, position }) => (
         <Column
           key={id}
           id={id}
           name={name}
           position={position}
+          availableLabels={labels}
           remove={removeColumn}
         />
       ))}
 
-      <input
-        type="text"
-        placeholder="kolumnejm"
-        value={newColumnName}
-        onChange={(e) => setNewColumnName(e.target.value)}
-      />
-      <button onClick={addColumn}>kolum</button>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <input
+          type="text"
+          placeholder="nejm labejle"
+          value={newLabelName}
+          onChange={(e) => setNewLabelName(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="kolór labejle"
+          value={newLabelColor}
+          onChange={(e) => setNewLabelColor(e.target.value)}
+        />
+        <button onClick={addLabel}>ejd leabje</button>
+        {labels.map(({ id, name, color }) => (
+          <Label
+            key={id}
+            id={id}
+            name={name}
+            color={color}
+            remove={removeLabel}
+          />
+        ))}
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <input
+          type="text"
+          placeholder="kolumnejm"
+          value={newColumnName}
+          onChange={(e) => setNewColumnName(e.target.value)}
+        />
+        <button onClick={addColumn}>kolum</button>
+      </div>
       <button onClick={() => remove(id)}>bord ziuuu</button>
     </div>
   );

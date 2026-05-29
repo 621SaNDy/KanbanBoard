@@ -51,6 +51,10 @@ export type LabelRequest = {
   color: string;
 };
 
+export type LabelBindRequest = {
+  labelId: number;
+};
+
 export type LabelModel = {
   id: number;
   name: string;

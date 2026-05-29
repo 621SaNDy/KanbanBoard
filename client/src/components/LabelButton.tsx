@@ -3,15 +3,14 @@ import { tintColor } from "../utilities/tintColor";
 import type { LabelModel } from "../types/models";
 
 export type LabelProps = LabelModel & {
-  remove: (id: number) => void;
+  click: (id: number) => void;
 };
 
-export function Label({ id, name, color, remove }: LabelProps) {
+export function LabelButton({ id, name, color, click }: LabelProps) {
   return (
     <motion.div
+      onClick={() => click(id)}
       style={{
-        display: "flex",
-        gap: 5,
         backgroundColor: color + "bb",
         paddingInline: 3,
         paddingBlock: 1,
@@ -20,15 +19,12 @@ export function Label({ id, name, color, remove }: LabelProps) {
     >
       <p
         style={{
-          flex: 1,
           color: tintColor(color, 0.75),
           fontSize: "0.9em",
         }}
       >
-        {name}
+        + {name}
       </p>
-
-      <button onClick={() => remove(id)}>ziuu</button>
     </motion.div>
   );
 }

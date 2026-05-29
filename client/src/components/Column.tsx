@@ -1,22 +1,28 @@
 import { motion } from "motion/react";
 import { Card } from "./Card";
 import { useEffect, useState } from "react";
-import type { CardModel, CardRequest, ColumnModel } from "../types/models";
+import type {
+  CardModel,
+  CardRequest,
+  ColumnModel,
+  LabelModel,
+} from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 
 type ColumnProps = ColumnModel & {
+  availableLabels: LabelModel[];
   remove: (columnId: number) => void;
 };
 
-export function Column({ id, name, remove }: ColumnProps) {
-  const [items, setItems] = useState<CardModel[]>([]);
+export function Column({ id, name, availableLabels, remove }: ColumnProps) {
+  const [cards, setCards] = useState<CardModel[]>([]);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [newCardDescription, setNewCardDescription] = useState<string>("");
   const [newCardDueDate, setNewCardDueDate] = useState<string>("");
 
   const loadCards = async () => {
-    const cards = await ServerConnection.get(`/columns/${id}/cards`);
-    setItems(cards);
+    const newCards = await ServerConnection.get(`/columns/${id}/cards`);
+    setCards(newCards);
   };
 
   const addCard = async () => {
@@ -119,7 +125,7 @@ export function Column({ id, name, remove }: ColumnProps) {
           gap: 10,
         }}
       >
-        {items.map(
+        {cards.map(
           ({
             id,
             title,
@@ -138,6 +144,7 @@ export function Column({ id, name, remove }: ColumnProps) {
               position={position}
               labels={labels}
               comments={comments}
+              availableLabels={availableLabels}
               remove={removeCard}
             />
           ),
