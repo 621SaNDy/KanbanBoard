@@ -48,48 +48,13 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
   });
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        gap: 10,
-        padding: 10,
-        flexDirection: "column",
-        backgroundColor: "#dfd8ce",
-        borderRadius: 15,
-      }}
-    >
-      <div
-        style={{
-          paddingTop: 10,
-          paddingInline: 10,
-          textAlign: "center",
-          backgroundColor: "#cec6ba",
-          borderRadius: 10,
-        }}
-      >
+    <div className="background flex flex-col p-3 flex-1">
+      <div className="text-center">
         <h2>{name}</h2>
-        <button
-          style={{
-            padding: 5,
-            backgroundColor: "#c1b9ae",
-            border: "none",
-            borderRadius: 5,
-          }}
-          onClick={() => remove(id)}
-        >
-          kolum ziuuu
-        </button>
+        <button onClick={() => remove(id)}>kolum ziuuu</button>
       </div>
 
-      <div
-        style={{
-          padding: 10,
-          textAlign: "center",
-          backgroundColor: "#cec6ba",
-          borderRadius: 10,
-        }}
-      >
+      <div className="flex flex-col gap-1">
         <input
           type="text"
           placeholder="titel"
@@ -108,26 +73,10 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
           value={newCardDueDate}
           onChange={(e) => setNewCardDueDate(e.target.value)}
         />
-        <button
-          style={{
-            padding: 5,
-            backgroundColor: "#c1b9ae",
-            border: "none",
-            borderRadius: 5,
-          }}
-          onClick={addCard}
-        >
-          czard
-        </button>
+        <button onClick={addCard}>czard</button>
       </div>
 
-      <motion.div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
+      <motion.div className="flex flex-col p-3 gap-3">
         {cards.map(
           ({
             id,

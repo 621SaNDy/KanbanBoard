@@ -6,12 +6,7 @@ type CommentProps = CommentModel & {
 
 export function Comment({ id, content, remove }: CommentProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 5,
-      }}
-    >
+    <div className="flex">
       <p style={{ flex: 1 }}>{content}</p>
       <button onClick={() => remove(id)}>ziuu</button>
     </div>

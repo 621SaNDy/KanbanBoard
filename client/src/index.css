@@ -1,3 +1,7 @@
+/* @tailwind base; */
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: "Dugas Pro Black";
   src: url("/font/DugasPro-Black.ttf");
@@ -14,7 +18,19 @@
 }
 
 :root {
+  --background-color: white;
+  --background-light-color: #f5f5f5;
+  --foreground-color: black;
+  --foreground-dimmed-color: gray;
+  --normal-padding: 10px;
+  --small-padding: 5px;
+}
 
+:root[data-theme="dark"] {
+  --background-color: black;
+  --background-light-color: #161616;
+  --foreground-color: white;
+  --foreground-dimmed-color: gray;
 }
 
 * {
@@ -23,20 +39,43 @@
   box-sizing: border-box;
 }
 
-html, #root {
+html,
+#root {
   height: 100%;
 }
 
 body {
-  background-color: #ebe5dd;
+  background-color: var(--background-color);
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+input,
+label {
+  color: var(--foreground-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Morganite", sans-serif;
   font-variant: small-caps;
   font-size-adjust: 0.38;
   letter-spacing: 1px;
+}
+
+h1 {
+  font-size: 6em;
 }
 
 h2 {
@@ -47,12 +86,14 @@ h3 {
   font-size: 3em;
 }
 
-p, a, input {
+p,
+a,
+input {
   font-family: "Pathway Gothic One", sans-serif;
 }
 
 input {
-  font-size: 0.95em
+  font-size: 0.95em;
 }
 
 input:focus {
@@ -60,5 +101,13 @@ input:focus {
 }
 
 input::placeholder {
-  color: var(--placeholder-color, #999);
+  color: var(--placeholder-color, var(--foreground-dimmed-color));
+}
+
+.background {
+  background-color: var(--background-light-color);
+}
+
+.background-lighter {
+  background-color: gray;
 }

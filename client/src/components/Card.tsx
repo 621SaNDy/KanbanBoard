@@ -1,6 +1,5 @@
 import { motion, useDragControls } from "motion/react";
 import { StretchableText } from "./StretchableText";
-import { tintColor } from "../utilities/tintColor";
 import { Label } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
 import CalendarMarkRemixIcon from "@iconify-react/streamline-flex/calendar-mark-remix";
@@ -37,7 +36,6 @@ export function Card({
   const [isBigTextMode, setBigTextMode] = useState(false);
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
-  const color = "#d6cbc1";
 
   const loadLabels = async () => {
     const newLabels = await ServerConnection.get(`/cards/${id}/labels`);
@@ -111,35 +109,15 @@ export function Card({
       dragTransition={{ power: 0.3 }}
       dragListener={false}
       dragControls={dragControls}
-      initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
-      animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
-      whileDrag={{
-        boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
-        zIndex: 9999,
-      }}
+      whileDrag={{ zIndex: 9999 }}
       onDrag={handleShrinkOnDrag}
       onDragEnd={handleExpandOnDragEnd}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundColor: color,
-        borderRadius: 10,
-        position: "relative",
-      }}
+      className="background-lighter flex flex-col justify-center relative"
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-          padding: 10,
-        }}
-      >
+      <div className="p-3 absolute inset-0 z-0 pointer-events-none">
         <StretchableText
           text={title.split(" ")[0]}
-          color={tintColor(color, isBigTextMode ? -0.5 : -0.05)}
+          color={"#aaa"}
           fontFamily="Dugas Pro Black"
           fontWeight={100}
         />
@@ -153,29 +131,15 @@ export function Card({
             ? Math.max(100, headerRef.current?.offsetHeight ?? 0)
             : "auto",
         }}
-        transition={{ duration: 0.2 /*delay: 1*/ }}
-        style={{
-          width: "100%",
-          position: "relative",
-          zIndex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 7.5,
-          paddingInline: 15,
-        }}
+        transition={{ duration: 0.2 }}
+        className="flex flex-col p-3 relative gap-2 w-full z-1"
       >
-        <div
-          style={{
-            paddingTop: 15,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <div className="flex flex-col pt-2 pb-3">
           <h3
             ref={headerRef}
             onDoubleClick={handleEditTitle}
             onPointerDown={handleStartDrag}
-            style={{ color: tintColor(color, -0.7), userSelect: "none" }}
+            className="select-none"
           >
             {title}
           </h3>
@@ -184,7 +148,7 @@ export function Card({
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 5 }}>
+        <div className="flex flex-wrap gap-2 flex-1">
           {availableLabels.map(({ id, name, color }) => (
             <LabelButton
               key={id}
@@ -197,14 +161,7 @@ export function Card({
         </div>
 
         {due_date && labels && (
-          <div
-            style={{
-              display: "flex",
-              gap: 7.5,
-              flexWrap: "wrap",
-              flex: 1,
-            }}
-          >
+          <div className="flex flex-wrap gap-2 flex-1">
             {labels.map(({ id, name, color }) => (
               <Label
                 key={id}
@@ -217,24 +174,9 @@ export function Card({
           </div>
         )}
 
-        <div
-          style={{
-            paddingBottom: 15,
-            display: "flex",
-            gap: 5,
-            justifyContent: "end",
-            alignItems: "end",
-          }}
-        >
+        <div className="flex justify-end gap-1">
           {!due_date && labels && (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 7.5,
-                flex: 1,
-              }}
-            >
+            <div className="flex flex-wrap flex-1">
               {labels.map(({ id, name, color }) => (
                 <Label
                   key={id}
@@ -250,61 +192,38 @@ export function Card({
           {due_date && (
             <p
               onDoubleClick={handleEditDeadline}
-              style={{ flex: 1, display: "flex", alignItems: "center", gap: 3 }}
+              className="flex items-center gap-1 flex-1"
             >
-              <CalendarMarkRemixIcon height="1em"/> {DateUtility.getAbsoluteDate(due_date)}
+              <CalendarMarkRemixIcon height="1em" />{" "}
+              {DateUtility.getAbsoluteDate(due_date)}
             </p>
           )}
 
           <motion.a
             onClick={() => setCommentsOpen(!areCommentsOpen)}
-            style={{
-              color: tintColor(color, -0.7),
-              display: "flex",
-              alignItems: "center",
-            }}
-            whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+            className="flex items-center"
+            whileHover={{ scale: 1.1 }}
           >
             <ChatBubbleTextSquareRemixIcon height="1em" />
           </motion.a>
           <motion.a
             onClick={() => remove(id)}
-            style={{
-              color: tintColor(color, -0.7),
-              display: "flex",
-              alignItems: "center",
-            }}
-            whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+            className="flex items-center"
+            whileHover={{ scale: 1.1 }}
           >
-            {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column */}
+            {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
             <RecycleBinRemix height="1em" />
           </motion.a>
         </div>
       </motion.div>
       <motion.div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 7.5,
-          width: "100%",
-          fontSize: "0.95em",
-          zIndex: 10000,
-        }}
+        className="flex flex-col items-stretch p-2 w-full"
+        style={{ zIndex: 10000 }}
       >
         {areCommentsOpen && (
           <>
             <input
               placeholder="Write a comment..."
-              style={
-                {
-                  backgroundColor: tintColor(color, -0.08),
-                  border: "none",
-                  borderRadius: "0 0 2px 2px",
-                  padding: 5,
-                  color: tintColor(color, 0.8),
-                  "--placeholder-color": tintColor(color, 0.3),
-                } as React.CSSProperties
-              }
               value={newCommentContent}
               onChange={(e) => setNewCommentContent(e.target.value)}
               onKeyDown={handleNewComment}

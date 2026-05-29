@@ -69,15 +69,7 @@ export function Board({ id, name, remove }: BoardProps) {
   }, []);
 
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        gap: 10,
-        padding: 10,
-      }}
-      onPointerMove={handlePointerMove}
-    >
+    <div className="flex p-3 h-full" onPointerMove={handlePointerMove}>
       <h1>{name}</h1>
       {columns.map(({ id, name, position }) => (
         <Column
@@ -90,7 +82,7 @@ export function Board({ id, name, remove }: BoardProps) {
         />
       ))}
 
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div className="flex flex-col">
         <input
           type="text"
           placeholder="kolumnejm"
@@ -100,7 +92,7 @@ export function Board({ id, name, remove }: BoardProps) {
         <button onClick={addColumn}>kolum</button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div className="flex flex-col">
         <input
           type="text"
           placeholder="nejm labejle"

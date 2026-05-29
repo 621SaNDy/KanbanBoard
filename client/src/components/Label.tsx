@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { tintColor } from "../utilities/tintColor";
 import type { LabelModel } from "../types/models";
 
 export type LabelProps = LabelModel & {
@@ -8,25 +7,8 @@ export type LabelProps = LabelModel & {
 
 export function Label({ id, name, color, remove }: LabelProps) {
   return (
-    <motion.div
-      style={{
-        display: "flex",
-        gap: 5,
-        backgroundColor: color + "bb",
-        paddingInline: 3,
-        paddingBlock: 1,
-        borderRadius: 2,
-      }}
-    >
-      <p
-        style={{
-          flex: 1,
-          color: tintColor(color, 0.75),
-          fontSize: "0.9em",
-        }}
-      >
-        {name}
-      </p>
+    <motion.div className="flex" style={{ backgroundColor: color }}>
+      <p className="flex-1">{name}</p>
 
       <button onClick={() => remove(id)}>ziuu</button>
     </motion.div>
