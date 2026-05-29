@@ -3,8 +3,10 @@ import { StretchableText } from "./StretchableText";
 import { tintColor } from "../utilities/tintColor";
 import { Label } from "./Label";
 import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
+import RecycleBinRemix from "@iconify-react/streamline-flex/recycle-bin-remix";
 import { useRef, useState } from "react";
 import type { CardModel } from "../types/models";
+import { DateUtility } from "../utilities/DateUtility";
 
 type CardProps = CardModel & {
   remove: (id: number) => void;
@@ -14,7 +16,7 @@ export function Card({
   id,
   title,
   description,
-  due_date: dueDate,
+  due_date,
   labels,
   comments,
   remove,
@@ -129,7 +131,7 @@ export function Card({
           )}
         </div>
 
-        {dueDate && labels && (
+        {due_date && labels && (
           <div
             style={{
               display: "flex",
@@ -153,7 +155,7 @@ export function Card({
             alignItems: "end",
           }}
         >
-          {!dueDate && labels && (
+          {!due_date && labels && (
             <div
               style={{
                 display: "flex",
@@ -168,12 +170,12 @@ export function Card({
             </div>
           )}
 
-          {dueDate && (
+          {due_date && (
             <p
               onDoubleClick={handleEditDeadline}
               style={{ flex: 1, fontStyle: "italic" }}
             >
-              {dueDate}
+              Due at {DateUtility.getAbsoluteDate(due_date)}
             </p>
           )}
 
@@ -187,7 +189,18 @@ export function Card({
             whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
           >
             <ChatBubbleTextSquareRemixIcon height="1em" />
-            <button onClick={() => remove(id)}>czard ziuuu</button>
+          </motion.a>
+          <motion.a
+            onClick={() => remove(id)}
+            style={{
+              color: tintColor(color, -0.7),
+              display: "flex",
+              alignItems: "center",
+            }}
+            whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
+          >
+            {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column */}
+            <RecycleBinRemix height="1em" />
           </motion.a>
         </div>
       </motion.div>

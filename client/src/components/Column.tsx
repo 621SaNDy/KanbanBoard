@@ -94,7 +94,7 @@ export function Column({ id, name, remove }: ColumnProps) {
           onChange={(e) => setNewCardDescription(e.target.value)}
         />
         <input
-          type="datetime-local"
+          type="date"
           placeholder="dejdlajn"
           value={newCardDueDate}
           onChange={(e) => setNewCardDueDate(e.target.value)}
@@ -124,7 +124,7 @@ export function Column({ id, name, remove }: ColumnProps) {
             id,
             title,
             description,
-            due_date: dueDate,
+            due_date,
             position,
             labels,
             comments,
@@ -134,7 +134,7 @@ export function Column({ id, name, remove }: ColumnProps) {
               id={id}
               title={title}
               description={description}
-              due_date={dueDate}
+              due_date={due_date}
               position={position}
               labels={labels}
               comments={comments}

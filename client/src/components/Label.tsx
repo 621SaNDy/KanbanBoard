@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { tintColor } from "../utilities/tintColor";
 import type { LabelModel } from "../types/models";
 
-export type LabelProps = LabelModel
+export type LabelProps = LabelModel;
 
 export function Label({ name, color }: LabelProps) {
   return (
