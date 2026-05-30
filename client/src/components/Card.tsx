@@ -1,5 +1,5 @@
 import { motion, useDragControls } from "motion/react";
-import { Label } from "./Label";
+import { CardLabel } from "./CardLabel";
 import { useEffect, useRef, useState } from "react";
 import {
   type CommentModel,
@@ -9,8 +9,8 @@ import {
 } from "../types/models";
 import { DateUtility } from "../utilities/DateUtility";
 import { ServerConnection } from "../utilities/ServerConnection";
-import { LabelButton } from "./LabelButton";
-import { Comment } from "./Comment";
+import { CardLabelButton } from "./CardLabelButton";
+import { CardComment } from "./CardComment";
 
 type CardProps = CardModel & {
   availableLabels: LabelModel[];
@@ -102,15 +102,15 @@ export function Card({
       <div className="flex flex-col p-3 relative gap-2 w-full">
         <h3
           className="select-none"
-            ref={headerRef}
-            onDoubleClick={handleEditTitle}
-            onPointerDown={handleStartDrag}
-          >
-            {title}
-          </h3>
-          {description && (
-            <p onDoubleClick={handleEditDescription}>{description}</p>
-          )}
+          ref={headerRef}
+          onDoubleClick={handleEditTitle}
+          onPointerDown={handleStartDrag}
+        >
+          {title}
+        </h3>
+        {description && (
+          <p onDoubleClick={handleEditDescription}>{description}</p>
+        )}
 
         <div className="flex flex-wrap gap-2 flex-1">
           {availableLabels
@@ -119,20 +119,20 @@ export function Card({
                 !labels.map((current) => current.id).includes(available.id),
             )
             .map(({ id, name, color }) => (
-            <LabelButton
-              key={id}
-              id={id}
-              name={name}
-              color={color}
-              click={addLabel}
-            />
-          ))}
+              <CardLabelButton
+                key={id}
+                id={id}
+                name={name}
+                color={color}
+                click={addLabel}
+              />
+            ))}
         </div>
 
         {due_date && labels && (
           <div className="flex flex-wrap gap-2 flex-1">
             {labels.map(({ id, name, color }) => (
-              <Label
+              <CardLabel
                 key={id}
                 id={id}
                 name={name}
@@ -147,7 +147,7 @@ export function Card({
           {!due_date && labels && (
             <div className="flex flex-wrap flex-1">
               {labels.map(({ id, name, color }) => (
-                <Label
+                <CardLabel
                   key={id}
                   id={id}
                   name={name}
@@ -176,22 +176,21 @@ export function Card({
           </a>
           <a className="flex items-center" onClick={() => remove(id)}>
             {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
-            <i className="hn hn-trash-alt"/>
-
+            <i className="hn hn-trash-alt" />
           </a>
         </div>
       </div>
 
-        {areCommentsOpen && (
+      {areCommentsOpen && (
         <div className="flex flex-col items-stretch gap-2 w-full pl-3 pr-3 pb-3">
-            {comments.map(({ id, content }) => (
-              <Comment
-                key={id}
-                id={id}
-                content={content}
-                remove={removeComment}
-              />
-            ))}
+          {comments.map(({ id, content }) => (
+            <CardComment
+              key={id}
+              id={id}
+              content={content}
+              remove={removeComment}
+            />
+          ))}
           <input
             placeholder="Write a comment..."
             value={newCommentContent}

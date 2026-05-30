@@ -9,7 +9,7 @@ type SideMenuProps = {
 
 export function SideMenu({ boards }: SideMenuProps) {
   const [isExpanded, setExpanded] = useState(false);
-  const {theme, toggleTheme} = useDarkMode();
+  const { theme, toggleTheme } = useDarkMode();
 
   const handleExpand = () => {
     setExpanded(true);

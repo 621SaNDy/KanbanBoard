@@ -1,10 +1,10 @@
 import type { LabelModel } from "../types/models";
 
-export type LabelProps = LabelModel & {
+type CardLabelProps = LabelModel & {
   remove: (id: number) => void;
 };
 
-export function Label({ id, name, color, remove }: LabelProps) {
+export function CardLabel({ id, name, color, remove }: CardLabelProps) {
   return (
     <div
       className="border-3 border-fg border-solid inset-shadow-border-small flex pl-1"

@@ -8,12 +8,17 @@ import type {
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 
-type ColumnProps = ColumnModel & {
+type BoardColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
   remove: (columnId: number) => void;
 };
 
-export function Column({ id, name, availableLabels, remove }: ColumnProps) {
+export function BoardColumn({
+  id,
+  name,
+  availableLabels,
+  remove,
+}: BoardColumnProps) {
   const [cards, setCards] = useState<CardModel[]>([]);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [newCardDescription, setNewCardDescription] = useState<string>("");

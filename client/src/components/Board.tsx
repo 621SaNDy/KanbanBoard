@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Column } from "./Column";
+import { BoardColumn } from "./BoardColumn";
 import {
   type LabelModel,
   type BoardModel,
@@ -8,7 +8,7 @@ import {
   type LabelRequest,
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
-import { Label } from "./Label";
+import { CardLabel } from "./CardLabel";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
@@ -74,7 +74,7 @@ export function Board({ id, name, remove }: BoardProps) {
     >
       <div className="flex gap-5 flex-1">
         {columns.map(({ id, name, position }) => (
-          <Column
+          <BoardColumn
             key={id}
             id={id}
             name={name}
