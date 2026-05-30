@@ -36,7 +36,7 @@ function App() {
   }, []);
 
   return (
-    <div className="h-full w-full flex gap-5 p-5">
+    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
       <SideMenu boards={boards} />
 
       {(() => {

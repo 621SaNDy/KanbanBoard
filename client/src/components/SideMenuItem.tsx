@@ -12,7 +12,10 @@ export function SideMenuItem({
   click,
 }: SideMenuItemProps) {
   return (
-    <div className="flex items-center pl-4 pr-4 pt-2 pb-2" onClick={click}>
+    <div
+      className="flex items-center pl-4 pr-4 pt-2 pb-2 hover:bg-fg hover:text-bg"
+      onClick={click}
+    >
       <i className={`hn hn-${icon}`} />
       <p className={`text-nowrap overflow-hidden ${expanded ? "pl-3" : "w-0"}`}>
         {title}

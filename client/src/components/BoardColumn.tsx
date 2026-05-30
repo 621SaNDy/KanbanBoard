@@ -55,7 +55,7 @@ export function BoardColumn({
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
       <div className="flex flex-col gap-2 text-center">
         <h2>{name}</h2>
-        {/* <button onClick={() => remove(id)}>kolum ziuuu</button> */}
+        <button onClick={() => remove(id)}>kolum ziuuu</button>
         {/* <input
           type="text"
           placeholder="titel"

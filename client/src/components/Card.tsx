@@ -172,7 +172,7 @@ export function Card({
             className="flex items-center"
             onClick={() => setCommentsOpen(!areCommentsOpen)}
           >
-            <i className="hn hn-comment-dots" />
+            <i className="hn hn-comments" />
           </a>
           <a className="flex items-center" onClick={() => remove(id)}>
             {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}

@@ -10,7 +10,7 @@ export function TopMenu({ title }: TopMenuProps) {
     <div className="shadow-border-rounded inset-shadow-border m-border flex items-center pl-4 pr-4">
       <h1>{title}</h1>
 
-      <div className="flex-1 flex justify-end pr-4">
+      <div className="flex-1 flex justify-end gap-2 pr-4">
         <TopMenuItem icon="exclamation-triangle" click={() => {}} />
         <TopMenuItem icon="tag" click={() => {}} />
         <TopMenuItem icon="filter" click={() => {}} />

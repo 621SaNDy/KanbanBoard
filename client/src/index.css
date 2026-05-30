@@ -67,7 +67,7 @@ i,
 input,
 label,
 button {
-  color: var(--color-fg);
+  /* color: var(--color-fg); */
 }
 
 h1,
@@ -116,7 +116,7 @@ input {
 }
 
 input:focus {
-  outline: none;
+  outline: 2px solid var(--color-fg);
 }
 
 input::placeholder {

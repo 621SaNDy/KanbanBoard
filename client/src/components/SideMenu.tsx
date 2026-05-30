@@ -26,13 +26,13 @@ export function SideMenu({ boards }: SideMenuProps) {
       className="shadow-border-rounded inset-shadow-border mt-border mr-border mb-border flex flex-col pt-2 pb-2"
     >
       <SideMenuItem expanded={isExpanded} icon="plus" title="New board" click={() => {}} />
-      {isExpanded ? (
+      {/* {isExpanded ? (
         boards.map(({ id, name }) => (
           <SideMenuItem expanded={isExpanded} key={id} icon="notebook" title={name} click={() => {}} />
         ))
-      ) : (
+      ) : ( */}
         <SideMenuItem expanded={isExpanded} icon="bars" title="Board list" click={() => {}} />
-      )}
+      {/* )} */}
       <SideMenuItem expanded={isExpanded} icon="expand" title="Full screen" click={() => {}} />
       <SideMenuItem expanded={isExpanded} icon={theme === "light" ? "sun" : "moon"} title="Toggle theme" click={toggleTheme} />
       <SideMenuItem expanded={isExpanded} icon="cog" title="Settings" click={() => {}} />
