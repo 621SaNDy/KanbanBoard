@@ -44,7 +44,7 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
 
   useEffect(() => {
     loadCards();
-  });
+  }, []);
 
   return (
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 flex-1">
