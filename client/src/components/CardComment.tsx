@@ -1,17 +1,12 @@
 import type { CommentModel } from "../types/models";
 
-type CommentProps = CommentModel & {
+type CardCommentProps = CommentModel & {
   remove: (id: number) => void;
 };
 
-export function Comment({ id, content, remove }: CommentProps) {
+export function CardComment({ id, content, remove }: CardCommentProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 5,
-      }}
-    >
+    <div className="flex">
       <p style={{ flex: 1 }}>{content}</p>
       <button onClick={() => remove(id)}>ziuu</button>
     </div>

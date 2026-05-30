@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Column } from "./Column";
+import { BoardColumn } from "./BoardColumn";
 import {
   type LabelModel,
   type BoardModel,
@@ -8,7 +8,7 @@ import {
   type LabelRequest,
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
-import { Label } from "./Label";
+import { CardLabel } from "./CardLabel";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
@@ -70,62 +70,65 @@ export function Board({ id, name, remove }: BoardProps) {
 
   return (
     <div
-      style={{
-        height: "100%",
-        display: "flex",
-        gap: 10,
-        padding: 10,
-      }}
-      onPointerMove={handlePointerMove}
+      className="flex flex-col gap-3 h-full" /*onPointerMove={handlePointerMove}*/
     >
-      <h1>{name}</h1>
-      {columns.map(({ id, name, position }) => (
-        <Column
-          key={id}
-          id={id}
-          name={name}
-          position={position}
-          availableLabels={labels}
-          remove={removeColumn}
-        />
-      ))}
-
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <input
-          type="text"
-          placeholder="kolumnejm"
-          value={newColumnName}
-          onChange={(e) => setNewColumnName(e.target.value)}
-        />
-        <button onClick={addColumn}>kolum</button>
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <input
-          type="text"
-          placeholder="nejm labejle"
-          value={newLabelName}
-          onChange={(e) => setNewLabelName(e.target.value)}
-        />
-        <input
-          type="color"
-          placeholder="kolór labejle"
-          value={newLabelColor}
-          onChange={(e) => setNewLabelColor(e.target.value)}
-        />
-        <button onClick={addLabel}>ejd leabje</button>
-        {labels.map(({ id, name, color }) => (
-          <Label
+      <div className="flex gap-5 flex-1">
+        {columns.map(({ id, name, position }) => (
+          <BoardColumn
             key={id}
             id={id}
             name={name}
-            color={color}
-            remove={removeLabel}
+            position={position}
+            availableLabels={labels}
+            remove={removeColumn}
           />
         ))}
+
+        <button
+          className="shadow-border-rounded inset-shadow-border m-border p-2"
+          onClick={addColumn}
+        >
+          <i className="hn hn-plus" />
+        </button>
       </div>
 
-      <button onClick={() => remove(id)}>bord ziuuu</button>
+      {/* <div className="flex">
+        <div className="flex flex-col">
+          <input
+            type="text"
+            placeholder="kolumnejm"
+            value={newColumnName}
+            onChange={(e) => setNewColumnName(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <input
+            type="text"
+            placeholder="nejm labejle"
+            value={newLabelName}
+            onChange={(e) => setNewLabelName(e.target.value)}
+          />
+          <input
+            type="color"
+            placeholder="kolór labejle"
+            value={newLabelColor}
+            onChange={(e) => setNewLabelColor(e.target.value)}
+          />
+          <button onClick={addLabel}>ejd leabje</button>
+          {labels.map(({ id, name, color }) => (
+            <Label
+              key={id}
+              id={id}
+              name={name}
+              color={color}
+              remove={removeLabel}
+            />
+          ))}
+        </div>
+
+        <button onClick={() => remove(id)}>bord ziuuu</button>
+      </div> */}
     </div>
   );
 }

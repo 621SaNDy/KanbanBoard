@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { Card } from "./Card";
 import { useEffect, useState } from "react";
 import type {
@@ -9,12 +8,17 @@ import type {
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 
-type ColumnProps = ColumnModel & {
+type BoardColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
   remove: (columnId: number) => void;
 };
 
-export function Column({ id, name, availableLabels, remove }: ColumnProps) {
+export function BoardColumn({
+  id,
+  name,
+  availableLabels,
+  remove,
+}: BoardColumnProps) {
   const [cards, setCards] = useState<CardModel[]>([]);
   const [newCardTitle, setNewCardTitle] = useState("");
   const [newCardDescription, setNewCardDescription] = useState<string>("");
@@ -48,49 +52,11 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
   }, []);
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        gap: 10,
-        padding: 10,
-        flexDirection: "column",
-        backgroundColor: "#dfd8ce",
-        borderRadius: 15,
-      }}
-    >
-      <div
-        style={{
-          paddingTop: 10,
-          paddingInline: 10,
-          textAlign: "center",
-          backgroundColor: "#cec6ba",
-          borderRadius: 10,
-        }}
-      >
+    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
+      <div className="flex flex-col gap-2 text-center">
         <h2>{name}</h2>
-        <button
-          style={{
-            padding: 5,
-            backgroundColor: "#c1b9ae",
-            border: "none",
-            borderRadius: 5,
-          }}
-          onClick={() => remove(id)}
-        >
-          kolum ziuuu
-        </button>
-      </div>
-
-      <div
-        style={{
-          padding: 10,
-          textAlign: "center",
-          backgroundColor: "#cec6ba",
-          borderRadius: 10,
-        }}
-      >
-        <input
+        <button onClick={() => remove(id)}>kolum ziuuu</button>
+        {/* <input
           type="text"
           placeholder="titel"
           value={newCardTitle}
@@ -107,27 +73,16 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
           placeholder="dejdlajn"
           value={newCardDueDate}
           onChange={(e) => setNewCardDueDate(e.target.value)}
-        />
+        /> */}
         <button
-          style={{
-            padding: 5,
-            backgroundColor: "#c1b9ae",
-            border: "none",
-            borderRadius: 5,
-          }}
+          className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"
           onClick={addCard}
         >
-          czard
+          <i className="hn hn-plus" />
         </button>
       </div>
 
-      <motion.div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
+      <div className="flex flex-col gap-3">
         {cards.map(
           ({
             id,
@@ -152,7 +107,7 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
             />
           ),
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }

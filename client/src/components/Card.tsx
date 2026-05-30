@@ -1,10 +1,5 @@
 import { motion, useDragControls } from "motion/react";
-import { StretchableText } from "./StretchableText";
-import { tintColor } from "../utilities/tintColor";
-import { Label } from "./Label";
-import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
-import CalendarMarkRemixIcon from "@iconify-react/streamline-flex/calendar-mark-remix";
-import RecycleBinRemix from "@iconify-react/streamline-flex/recycle-bin-remix";
+import { CardLabel } from "./CardLabel";
 import { useEffect, useRef, useState } from "react";
 import {
   type CommentModel,
@@ -14,8 +9,8 @@ import {
 } from "../types/models";
 import { DateUtility } from "../utilities/DateUtility";
 import { ServerConnection } from "../utilities/ServerConnection";
-import { LabelButton } from "./LabelButton";
-import { Comment } from "./Comment";
+import { CardLabelButton } from "./CardLabelButton";
+import { CardComment } from "./CardComment";
 
 type CardProps = CardModel & {
   availableLabels: LabelModel[];
@@ -34,10 +29,8 @@ export function Card({
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
-  const [isBigTextMode, setBigTextMode] = useState(false);
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
-  const color = "#d6cbc1";
 
   const loadLabels = async () => {
     const newLabels = await ServerConnection.get(`/cards/${id}/labels`);
@@ -75,10 +68,6 @@ export function Card({
     }
   };
 
-  const handleShrinkOnDrag = () => {
-    setBigTextMode(true);
-  };
-
   const handleStartDrag = (event: React.PointerEvent) => {
     dragControls.start(event, { snapToCursor: false });
   };
@@ -95,10 +84,6 @@ export function Card({
     alert("bruh dead");
   };
 
-  const handleExpandOnDragEnd = () => {
-    setBigTextMode(false);
-  };
-
   useEffect(() => {
     loadLabels();
     loadComments();
@@ -111,102 +96,43 @@ export function Card({
       dragTransition={{ power: 0.3 }}
       dragListener={false}
       dragControls={dragControls}
-      initial={{ boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}` }}
-      animate={{ boxShadow: `3px 3px 0 ${tintColor(color, -0.2)}` }}
-      whileDrag={{
-        boxShadow: `1px 1px 0 ${tintColor(color, -0.2)}`,
-        zIndex: 9999,
-      }}
-      onDrag={handleShrinkOnDrag}
-      onDragEnd={handleExpandOnDragEnd}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundColor: color,
-        borderRadius: 10,
-        position: "relative",
-      }}
+      whileDrag={{ zIndex: 9999 }}
+      className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative"
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-          padding: 10,
-        }}
-      >
-        <StretchableText
-          text={title.split(" ")[0]}
-          color={tintColor(color, isBigTextMode ? -0.5 : -0.05)}
-          fontFamily="Dugas Pro Black"
-          fontWeight={100}
-        />
-      </div>
-
-      <motion.div
-        // initial={{ opacity: 0 }}
-        animate={{
-          opacity: isBigTextMode ? 0 : 1,
-          height: isBigTextMode
-            ? Math.max(100, headerRef.current?.offsetHeight ?? 0)
-            : "auto",
-        }}
-        transition={{ duration: 0.2 /*delay: 1*/ }}
-        style={{
-          width: "100%",
-          position: "relative",
-          zIndex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 7.5,
-          paddingInline: 15,
-        }}
-      >
-        <div
-          style={{
-            paddingTop: 15,
-            display: "flex",
-            flexDirection: "column",
-          }}
+      <div className="flex flex-col p-3 relative gap-2 w-full">
+        <h3
+          className="select-none"
+          ref={headerRef}
+          onDoubleClick={handleEditTitle}
+          onPointerDown={handleStartDrag}
         >
-          <h3
-            ref={headerRef}
-            onDoubleClick={handleEditTitle}
-            onPointerDown={handleStartDrag}
-            style={{ color: tintColor(color, -0.7), userSelect: "none" }}
-          >
-            {title}
-          </h3>
-          {description && (
-            <p onDoubleClick={handleEditDescription}>{description}</p>
-          )}
-        </div>
+          {title}
+        </h3>
+        {description && (
+          <p onDoubleClick={handleEditDescription}>{description}</p>
+        )}
 
-        <div style={{ display: "flex", gap: 5 }}>
-          {availableLabels.map(({ id, name, color }) => (
-            <LabelButton
-              key={id}
-              id={id}
-              name={name}
-              color={color}
-              click={addLabel}
-            />
-          ))}
+        <div className="flex flex-wrap gap-2 flex-1">
+          {availableLabels
+            .filter(
+              (available) =>
+                !labels.map((current) => current.id).includes(available.id),
+            )
+            .map(({ id, name, color }) => (
+              <CardLabelButton
+                key={id}
+                id={id}
+                name={name}
+                color={color}
+                click={addLabel}
+              />
+            ))}
         </div>
 
         {due_date && labels && (
-          <div
-            style={{
-              display: "flex",
-              gap: 7.5,
-              flexWrap: "wrap",
-              flex: 1,
-            }}
-          >
+          <div className="flex flex-wrap gap-2 flex-1">
             {labels.map(({ id, name, color }) => (
-              <Label
+              <CardLabel
                 key={id}
                 id={id}
                 name={name}
@@ -217,26 +143,11 @@ export function Card({
           </div>
         )}
 
-        <div
-          style={{
-            paddingBottom: 15,
-            display: "flex",
-            gap: 5,
-            justifyContent: "end",
-            alignItems: "end",
-          }}
-        >
+        <div className="flex justify-end gap-1">
           {!due_date && labels && (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 7.5,
-                flex: 1,
-              }}
-            >
+            <div className="flex flex-wrap flex-1">
               {labels.map(({ id, name, color }) => (
-                <Label
+                <CardLabel
                   key={id}
                   id={id}
                   name={name}
@@ -249,77 +160,45 @@ export function Card({
 
           {due_date && (
             <p
+              className="flex items-center gap-1 flex-1"
               onDoubleClick={handleEditDeadline}
-              style={{ flex: 1, display: "flex", alignItems: "center", gap: 3 }}
             >
-              <CalendarMarkRemixIcon height="1em"/> {DateUtility.getAbsoluteDate(due_date)}
+              <i className="hn hn-clock" />{" "}
+              {DateUtility.getAbsoluteDate(due_date)}
             </p>
           )}
 
-          <motion.a
+          <a
+            className="flex items-center"
             onClick={() => setCommentsOpen(!areCommentsOpen)}
-            style={{
-              color: tintColor(color, -0.7),
-              display: "flex",
-              alignItems: "center",
-            }}
-            whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
           >
-            <ChatBubbleTextSquareRemixIcon height="1em" />
-          </motion.a>
-          <motion.a
-            onClick={() => remove(id)}
-            style={{
-              color: tintColor(color, -0.7),
-              display: "flex",
-              alignItems: "center",
-            }}
-            whileHover={{ color: tintColor(color, -0.4), scale: 1.1 }}
-          >
-            {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column */}
-            <RecycleBinRemix height="1em" />
-          </motion.a>
+            <i className="hn hn-comments" />
+          </a>
+          <a className="flex items-center" onClick={() => remove(id)}>
+            {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
+            <i className="hn hn-trash-alt" />
+          </a>
         </div>
-      </motion.div>
-      <motion.div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 7.5,
-          width: "100%",
-          fontSize: "0.95em",
-          zIndex: 10000,
-        }}
-      >
-        {areCommentsOpen && (
-          <>
-            <input
-              placeholder="Write a comment..."
-              style={
-                {
-                  backgroundColor: tintColor(color, -0.08),
-                  border: "none",
-                  borderRadius: "0 0 2px 2px",
-                  padding: 5,
-                  color: tintColor(color, 0.8),
-                  "--placeholder-color": tintColor(color, 0.3),
-                } as React.CSSProperties
-              }
-              value={newCommentContent}
-              onChange={(e) => setNewCommentContent(e.target.value)}
-              onKeyDown={handleNewComment}
+      </div>
+
+      {areCommentsOpen && (
+        <div className="flex flex-col items-stretch gap-2 w-full pl-3 pr-3 pb-3">
+          {comments.map(({ id, content }) => (
+            <CardComment
+              key={id}
+              id={id}
+              content={content}
+              remove={removeComment}
             />
-            {comments.map(({ id, content }) => (
-              <Comment
-                key={id}
-                id={id}
-                content={content}
-                remove={removeComment}
-              />
-            ))}
-          </>
-        )}
-      </motion.div>
+          ))}
+          <input
+            placeholder="Write a comment..."
+            value={newCommentContent}
+            onChange={(e) => setNewCommentContent(e.target.value)}
+            onKeyDown={handleNewComment}
+          />
+        </div>
+      )}
     </motion.div>
   );
 }

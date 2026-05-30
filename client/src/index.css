@@ -1,64 +1,134 @@
+@import "tailwindcss";
+@import "@hackernoon/pixel-icon-library/fonts/iconfont.css";
+
 @font-face {
-  font-family: "Dugas Pro Black";
-  src: url("/font/DugasPro-Black.ttf");
+  font-family: "Jacquard 24";
+  src: url("/font/Jacquard24-Regular.ttf");
 }
 
 @font-face {
-  font-family: "Morganite";
-  src: url("/font/Morganite-Bold.ttf");
+  font-family: "Modern DOS";
+  src: url("/font/ModernDOS8x14.ttf");
 }
 
-@font-face {
-  font-family: "Pathway Gothic One";
-  src: url("/font/PathwayGothicOne-Regular.ttf");
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* :root { */
+@theme {
+  --color-bg: #aab38a;
+  --color-bg-secondary: #a5ad87;
+  --color-fg: #1e2210;
+  --color-fg-semi-trans: #1e221080;
+  --color-fg-secondary: #1b1e0e;
+  --color-fg-dimmed: #79805e;
+  --spacing-border: 3px;
+  --inset-shadow-border: inset 2px 2px 0 var(--color-fg-semi-trans);
+  --inset-shadow-border-small: inset 1px 1px 0 var(--color-fg-semi-trans);
+  --shadow-border-rounded:
+    3px 0 0 var(--color-fg), -3px 0 0 var(--color-fg), 0 3px 0 var(--color-fg),
+    0 -3px 0 var(--color-fg);
 }
 
-:root {
-
+:root[data-theme="dark"] {
+  --color-bg: #1e2210;
+  --color-bg-secondary: #1b1e0e;
+  --color-fg: #aab38a;
+  --color-fg-semi-trans: #aab38a80;
+  --color-fg-secondary: #a5ad87;
+  --color-fg-dimmed: #626751;
 }
 
 * {
-  padding: 0;
-  margin: 0;
   box-sizing: border-box;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
 
-html, #root {
+html,
+#root {
   height: 100%;
 }
 
 body {
-  background-color: #ebe5dd;
+  /* background: linear-gradient(45deg, var(--color-bg), var(--color-bg-secondary)); */
+  background-color: var(--color-bg);
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Morganite", sans-serif;
-  font-variant: small-caps;
-  font-size-adjust: 0.38;
-  letter-spacing: 1px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+i,
+input,
+label,
+button {
+  /* color: var(--color-fg); */
 }
 
-h2 {
-  font-size: 4.5em;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Jacquard 24", sans-serif;
+  line-height: normal;
+  text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
 }
 
-h3 {
+a,
+p,
+i {
+  text-shadow: 0.5px 0.5px 0 var(--color-fg-semi-trans);
+}
+
+i {
+  font-size: 1.25em;
+}
+
+h1 {
   font-size: 3em;
 }
 
-p, a, input {
-  font-family: "Pathway Gothic One", sans-serif;
+h2 {
+  font-size: 3em;
+}
+
+h3 {
+  font-size: 2.5em;
+}
+
+p,
+a,
+input,
+button {
+  font-family: "Modern DOS", monospace;
 }
 
 input {
-  font-size: 0.95em
+  padding-inline: 4px;
+  font-size: 0.95em;
 }
 
 input:focus {
-  outline: none;
+  outline: 2px solid var(--color-fg);
 }
 
 input::placeholder {
-  color: var(--placeholder-color, #999);
+  color: var(--color-fg-dimmed);
+}
+
+button:hover {
+  color: var(--color-bg);
+  background-color: var(--color-fg);
+}
+
+input {
+  border: 3px solid var(--color-fg);
+  box-shadow: var(--inset-shadow-border-small);
 }
