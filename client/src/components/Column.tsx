@@ -45,7 +45,7 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
 
   useEffect(() => {
     loadCards();
-  });
+  }, []);
 
   return (
     <div

@@ -102,7 +102,7 @@ export function Card({
   useEffect(() => {
     loadLabels();
     loadComments();
-  });
+  }, []);
 
   return (
     <motion.div
