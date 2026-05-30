@@ -3,12 +3,12 @@
 
 @font-face {
   font-family: "Jacquard 24";
-  src: url("/font/Jacquard24-Regular.ttf");
+  src: url("/font/Jacquard24.ttf");
 }
 
 @font-face {
-  font-family: "Modern DOS";
-  src: url("/font/ModernDOS8x14.ttf");
+  font-family: "Ruler 9";
+  src: url("/font/Ruler9.ttf");
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -107,12 +107,11 @@ p,
 a,
 input,
 button {
-  font-family: "Modern DOS", monospace;
+  font-family: "Ruler 9", monospace;
 }
 
 input {
   padding-inline: 4px;
-  font-size: 0.95em;
 }
 
 input:focus {
