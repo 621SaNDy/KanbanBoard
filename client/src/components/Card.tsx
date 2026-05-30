@@ -1,9 +1,5 @@
 import { motion, useDragControls } from "motion/react";
-import { StretchableText } from "./StretchableText";
 import { Label } from "./Label";
-import ChatBubbleTextSquareRemixIcon from "@iconify-react/streamline-flex/chat-bubble-text-square-remix";
-import CalendarMarkRemixIcon from "@iconify-react/streamline-flex/calendar-mark-remix";
-import RecycleBinRemix from "@iconify-react/streamline-flex/recycle-bin-remix";
 import { useEffect, useRef, useState } from "react";
 import {
   type CommentModel,
@@ -33,7 +29,6 @@ export function Card({
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
-  const [isBigTextMode, setBigTextMode] = useState(false);
   const dragControls = useDragControls();
   const headerRef = useRef<HTMLHeadingElement>(null);
 
@@ -73,10 +68,6 @@ export function Card({
     }
   };
 
-  const handleShrinkOnDrag = () => {
-    setBigTextMode(true);
-  };
-
   const handleStartDrag = (event: React.PointerEvent) => {
     dragControls.start(event, { snapToCursor: false });
   };
@@ -93,10 +84,6 @@ export function Card({
     alert("bruh dead");
   };
 
-  const handleExpandOnDragEnd = () => {
-    setBigTextMode(false);
-  };
-
   useEffect(() => {
     loadLabels();
     loadComments();
@@ -110,46 +97,28 @@ export function Card({
       dragListener={false}
       dragControls={dragControls}
       whileDrag={{ zIndex: 9999 }}
-      onDrag={handleShrinkOnDrag}
-      onDragEnd={handleExpandOnDragEnd}
-      className="background-lighter flex flex-col justify-center relative"
+      className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative"
     >
-      <div className="p-3 absolute inset-0 z-0 pointer-events-none">
-        <StretchableText
-          text={title.split(" ")[0]}
-          color={"#aaa"}
-          fontFamily="Dugas Pro Black"
-          fontWeight={100}
-        />
-      </div>
-
-      <motion.div
-        // initial={{ opacity: 0 }}
-        animate={{
-          opacity: isBigTextMode ? 0 : 1,
-          height: isBigTextMode
-            ? Math.max(100, headerRef.current?.offsetHeight ?? 0)
-            : "auto",
-        }}
-        transition={{ duration: 0.2 }}
-        className="flex flex-col p-3 relative gap-2 w-full z-1"
-      >
-        <div className="flex flex-col pt-2 pb-3">
-          <h3
+      <div className="flex flex-col p-3 relative gap-2 w-full">
+        <h3
+          className="select-none"
             ref={headerRef}
             onDoubleClick={handleEditTitle}
             onPointerDown={handleStartDrag}
-            className="select-none"
           >
             {title}
           </h3>
           {description && (
             <p onDoubleClick={handleEditDescription}>{description}</p>
           )}
-        </div>
 
         <div className="flex flex-wrap gap-2 flex-1">
-          {availableLabels.map(({ id, name, color }) => (
+          {availableLabels
+            .filter(
+              (available) =>
+                !labels.map((current) => current.id).includes(available.id),
+            )
+            .map(({ id, name, color }) => (
             <LabelButton
               key={id}
               id={id}
@@ -191,43 +160,30 @@ export function Card({
 
           {due_date && (
             <p
-              onDoubleClick={handleEditDeadline}
               className="flex items-center gap-1 flex-1"
+              onDoubleClick={handleEditDeadline}
             >
-              <CalendarMarkRemixIcon height="1em" />{" "}
+              <i className="hn hn-clock" />{" "}
               {DateUtility.getAbsoluteDate(due_date)}
             </p>
           )}
 
-          <motion.a
+          <a
+            className="flex items-center"
             onClick={() => setCommentsOpen(!areCommentsOpen)}
-            className="flex items-center"
-            whileHover={{ scale: 1.1 }}
           >
-            <ChatBubbleTextSquareRemixIcon height="1em" />
-          </motion.a>
-          <motion.a
-            onClick={() => remove(id)}
-            className="flex items-center"
-            whileHover={{ scale: 1.1 }}
-          >
+            <i className="hn hn-comments" />
+          </a>
+          <a className="flex items-center" onClick={() => remove(id)}>
             {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
-            <RecycleBinRemix height="1em" />
-          </motion.a>
+            <i className="hn hn-times-square"/>
+
+          </a>
         </div>
-      </motion.div>
-      <motion.div
-        className="flex flex-col items-stretch p-2 w-full"
-        style={{ zIndex: 10000 }}
-      >
+      </div>
+
         {areCommentsOpen && (
-          <>
-            <input
-              placeholder="Write a comment..."
-              value={newCommentContent}
-              onChange={(e) => setNewCommentContent(e.target.value)}
-              onKeyDown={handleNewComment}
-            />
+        <div className="flex flex-col items-stretch gap-2 w-full pl-3 pr-3 pb-3">
             {comments.map(({ id, content }) => (
               <Comment
                 key={id}
@@ -236,9 +192,14 @@ export function Card({
                 remove={removeComment}
               />
             ))}
-          </>
-        )}
-      </motion.div>
+          <input
+            placeholder="Write a comment..."
+            value={newCommentContent}
+            onChange={(e) => setNewCommentContent(e.target.value)}
+            onKeyDown={handleNewComment}
+          />
+        </div>
+      )}
     </motion.div>
   );
 }

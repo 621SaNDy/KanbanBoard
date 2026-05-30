@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { Card } from "./Card";
 import { useEffect, useState } from "react";
 import type {
@@ -48,13 +47,13 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
   });
 
   return (
-    <div className="background flex flex-col p-3 flex-1">
+    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 flex-1">
       <div className="text-center">
-        <h2>{name}</h2>
+        <h2 className="p-2">{name}</h2>
         <button onClick={() => remove(id)}>kolum ziuuu</button>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col pl-5 pr-5 gap-1">
         <input
           type="text"
           placeholder="titel"
@@ -73,10 +72,15 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
           value={newCardDueDate}
           onChange={(e) => setNewCardDueDate(e.target.value)}
         />
-        <button onClick={addCard}>czard</button>
+        <button
+          className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-1"
+          onClick={addCard}
+        >
+          <i className="hn hn-plus" />
+        </button>
       </div>
 
-      <motion.div className="flex flex-col p-3 gap-3">
+      <div className="flex flex-col pl-5 pr-5 pb-5 gap-3">
         {cards.map(
           ({
             id,
@@ -101,7 +105,7 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
             />
           ),
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }

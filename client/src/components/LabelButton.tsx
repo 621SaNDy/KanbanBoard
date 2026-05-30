@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import type { LabelModel } from "../types/models";
 
 export type LabelProps = LabelModel & {
@@ -7,8 +6,12 @@ export type LabelProps = LabelModel & {
 
 export function LabelButton({ id, name, color, click }: LabelProps) {
   return (
-    <motion.div onClick={() => click(id)} style={{ backgroundColor: color }}>
-      <p>+ {name}</p>
-    </motion.div>
+    <div
+      className="border-3 border-fg border-solid inset-shadow-border-small flex pl-1"
+      style={{ backgroundColor: color + "88" }}
+    >
+      <p>{name}</p>
+      <button onClick={() => click(id)}>+</button>
+    </div>
   );
 }

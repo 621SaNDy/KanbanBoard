@@ -69,55 +69,61 @@ export function Board({ id, name, remove }: BoardProps) {
   }, []);
 
   return (
-    <div className="flex p-3 h-full" onPointerMove={handlePointerMove}>
-      <h1>{name}</h1>
-      {columns.map(({ id, name, position }) => (
-        <Column
-          key={id}
-          id={id}
-          name={name}
-          position={position}
-          availableLabels={labels}
-          remove={removeColumn}
-        />
-      ))}
-
-      <div className="flex flex-col">
-        <input
-          type="text"
-          placeholder="kolumnejm"
-          value={newColumnName}
-          onChange={(e) => setNewColumnName(e.target.value)}
-        />
-        <button onClick={addColumn}>kolum</button>
-      </div>
-
-      <div className="flex flex-col">
-        <input
-          type="text"
-          placeholder="nejm labejle"
-          value={newLabelName}
-          onChange={(e) => setNewLabelName(e.target.value)}
-        />
-        <input
-          type="color"
-          placeholder="kolór labejle"
-          value={newLabelColor}
-          onChange={(e) => setNewLabelColor(e.target.value)}
-        />
-        <button onClick={addLabel}>ejd leabje</button>
-        {labels.map(({ id, name, color }) => (
-          <Label
+    <div
+      className="flex flex-col gap-6 h-full" /*onPointerMove={handlePointerMove}*/
+    >
+      <h1 className="text-center">{name}</h1>
+      <div className="flex pl-3 pr-3 gap-3 flex-1">
+        {columns.map(({ id, name, position }) => (
+          <Column
             key={id}
             id={id}
             name={name}
-            color={color}
-            remove={removeLabel}
+            position={position}
+            availableLabels={labels}
+            remove={removeColumn}
           />
         ))}
       </div>
 
-      <button onClick={() => remove(id)}>bord ziuuu</button>
+      <div className="flex">
+        <div className="flex flex-col">
+          <input
+            type="text"
+            placeholder="kolumnejm"
+            value={newColumnName}
+            onChange={(e) => setNewColumnName(e.target.value)}
+          />
+          <button onClick={addColumn}>kolum</button>
+        </div>
+
+        <div className="flex flex-col">
+          <input
+            type="text"
+            placeholder="nejm labejle"
+            value={newLabelName}
+            onChange={(e) => setNewLabelName(e.target.value)}
+          />
+          <input
+            type="color"
+            placeholder="kolór labejle"
+            value={newLabelColor}
+            onChange={(e) => setNewLabelColor(e.target.value)}
+          />
+          <button onClick={addLabel}>ejd leabje</button>
+          {labels.map(({ id, name, color }) => (
+            <Label
+              key={id}
+              id={id}
+              name={name}
+              color={color}
+              remove={removeLabel}
+            />
+          ))}
+        </div>
+
+        <button onClick={() => remove(id)}>bord ziuuu</button>
+      </div>
     </div>
   );
 }
