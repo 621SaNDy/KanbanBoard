@@ -70,10 +70,9 @@ export function Board({ id, name, remove }: BoardProps) {
 
   return (
     <div
-      className="flex flex-col gap-6 h-full" /*onPointerMove={handlePointerMove}*/
+      className="flex flex-col gap-3 h-full" /*onPointerMove={handlePointerMove}*/
     >
-      <h1 className="text-center">{name}</h1>
-      <div className="flex pl-3 pr-3 gap-3 flex-1">
+      <div className="flex gap-5 flex-1">
         {columns.map(({ id, name, position }) => (
           <Column
             key={id}
@@ -84,9 +83,16 @@ export function Board({ id, name, remove }: BoardProps) {
             remove={removeColumn}
           />
         ))}
+
+        <button
+          className="shadow-border-rounded inset-shadow-border m-border p-2"
+          onClick={addColumn}
+        >
+          <i className="hn hn-plus" />
+        </button>
       </div>
 
-      <div className="flex">
+      {/* <div className="flex">
         <div className="flex flex-col">
           <input
             type="text"
@@ -94,7 +100,6 @@ export function Board({ id, name, remove }: BoardProps) {
             value={newColumnName}
             onChange={(e) => setNewColumnName(e.target.value)}
           />
-          <button onClick={addColumn}>kolum</button>
         </div>
 
         <div className="flex flex-col">
@@ -123,7 +128,7 @@ export function Board({ id, name, remove }: BoardProps) {
         </div>
 
         <button onClick={() => remove(id)}>bord ziuuu</button>
-      </div>
+      </div> */}
     </div>
   );
 }

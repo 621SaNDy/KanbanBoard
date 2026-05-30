@@ -47,14 +47,11 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
   }, []);
 
   return (
-    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 flex-1">
-      <div className="text-center">
-        <h2 className="p-2">{name}</h2>
-        <button onClick={() => remove(id)}>kolum ziuuu</button>
-      </div>
-
-      <div className="flex flex-col pl-5 pr-5 gap-1">
-        <input
+    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
+      <div className="flex flex-col gap-2 text-center">
+        <h2>{name}</h2>
+        {/* <button onClick={() => remove(id)}>kolum ziuuu</button> */}
+        {/* <input
           type="text"
           placeholder="titel"
           value={newCardTitle}
@@ -71,16 +68,16 @@ export function Column({ id, name, availableLabels, remove }: ColumnProps) {
           placeholder="dejdlajn"
           value={newCardDueDate}
           onChange={(e) => setNewCardDueDate(e.target.value)}
-        />
+        /> */}
         <button
-          className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-1"
+          className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"
           onClick={addCard}
         >
           <i className="hn hn-plus" />
         </button>
       </div>
 
-      <div className="flex flex-col pl-5 pr-5 pb-5 gap-3">
+      <div className="flex flex-col gap-3">
         {cards.map(
           ({
             id,

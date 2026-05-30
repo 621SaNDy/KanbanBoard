@@ -6,9 +6,9 @@ function App() {
   useDarkMode();
 
   return (
-    <>
+    <div className="h-full">
       <BoardSelector />
-    </>
+    </div>
   );
 }
 

@@ -17,8 +17,9 @@ export function useDarkMode() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
-    localStorage.setItem("theme", theme);
+    const newTheme = theme === "dark" ? "light" : "dark"
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
   };
 
   return { theme, toggleTheme };
