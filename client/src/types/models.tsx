@@ -36,6 +36,12 @@ export type CardRequest = {
   due_date?: string;
 };
 
+export type CardUpdateRequest = {
+  title?: string;
+  description?: string;
+  due_date?: string;
+};
+
 export type CardModel = {
   id: number;
   title: string;

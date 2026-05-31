@@ -17,7 +17,6 @@ type BoardProps = BoardModel & {
 export function Board({ id, name, remove }: BoardProps) {
   const [columns, setColumns] = useState<ColumnModel[]>([]);
   const [labels, setLabels] = useState<LabelModel[]>([]);
-  const [newColumnName, setNewColumnName] = useState("");
   const [newLabelName, setNewLabelName] = useState("");
   const [newLabelColor, setNewLabelColor] = useState("");
 
@@ -32,9 +31,14 @@ export function Board({ id, name, remove }: BoardProps) {
   };
 
   const addColumn = async () => {
-    const column: ColumnRequest = { name: newColumnName };
-    await ServerConnection.post(`/boards/${id}/columns`, column);
-    setNewColumnName("");
+    const columnData: ColumnRequest = { name: "New column" };
+    await ServerConnection.post(`/boards/${id}/columns`, columnData);
+    loadColumns();
+  };
+
+  const editColumnName = async (columnId: number, name: string) => {
+    const columnData: ColumnRequest = { name: name };
+    await ServerConnection.patch(`/columns/${columnId}`, columnData);
     loadColumns();
   };
 
@@ -66,7 +70,7 @@ export function Board({ id, name, remove }: BoardProps) {
   useEffect(() => {
     loadColumns();
     loadLabels();
-  }, []);
+  }, [id]);
 
   return (
     <div
@@ -80,6 +84,7 @@ export function Board({ id, name, remove }: BoardProps) {
             name={name}
             position={position}
             availableLabels={labels}
+            editName={editColumnName}
             remove={removeColumn}
           />
         ))}
@@ -92,16 +97,7 @@ export function Board({ id, name, remove }: BoardProps) {
         </button>
       </div>
 
-      {/* <div className="flex">
-        <div className="flex flex-col">
-          <input
-            type="text"
-            placeholder="kolumnejm"
-            value={newColumnName}
-            onChange={(e) => setNewColumnName(e.target.value)}
-          />
-        </div>
-
+      <div className="flex">
         <div className="flex flex-col">
           <input
             type="text"
@@ -117,7 +113,7 @@ export function Board({ id, name, remove }: BoardProps) {
           />
           <button onClick={addLabel}>ejd leabje</button>
           {labels.map(({ id, name, color }) => (
-            <Label
+            <CardLabel
               key={id}
               id={id}
               name={name}
@@ -126,9 +122,7 @@ export function Board({ id, name, remove }: BoardProps) {
             />
           ))}
         </div>
-
-        <button onClick={() => remove(id)}>bord ziuuu</button>
-      </div> */}
+      </div>
     </div>
   );
 }

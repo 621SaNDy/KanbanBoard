@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type {
   CardModel,
   CardRequest,
+  CardUpdateRequest,
   ColumnModel,
   LabelModel,
 } from "../types/models";
@@ -10,19 +11,19 @@ import { ServerConnection } from "../utilities/ServerConnection";
 
 type BoardColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
-  remove: (columnId: number) => void;
+  editName: (id: number, name: string) => void;
+  remove: (id: number) => void;
 };
 
 export function BoardColumn({
   id,
   name,
   availableLabels,
+  editName,
   remove,
 }: BoardColumnProps) {
+  const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
-  const [newCardTitle, setNewCardTitle] = useState("");
-  const [newCardDescription, setNewCardDescription] = useState<string>("");
-  const [newCardDueDate, setNewCardDueDate] = useState<string>("");
 
   const loadCards = async () => {
     const newCards = await ServerConnection.get(`/columns/${id}/cards`);
@@ -30,15 +31,30 @@ export function BoardColumn({
   };
 
   const addCard = async () => {
-    const card: CardRequest = {
-      title: newCardTitle,
-      description: newCardDescription,
-      due_date: newCardDueDate,
+    const cardData: CardRequest = {
+      title: "New card",
+      description: "New card description",
+      due_date: "2026-04-21",
     };
-    await ServerConnection.post(`/columns/${id}/cards`, card);
-    setNewCardTitle("");
-    setNewCardDescription("");
-    setNewCardDueDate("");
+    await ServerConnection.post(`/columns/${id}/cards`, cardData);
+    loadCards();
+  };
+
+  const editCardTitle = async (cardId: number, title: string) => {
+    const cardData: CardUpdateRequest = { title: title };
+    await ServerConnection.patch(`/cards/${cardId}`, cardData);
+    loadCards();
+  };
+
+  const editCardDescription = async (cardId: number, description: string) => {
+    const cardData: CardUpdateRequest = { description: description };
+    await ServerConnection.patch(`/cards/${cardId}`, cardData);
+    loadCards();
+  };
+
+  const editCardDueDate = async (cardId: number, dueDate: string) => {
+    const cardData: CardUpdateRequest = { due_date: dueDate };
+    await ServerConnection.patch(`/cards/${cardId}`, cardData);
     loadCards();
   };
 
@@ -55,25 +71,13 @@ export function BoardColumn({
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
       <div className="flex flex-col gap-2 text-center">
         <h2>{name}</h2>
+        <input
+          placeholder="name"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+        />
+        <button onClick={() => editName(id, newName)}>kolum nejm</button>
         <button onClick={() => remove(id)}>kolum ziuuu</button>
-        {/* <input
-          type="text"
-          placeholder="titel"
-          value={newCardTitle}
-          onChange={(e) => setNewCardTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="deskripszyn"
-          value={newCardDescription}
-          onChange={(e) => setNewCardDescription(e.target.value)}
-        />
-        <input
-          type="date"
-          placeholder="dejdlajn"
-          value={newCardDueDate}
-          onChange={(e) => setNewCardDueDate(e.target.value)}
-        /> */}
         <button
           className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"
           onClick={addCard}
@@ -103,6 +107,9 @@ export function BoardColumn({
               labels={labels}
               comments={comments}
               availableLabels={availableLabels}
+              editTitle={editCardTitle}
+              editDescription={editCardDescription}
+              editDueDate={editCardDueDate}
               remove={removeCard}
             />
           ),

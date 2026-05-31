@@ -3,16 +3,12 @@ import { useState, useEffect } from "react";
 import { Board } from "./components/Board";
 import { SideMenu } from "./components/SideMenu";
 import { TopMenu } from "./components/TopMenu";
-import { useDarkMode } from "./hooks/useDarkMode";
 import type { BoardModel, BoardRequest } from "./types/models";
 import { ServerConnection } from "./utilities/ServerConnection";
 
 function App() {
-  useDarkMode();
-
   const [boards, setBoards] = useState<BoardModel[]>([]);
-  const [currentBoard, setCurrentBoard] = useState(0);
-  const [newBoardName, setNewBoardName] = useState("");
+  const [currentBoardId, setCurrentBoardId] = useState(0);
 
   const loadBoards = async () => {
     const newBoards: BoardModel[] = await ServerConnection.get("/boards");
@@ -20,9 +16,15 @@ function App() {
   };
 
   const addBoard = async () => {
-    const board: BoardRequest = { name: newBoardName };
-    await ServerConnection.post("/boards", board);
-    setNewBoardName("");
+    const boardData: BoardRequest = { name: "New board" };
+    const newBoard: BoardModel = await ServerConnection.post("/boards", boardData);
+    setCurrentBoardId(newBoard.id);
+    loadBoards();
+  };
+
+  const editBoardName = async (boardId: number, name: string) => {
+    const boardData: BoardRequest = { name: name };
+    await ServerConnection.patch(`/boards/${boardId}`, boardData);
     loadBoards();
   };
 
@@ -35,31 +37,38 @@ function App() {
     loadBoards();
   }, []);
 
+  useEffect(() => {
+    if (!currentBoardId || !boards.find(({ id }) => id === currentBoardId)) {
+      setCurrentBoardId(boards[0]?.id ?? 0);
+    }
+  }, [boards]);
+
   return (
     <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
-      <SideMenu boards={boards} />
+      <SideMenu
+        boards={boards}
+        currentBoard={currentBoardId}
+        addBoard={addBoard}
+        setCurrentBoard={setCurrentBoardId}
+      />
 
       {(() => {
-        const board = boards[currentBoard];
+        const board = boards.find(({ id }) => id === currentBoardId);
         return (
           <div className="flex flex-col gap-5 h-full w-full">
             {board ? (
               <>
-                <TopMenu title={board.name} />
+                <TopMenu
+                  board={board}
+                  editBoardName={editBoardName}
+                  removeBoard={removeBoard}
+                />
                 <Board id={board.id} name={board.name} remove={removeBoard} />
               </>
             ) : null}
           </div>
         );
       })()}
-
-      {/* <input
-        type="text"
-        placeholder="bornejm"
-        value={newBoardName}
-        onChange={(e) => setNewBoardName(e.target.value)}
-      />
-      <button onClick={addBoard}>bord</button> */}
     </div>
   );
 }

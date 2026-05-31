@@ -55,6 +55,11 @@ body {
   height: 100%;
 }
 
+div {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-fg) transparent;
+}
+
 h1,
 h2,
 h3,

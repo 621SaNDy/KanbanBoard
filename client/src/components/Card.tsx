@@ -14,6 +14,9 @@ import { CardComment } from "./CardComment";
 
 type CardProps = CardModel & {
   availableLabels: LabelModel[];
+  editTitle: (id: number, title: string) => void;
+  editDescription: (id: number, description: string) => void;
+  editDueDate: (id: number, dueDate: string) => void;
   remove: (id: number) => void;
 };
 
@@ -23,8 +26,14 @@ export function Card({
   description,
   due_date,
   availableLabels,
+  editTitle,
+  editDescription,
+  editDueDate,
   remove,
 }: CardProps) {
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newDueDate, setNewDueDate] = useState("");
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
@@ -43,8 +52,8 @@ export function Card({
   };
 
   const addLabel = async (labelId: number) => {
-    const label: LabelBindRequest = { labelId: labelId };
-    await ServerConnection.post(`/cards/${id}/labels`, label);
+    const labelData: LabelBindRequest = { labelId: labelId };
+    await ServerConnection.post(`/cards/${id}/labels`, labelData);
     loadLabels();
   };
 
@@ -72,18 +81,6 @@ export function Card({
     dragControls.start(event, { snapToCursor: false });
   };
 
-  const handleEditTitle = () => {
-    alert("zaraza edit");
-  };
-
-  const handleEditDescription = () => {
-    alert("hejka descr");
-  };
-
-  const handleEditDeadline = () => {
-    alert("bruh dead");
-  };
-
   useEffect(() => {
     loadLabels();
     loadComments();
@@ -103,13 +100,27 @@ export function Card({
         <h3
           className="select-none"
           ref={headerRef}
-          onDoubleClick={handleEditTitle}
+          onDoubleClick={() => editTitle(id, newTitle)}
           onPointerDown={handleStartDrag}
         >
           {title}
         </h3>
+        <input
+          placeholder="newtitle"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
         {description && (
-          <p onDoubleClick={handleEditDescription}>{description}</p>
+          <>
+            <p onDoubleClick={() => editDescription(id, newDescription)}>
+              {description}
+            </p>
+            <input
+              placeholder="newdesc"
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+            />
+          </>
         )}
 
         <div className="flex flex-wrap gap-2 flex-1">
@@ -159,13 +170,21 @@ export function Card({
           )}
 
           {due_date && (
-            <p
-              className="flex items-center gap-1 flex-1"
-              onDoubleClick={handleEditDeadline}
-            >
-              <i className="hn hn-clock" />{" "}
-              {DateUtility.getAbsoluteDate(due_date)}
-            </p>
+            <>
+              <p
+                className="flex items-center gap-1 flex-1"
+                onDoubleClick={() => editDueDate(id, newDueDate)}
+              >
+                <i className="hn hn-clock" />{" "}
+                {DateUtility.getAbsoluteDate(due_date)}
+              </p>
+              <input
+                type="date"
+                placeholder="newdate"
+                value={newDueDate}
+                onChange={(e) => setNewDueDate(e.target.value)}
+              />
+            </>
           )}
 
           <a
