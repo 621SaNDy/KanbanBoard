@@ -4,11 +4,10 @@ import {
   type LabelModel,
   type BoardModel,
   type ColumnModel,
-  type ColumnRequest,
-  type LabelRequest,
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 import { CardLabel } from "./CardLabel";
+import type { ColumnRequest, LabelRequest } from "../types/requests";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
@@ -19,6 +18,7 @@ export function Board({ id, name, remove }: BoardProps) {
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [newLabelName, setNewLabelName] = useState("");
   const [newLabelColor, setNewLabelColor] = useState("");
+  const [cardsRefreshToken, setCardsRefreshToken] = useState(0);
 
   const loadColumns = async () => {
     const newColumns = await ServerConnection.get(`/boards/${id}/columns`);
@@ -63,8 +63,8 @@ export function Board({ id, name, remove }: BoardProps) {
     loadLabels();
   };
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    console.log(e.clientX, e.clientY);
+  const refreshColumns = () => {
+    setCardsRefreshToken((value) => value + 1);
   };
 
   useEffect(() => {
@@ -73,9 +73,7 @@ export function Board({ id, name, remove }: BoardProps) {
   }, [id]);
 
   return (
-    <div
-      className="flex flex-col gap-3 h-full" /*onPointerMove={handlePointerMove}*/
-    >
+    <div className="flex flex-col gap-3 h-full">
       <div className="flex gap-5 flex-1">
         {columns.map(({ id, name, position }) => (
           <BoardColumn
@@ -86,6 +84,8 @@ export function Board({ id, name, remove }: BoardProps) {
             availableLabels={labels}
             editName={editColumnName}
             remove={removeColumn}
+            refreshBoard={refreshColumns}
+            refreshToken={cardsRefreshToken}
           />
         ))}
 

@@ -1,19 +1,22 @@
-import { motion, useDragControls } from "motion/react";
+import { useDrag } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 import { CardLabel } from "./CardLabel";
 import { useEffect, useRef, useState } from "react";
 import {
   type CommentModel,
   type CardModel,
   type LabelModel,
-  type LabelBindRequest,
 } from "../types/models";
 import { DateUtility } from "../utilities/DateUtility";
 import { ServerConnection } from "../utilities/ServerConnection";
 import { CardLabelButton } from "./CardLabelButton";
 import { CardComment } from "./CardComment";
 import { AutoResizeTextArea } from "./AutoResizeTextArea";
+import { type DragCardItem, CARD_DND_TYPE } from "../types/dnd";
+import type { LabelBindRequest } from "../types/requests";
 
 type CardProps = CardModel & {
+  columnId: number;
   availableLabels: LabelModel[];
   editTitle: (id: number, title: string) => void;
   editDescription: (id: number, description: string) => void;
@@ -26,6 +29,8 @@ export function Card({
   title,
   description,
   due_date: dueDate,
+  columnId,
+  position,
   availableLabels,
   editTitle,
   editDescription,
@@ -42,11 +47,47 @@ export function Card({
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
   const [newCommentContent, setNewCommentContent] = useState("");
-  const dragControls = useDragControls();
-  const headerRef = useRef<HTMLHeadingElement>(null);
+  const cardContainerRef = useRef<HTMLDivElement>(null);
   const titleTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const descriptionTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const dueDateInputRef = useRef<HTMLInputElement>(null);
+  const [{ isDragging }, dragRef, previewRef] = useDrag<
+    DragCardItem,
+    void,
+    { isDragging: boolean }
+  >(
+    () => ({
+      type: CARD_DND_TYPE,
+      item: () => {
+        const rect = cardContainerRef.current?.getBoundingClientRect();
+
+        return {
+          type: CARD_DND_TYPE,
+          cardId: id,
+          fromColumnId: columnId,
+          fromPosition: position,
+          title: title,
+          description: description,
+          dueDate: dueDate,
+          labels: labels,
+          width: rect?.width,
+          height: rect?.height,
+        };
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    [id, columnId, position, title, description, dueDate, labels],
+  );
+
+  const dragHandleRef = (node: HTMLHeadingElement | null) => {
+    dragRef(node);
+  };
+
+  useEffect(() => {
+    previewRef(getEmptyImage(), { captureDraggingState: true });
+  }, [previewRef]);
 
   const loadLabels = async () => {
     const newLabels = await ServerConnection.get(`/cards/${id}/labels`);
@@ -123,10 +164,6 @@ export function Card({
     }
   };
 
-  const handleStartDrag = (event: React.PointerEvent) => {
-    dragControls.start(event, { snapToCursor: false });
-  };
-
   useEffect(() => {
     loadLabels();
     loadComments();
@@ -154,14 +191,10 @@ export function Card({
   }, [isEditingTitle, isEditingDescription, isEditingDueDate]);
 
   return (
-    <motion.div
-      drag
-      dragElastic={0.2}
-      dragTransition={{ power: 0.3 }}
-      dragListener={false}
-      dragControls={dragControls}
-      whileDrag={{ zIndex: 9999 }}
+    <div
+      ref={cardContainerRef}
       className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative"
+      style={isDragging ? { opacity: 0.5 } : undefined}
     >
       <div className="flex flex-col p-3 relative gap-2 w-full">
         {isEditingTitle ? (
@@ -177,9 +210,8 @@ export function Card({
           />
         ) : (
           <h3
-            className="select-none"
-            ref={headerRef}
-            onPointerDown={handleStartDrag}
+            className="select-none cursor-grab active:cursor-grabbing"
+            ref={dragHandleRef}
             onDoubleClick={() => setEditingTitle(true)}
           >
             {title}
@@ -273,8 +305,6 @@ export function Card({
               ) : (
                 <p
                   className="flex items-center gap-1 flex-1 select-none"
-                  ref={headerRef}
-                  onPointerDown={handleStartDrag}
                   onDoubleClick={() => setEditingDueDate(true)}
                 >
                   {DateUtility.getAbsoluteDate(dueDate)}
@@ -315,6 +345,6 @@ export function Card({
           />
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

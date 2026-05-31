@@ -1,32 +1,40 @@
 import { Card } from "./Card";
-import { useEffect, useRef, useState } from "react";
-import type {
-  CardModel,
-  CardRequest,
-  CardUpdateRequest,
-  ColumnModel,
-  LabelModel,
-} from "../types/models";
+import { useDrop } from "react-dnd";
+import { Fragment, useEffect, useRef, useState } from "react";
+import type { CardModel, ColumnModel, LabelModel } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 import { AutoResizeTextArea } from "./AutoResizeTextArea";
+import { CardDropIndicator } from "./CardDropIndicator";
+import { type DragCardItem, CARD_DND_TYPE } from "../types/dnd";
+import type {
+  CardRequest,
+  CardUpdateRequest,
+  CardMoveRequest,
+} from "../types/requests";
 
 type BoardColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
+  refreshToken: number;
   editName: (id: number, name: string) => void;
   remove: (id: number) => void;
+  refreshBoard: () => void;
 };
 
 export function BoardColumn({
   id,
   name,
   availableLabels,
+  refreshToken,
   editName,
   remove,
+  refreshBoard,
 }: BoardColumnProps) {
   const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
+  const [closestDropIndex, setClosestDropIndex] = useState<number | null>(null);
   const nameTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const cardRefs = useRef(new Map<number, HTMLDivElement | null>());
 
   const loadCards = async () => {
     const newCards = await ServerConnection.get(`/columns/${id}/cards`);
@@ -78,9 +86,119 @@ export function BoardColumn({
     }
   };
 
+  const moveCard = async (
+    cardId: number,
+    columnId: number,
+    position: number,
+  ) => {
+    const cardData: CardMoveRequest = {
+      columnId: columnId,
+      position: position,
+    };
+    await ServerConnection.patch(`/cards/${cardId}/move`, cardData);
+    refreshBoard();
+  };
+
+  const getDropZoneIndex = (clientY: number) => {
+    if (cards.length === 0) {
+      return 0;
+    }
+    for (let index = 0; index < cards.length; index += 1) {
+      const cardId = cards[index]?.id;
+      if (!cardId) {
+        continue;
+      }
+      const node = cardRefs.current.get(cardId);
+      if (!node) {
+        continue;
+      }
+      const rect = node.getBoundingClientRect();
+      const centerY = rect.top + rect.height / 2;
+      if (clientY < centerY) {
+        return Math.max(index, 0);
+      }
+    }
+    return cards.length;
+  };
+
+  const getInsertionIndex = (zoneIndex: number, draggingCardId?: number) => {
+    const currentIndex = draggingCardId
+      ? cards.findIndex((card) => card.id === draggingCardId)
+      : -1;
+
+    if (currentIndex !== -1 && zoneIndex > currentIndex) {
+      return zoneIndex - 1;
+    }
+    return zoneIndex;
+  };
+
+  const getDropPlacement = (
+    clientY: number | null,
+    draggingCardId?: number,
+  ) => {
+    const zoneIndex =
+      clientY !== null ? getDropZoneIndex(clientY) : cards.length;
+    const insertionIndex = getInsertionIndex(zoneIndex, draggingCardId);
+    return { zoneIndex, nextPosition: insertionIndex + 1 };
+  };
+
+  const [{ isOver }, dropRef] = useDrop<
+    DragCardItem,
+    void,
+    { isOver: boolean }
+  >(
+    () => ({
+      accept: CARD_DND_TYPE,
+      hover: (_, monitor) => {
+        const offset = monitor.getClientOffset();
+        if (!offset) {
+          return;
+        }
+        setClosestDropIndex(getDropPlacement(offset.y).zoneIndex);
+      },
+      drop: (item, monitor) => {
+        const placement = getDropPlacement(
+          monitor.getClientOffset()?.y ?? null,
+          item.cardId,
+        );
+        if (
+          item.fromColumnId === id &&
+          item.fromPosition === placement.nextPosition
+        ) {
+          setClosestDropIndex(null);
+          return;
+        }
+        moveCard(item.cardId, id, placement.nextPosition);
+        setClosestDropIndex(null);
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    }),
+    [cards, id, refreshBoard],
+  );
+
+  const dropTargetRef = (node: HTMLDivElement | null) => {
+    dropRef(node);
+  };
+
+  const setCardRef = (cardId: number) => (node: HTMLDivElement | null) => {
+    if (node) {
+      cardRefs.current.set(cardId, node);
+    } else {
+      cardRefs.current.delete(cardId);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOver) {
+      setClosestDropIndex(null);
+    }
+  }, [isOver]);
+
   useEffect(() => {
     loadCards();
-  }, []);
+  }, [id, refreshToken]);
 
   useEffect(() => {
     if (isEditingName && nameTextAreaRef.current) {
@@ -92,7 +210,7 @@ export function BoardColumn({
   }, [isEditingName]);
 
   return (
-    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
+    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1">
       <div className="flex flex-col gap-2 text-center">
         {isEditingName ? (
           <AutoResizeTextArea
@@ -117,32 +235,43 @@ export function BoardColumn({
         </button>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div ref={dropTargetRef} className="flex flex-col flex-1 gap-1">
+        <CardDropIndicator active={isOver && closestDropIndex === 0} />
         {cards.map(
-          ({
-            id,
-            title,
-            description,
-            due_date,
-            position,
-            labels,
-            comments,
-          }) => (
-            <Card
-              key={id}
-              id={id}
-              title={title}
-              description={description}
-              due_date={due_date}
-              position={position}
-              labels={labels}
-              comments={comments}
-              availableLabels={availableLabels}
-              editTitle={editCardTitle}
-              editDescription={editCardDescription}
-              editDueDate={editCardDueDate}
-              remove={removeCard}
-            />
+          (
+            {
+              id: cardId,
+              title,
+              description,
+              due_date,
+              position,
+              labels,
+              comments,
+            },
+            index,
+          ) => (
+            <Fragment key={cardId}>
+              <div ref={setCardRef(cardId)}>
+                <Card
+                  id={cardId}
+                  title={title}
+                  description={description}
+                  due_date={due_date}
+                  position={position}
+                  columnId={id}
+                  labels={labels}
+                  comments={comments}
+                  availableLabels={availableLabels}
+                  editTitle={editCardTitle}
+                  editDescription={editCardDescription}
+                  editDueDate={editCardDueDate}
+                  remove={removeCard}
+                />
+              </div>
+              <CardDropIndicator
+                active={isOver && closestDropIndex === index + 1}
+              />
+            </Fragment>
           ),
         )}
       </div>

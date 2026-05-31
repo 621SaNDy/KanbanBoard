@@ -1,10 +1,12 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { Board } from "./components/Board";
+import { CardDragLayer } from "./components/CardDragLayer";
 import { SideMenu } from "./components/SideMenu";
 import { TopMenu } from "./components/TopMenu";
-import type { BoardModel, BoardRequest } from "./types/models";
+import type { BoardModel } from "./types/models";
 import { ServerConnection } from "./utilities/ServerConnection";
+import type { BoardRequest } from "./types/requests";
 
 function App() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
@@ -17,7 +19,10 @@ function App() {
 
   const addBoard = async () => {
     const boardData: BoardRequest = { name: "New board" };
-    const newBoard: BoardModel = await ServerConnection.post("/boards", boardData);
+    const newBoard: BoardModel = await ServerConnection.post(
+      "/boards",
+      boardData,
+    );
     setCurrentBoardId(newBoard.id);
     loadBoards();
   };
@@ -69,6 +74,7 @@ function App() {
           </div>
         );
       })()}
+      <CardDragLayer />
     </div>
   );
 }
