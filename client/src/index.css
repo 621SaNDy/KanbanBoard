@@ -65,21 +65,6 @@ h2,
 h3,
 h4,
 h5,
-h6,
-p,
-a,
-i,
-input,
-label,
-button {
-  /* color: var(--color-fg); */
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
 h6 {
   font-family: "Jacquard 24", sans-serif;
   line-height: normal;
@@ -108,22 +93,70 @@ h3 {
   font-size: 2.5em;
 }
 
+h1, h2, h3 {
+  line-height: 0.9;
+}
+
+p {
+  line-height: 1.2;
+}
+
+.h1-input {
+  font-family: "Jacquard 24", sans-serif;
+  line-height: 0.9;
+  text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
+  box-shadow: none;
+  border: none;
+  font-size: 3em;
+}
+
+.h2-input {
+  font-family: "Jacquard 24", sans-serif;
+  line-height: 0.9;
+  text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
+  box-shadow: none;
+  border: none;
+  font-size: 3em;
+  text-align: center;
+}
+
+.h3-input {
+  font-family: "Jacquard 24", sans-serif;
+  line-height: 0.9;
+  text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
+  box-shadow: none;
+  border: none;
+  font-size: 2.5em;
+}
+
+.p-input {
+  font-family: "Ruler 9", monospace;
+  line-height: 1.2;
+  text-shadow: 0.5px 0.5px 0 var(--color-fg-semi-trans);
+  box-shadow: none !important;
+  border: none;
+}
+
 p,
 a,
 input,
-button {
+button,
+textarea {
   font-family: "Ruler 9", monospace;
 }
 
-input {
+input:not(.h1-input) {
   padding-inline: 4px;
+  border: 3px solid var(--color-fg);
+  box-shadow: var(--inset-shadow-border-small);
 }
 
 input:focus {
   outline: 2px solid var(--color-fg);
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--color-fg-dimmed);
 }
 
@@ -132,7 +165,10 @@ button:hover {
   background-color: var(--color-fg);
 }
 
-input {
-  border: 3px solid var(--color-fg);
-  box-shadow: var(--inset-shadow-border-small);
+textarea {
+  resize: none;
+}
+
+textarea:focus {
+  outline: 3px dashed var(--color-fg);
 }

@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   CardModel,
   CardRequest,
@@ -8,6 +8,7 @@ import type {
   LabelModel,
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
+import { AutoResizeTextArea } from "./AutoResizeTextArea";
 
 type BoardColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
@@ -22,8 +23,10 @@ export function BoardColumn({
   editName,
   remove,
 }: BoardColumnProps) {
+  const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
+  const nameTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const loadCards = async () => {
     const newCards = await ServerConnection.get(`/columns/${id}/cards`);
@@ -63,20 +66,48 @@ export function BoardColumn({
     loadCards();
   };
 
+  const handleNameTextAreaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setEditingName(false);
+      if ((e.target as HTMLTextAreaElement).value.trim() !== "") {
+        editName(id, newName);
+      }
+    }
+    if (e.key === "Escape") {
+      setEditingName(false);
+    }
+  };
+
   useEffect(() => {
     loadCards();
   }, []);
 
+  useEffect(() => {
+    if (isEditingName && nameTextAreaRef.current) {
+      nameTextAreaRef.current.value = name;
+      nameTextAreaRef.current.focus();
+      nameTextAreaRef.current.select();
+      setNewName(name);
+    }
+  }, [isEditingName]);
+
   return (
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-3 p-3 flex-1">
       <div className="flex flex-col gap-2 text-center">
-        <h2>{name}</h2>
-        <input
-          placeholder="name"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <button onClick={() => editName(id, newName)}>kolum nejm</button>
+        {isEditingName ? (
+          <AutoResizeTextArea
+            className="h2-input"
+            rows={1}
+            ref={nameTextAreaRef}
+            placeholder={name}
+            value={newName}
+            onChange={(e) => setNewName(e.target.value.replaceAll("\n", ""))}
+            onKeyDown={handleNameTextAreaKeyDown}
+            onBlur={() => setEditingName(false)}
+          />
+        ) : (
+          <h2 onDoubleClick={() => setEditingName(true)}>{name}</h2>
+        )}
         <button onClick={() => remove(id)}>kolum ziuuu</button>
         <button
           className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"

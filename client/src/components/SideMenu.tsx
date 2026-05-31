@@ -3,6 +3,7 @@ import { SideMenuItem } from "./SideMenuItem";
 import type { BoardModel } from "../types/models";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { SideMenuBoardList } from "./SideMenuBoardList";
+import { useFullScreen } from "../hooks/useFullScreen";
 
 type SideMenuProps = {
   boards: BoardModel[];
@@ -14,6 +15,11 @@ type SideMenuProps = {
 export function SideMenu({ boards, currentBoard, addBoard, setCurrentBoard }: SideMenuProps) {
   const [isExpanded, setExpanded] = useState(false);
   const { theme, toggleTheme } = useDarkMode();
+  const { isFullscreen, toggleFullScreen } = useFullScreen();
+
+  const handleGitHubLink = () => {
+    window.open("https://github.com/621SaNDy/KanbanBoard", '_blank')?.focus();
+  }
 
   return (
     <div
@@ -31,11 +37,11 @@ export function SideMenu({ boards, currentBoard, addBoard, setCurrentBoard }: Si
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
       />
-      <SideMenuItem expanded={isExpanded} icon="expand" title="Full screen" click={() => {}} />
+      <SideMenuItem expanded={isExpanded} icon={isFullscreen ? "collapse" : "expand"} title={`${isFullscreen ? "Exit full" : "Full"} screen`} click={toggleFullScreen} />
       <SideMenuItem expanded={isExpanded} icon={theme === "light" ? "sun" : "moon"} title="Toggle theme" click={toggleTheme} />
       <SideMenuItem expanded={isExpanded} icon="cog" title="Settings" click={() => {}} />
       <SideMenuItem expanded={isExpanded} icon="info-circle" title="About" click={() => {}} />
-      <SideMenuItem expanded={isExpanded} icon="github" title="Our GitHub" click={() => {}} />
+      <SideMenuItem expanded={isExpanded} icon="github" title="Our GitHub" click={handleGitHubLink} />
     </div>
   );
 }
