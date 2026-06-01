@@ -3,6 +3,7 @@ import type { LabelModel } from "../types/models";
 import { CardLabel } from "./CardLabel";
 import { ContextMenu } from "./ContextMenu";
 import { HoverableIcon } from "./HoverableIcon";
+import { CardLabelButton } from "./CardLabelButton";
 
 type BoardLabelMenuProps = {
   labels: LabelModel[];
@@ -33,7 +34,7 @@ export function BoardLabelMenu({
 
   return (
     <ContextMenu>
-      <div className="flex flex-col p-3 gap-3 min-w-20 max-w-[15vw]">
+      <div className="flex flex-col p-3 gap-3 min-w-40 max-w-[15vw]">
         <h2 className="text-center">Board labels</h2>
         <div className="flex flex-col gap-1">
           <input
@@ -59,12 +60,13 @@ export function BoardLabelMenu({
         </div>
         <div className="flex flex-col gap-1">
           {labels.map(({ id, name, color }) => (
-            <CardLabel
+            <CardLabelButton
               key={id}
               id={id}
               name={name}
               color={color}
-              remove={removeLabel}
+              icon="minus"
+              click={removeLabel}
             />
           ))}
         </div>

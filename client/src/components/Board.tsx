@@ -35,6 +35,7 @@ export function Board({
   const [autoEditColumnId, setAutoEditColumnId] = useState(0);
   const [isLabelMenuOpen, setLabelMenuOpen] = useState(false);
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
+  const [filterLabelIds, setFilterLabelIds] = useState<number[]>([]);
 
   const loadColumns = async () => {
     const newColumns = await ServerConnection.get(`/boards/${id}/columns`);
@@ -91,10 +92,28 @@ export function Board({
     setCardsRefreshToken((value) => value + 1);
   };
 
+  const addFilterLabel = (labelId: number) => {
+    setFilterLabelIds((current) =>
+      current.includes(labelId) ? current : [...current, labelId],
+    );
+  };
+
+  const removeFilterLabel = (labelId: number) => {
+    setFilterLabelIds((current) => current.filter((id) => id !== labelId));
+  };
+
+  const isFilteringActive = isFilterMenuOpen && filterLabelIds.length > 0;
+
   useEffect(() => {
     loadColumns();
     loadLabels();
   }, [id]);
+
+  useEffect(() => {
+    setFilterLabelIds((current) =>
+      current.filter((labelId) => labels.some((label) => label.id === labelId)),
+    );
+  }, [labels]);
 
   return (
     <div className="flex flex-col gap-5 flex-1 min-h-0 min-w-0">
@@ -122,14 +141,19 @@ export function Board({
               remove={removeColumn}
               refreshBoard={refreshColumns}
               refreshToken={cardsRefreshToken}
+              filterLabelIds={filterLabelIds}
+              isFilteringActive={isFilteringActive}
               isAutoNameEditEnabled={autoEditColumnId === id}
               autoNameEditUsed={() => setAutoEditColumnId(0)}
             />
           ))}
         </div>
         <button
-          className="shadow-border-rounded inset-shadow-border m-border p-2"
-          onClick={addColumn}
+          className={`shadow-border-rounded inset-shadow-border m-border p-2 ${
+            isFilteringActive ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={isFilteringActive ? undefined : addColumn}
+          disabled={isFilteringActive}
         >
           <HoverableIcon name="plus" useHover={false} />
         </button>
@@ -148,7 +172,9 @@ export function Board({
         {isFilterMenuOpen && (
           <BoardFilterMenu
             labels={labels}
-            removeLabel={removeLabel}
+            selectedLabelIds={filterLabelIds}
+            addFilter={addFilterLabel}
+            removeFilter={removeFilterLabel}
           />
         )}
       </div>

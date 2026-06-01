@@ -19,6 +19,8 @@ type ColumnProps = ColumnModel & {
   editName: (id: number, name: string) => void;
   remove: (id: number) => void;
   refreshBoard: () => void;
+  filterLabelIds: number[];
+  isFilteringActive: boolean;
   isAutoNameEditEnabled?: boolean;
   autoNameEditUsed?: () => void;
 };
@@ -31,12 +33,18 @@ export function Column({
   editName,
   remove,
   refreshBoard,
+  filterLabelIds,
+  isFilteringActive,
   isAutoNameEditEnabled,
   autoNameEditUsed,
 }: ColumnProps) {
   const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
+  const [cardLabelIdsByCardId, setCardLabelIdsByCardId] = useState<
+    Record<number, number[]>
+  >({});
+  const [isFilterReady, setFilterReady] = useState(false);
   const [closestDropIndex, setClosestDropIndex] = useState<number | null>(null);
   const [autoEditCardId, setAutoEditCardId] = useState(0);
   const nameTextAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -48,6 +56,9 @@ export function Column({
   };
 
   const addCard = async () => {
+    if (isFilteringActive) {
+      return;
+    }
     const cardData: CardRequest = {
       title: "New card",
       description: "New card description",
@@ -101,6 +112,9 @@ export function Column({
     columnId: number,
     position: number,
   ) => {
+    if (isFilteringActive) {
+      return;
+    }
     const cardData: CardMoveRequest = {
       columnId: columnId,
       position: position,
@@ -159,7 +173,11 @@ export function Column({
   >(
     () => ({
       accept: CARD_DND_TYPE,
+      canDrop: () => !isFilteringActive,
       hover: (_, monitor) => {
+        if (isFilteringActive) {
+          return;
+        }
         const offset = monitor.getClientOffset();
         if (!offset) {
           return;
@@ -167,6 +185,9 @@ export function Column({
         setClosestDropIndex(getDropPlacement(offset.y).zoneIndex);
       },
       drop: (item, monitor) => {
+        if (isFilteringActive) {
+          return;
+        }
         const placement = getDropPlacement(
           monitor.getClientOffset()?.y ?? null,
           item.cardId,
@@ -182,10 +203,10 @@ export function Column({
         setClosestDropIndex(null);
       },
       collect: (monitor) => ({
-        isOver: monitor.isOver(),
+        isOver: !isFilteringActive && monitor.isOver(),
       }),
     }),
-    [cards, id, refreshBoard],
+    [cards, id, isFilteringActive, refreshBoard],
   );
 
   const dropTargetRef = (node: HTMLDivElement | null) => {
@@ -226,6 +247,62 @@ export function Column({
     }
   }, [isAutoNameEditEnabled, autoNameEditUsed]);
 
+  const visibleCards =
+    isFilteringActive && isFilterReady
+      ? cards.filter((card: CardModel) => {
+          if (filterLabelIds.length === 0) {
+            return true;
+          }
+          const cardLabelIds = cardLabelIdsByCardId[card.id] ?? [];
+          return cardLabelIds.some((labelId) =>
+            filterLabelIds.includes(labelId),
+          );
+        })
+      : cards;
+
+  useEffect(() => {
+    if (!isFilteringActive) {
+      setFilterReady(false);
+      return;
+    }
+    let isCurrent = true;
+    
+    const loadCardLabelIds = async () => {
+      if (cards.length === 0) {
+        if (isCurrent) {
+          setCardLabelIdsByCardId({});
+          setFilterReady(true);
+        }
+        return;
+      }
+      setFilterReady(false);
+
+      const entries = await Promise.all(
+        cards.map(async (card) => {
+          const labels = await ServerConnection.get(`/cards/${card.id}/labels`);
+          return {
+            cardId: card.id,
+            labelIds: (labels as LabelModel[]).map((label) => label.id),
+          };
+        }),
+      );
+      if (!isCurrent) {
+        return;
+      }
+      const next: Record<number, number[]> = {};
+      entries.forEach(({ cardId, labelIds }) => {
+        next[cardId] = labelIds;
+      });
+      setCardLabelIdsByCardId(next);
+      setFilterReady(true);
+    };
+    loadCardLabelIds();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [cards, isFilteringActive]);
+
   return (
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1 min-h-0">
       <div className="flex flex-col gap-3 text-center">
@@ -257,8 +334,11 @@ export function Column({
           </a>
         </div>
         <button
-          className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"
-          onClick={addCard}
+          className={`shadow-border-rounded inset-shadow-border m-border flex justify-center p-2 ${
+            isFilteringActive ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={isFilteringActive ? undefined : addCard}
+          disabled={isFilteringActive}
         >
           <HoverableIcon name="plus" useHover={false} />
         </button>
@@ -269,7 +349,7 @@ export function Column({
         className="flex flex-col flex-1 gap-1 overflow-auto"
       >
         <CardDropIndicator active={isOver && closestDropIndex === 0} />
-        {cards.map(
+        {visibleCards.map(
           (
             {
               id: cardId,
@@ -298,6 +378,7 @@ export function Column({
                   editDescription={editCardDescription}
                   editDueDate={editCardDueDate}
                   remove={removeCard}
+                  isDragDisabled={isFilteringActive}
                   isAutoTitleEditEnabled={autoEditCardId === cardId}
                   autoTitleEditUsed={() => setAutoEditCardId(0)}
                 />

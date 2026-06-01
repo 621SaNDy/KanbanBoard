@@ -23,6 +23,7 @@ type CardProps = CardModel & {
   editDescription: (id: number, description: string) => void;
   editDueDate: (id: number, dueDate: string) => void;
   remove: (id: number) => void;
+  isDragDisabled?: boolean;
   isAutoTitleEditEnabled?: boolean;
   autoTitleEditUsed?: () => void;
 };
@@ -39,6 +40,7 @@ export function Card({
   editDescription,
   editDueDate,
   remove,
+  isDragDisabled = false,
   isAutoTitleEditEnabled,
   autoTitleEditUsed,
 }: CardProps) {
@@ -63,6 +65,7 @@ export function Card({
   >(
     () => ({
       type: CARD_DND_TYPE,
+      canDrag: !isDragDisabled,
       item: () => {
         const rect = cardContainerRef.current?.getBoundingClientRect();
 
@@ -80,10 +83,19 @@ export function Card({
         };
       },
       collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
+        isDragging: !isDragDisabled && monitor.isDragging(),
       }),
     }),
-    [id, columnId, position, title, description, dueDate, labels],
+    [
+      id,
+      columnId,
+      position,
+      title,
+      description,
+      dueDate,
+      labels,
+      isDragDisabled,
+    ],
   );
 
   const dragHandleRef = (node: HTMLHeadingElement | null) => {
@@ -225,7 +237,11 @@ export function Card({
           />
         ) : (
           <h3
-            className="card-title pl-1 pr-1 select-none cursor-grab active:cursor-grabbing"
+            className={`card-title pl-1 pr-1 select-none ${
+              isDragDisabled
+                ? "cursor-default"
+                : "cursor-grab active:cursor-grabbing"
+            }`}
             ref={dragHandleRef}
             onDoubleClick={() => setEditingTitle(true)}
           >
@@ -265,7 +281,18 @@ export function Card({
                 id={id}
                 name={name}
                 color={color}
+                icon="plus"
                 click={addLabel}
+              />
+            ))}
+          {labels.map(({ id, name, color }) => (
+              <CardLabelButton
+                key={id}
+                id={id}
+                name={name}
+                color={color}
+                icon="minus"
+                click={removeLabel}
               />
             ))}
         </div>
@@ -278,7 +305,6 @@ export function Card({
                 id={id}
                 name={name}
                 color={color}
-                remove={removeLabel}
               />
             ))}
           </div>
@@ -293,7 +319,6 @@ export function Card({
                   id={id}
                   name={name}
                   color={color}
-                  remove={removeLabel}
                 />
               ))}
             </div>
