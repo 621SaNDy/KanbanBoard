@@ -18,6 +18,8 @@ type BoardColumnProps = ColumnModel & {
   editName: (id: number, name: string) => void;
   remove: (id: number) => void;
   refreshBoard: () => void;
+  isAutoNameEditEnabled?: boolean;
+  autoNameEditUsed?: () => void;
 };
 
 export function BoardColumn({
@@ -28,11 +30,14 @@ export function BoardColumn({
   editName,
   remove,
   refreshBoard,
+  isAutoNameEditEnabled,
+  autoNameEditUsed,
 }: BoardColumnProps) {
   const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
   const [closestDropIndex, setClosestDropIndex] = useState<number | null>(null);
+  const [autoEditCardId, setAutoEditCardId] = useState(0);
   const nameTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const cardRefs = useRef(new Map<number, HTMLDivElement | null>());
 
@@ -47,7 +52,11 @@ export function BoardColumn({
       description: "New card description",
       due_date: "2026-04-21",
     };
-    await ServerConnection.post(`/columns/${id}/cards`, cardData);
+    const newCard: CardModel = await ServerConnection.post(
+      `/columns/${id}/cards`,
+      cardData,
+    );
+    setAutoEditCardId(newCard.id);
     loadCards();
   };
 
@@ -209,6 +218,13 @@ export function BoardColumn({
     }
   }, [isEditingName]);
 
+  useEffect(() => {
+    if (isAutoNameEditEnabled) {
+      setEditingName(true);
+      autoNameEditUsed?.();
+    }
+  }, [isAutoNameEditEnabled, autoNameEditUsed]);
+
   return (
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1">
       <div className="flex flex-col gap-2 text-center">
@@ -266,6 +282,8 @@ export function BoardColumn({
                   editDescription={editCardDescription}
                   editDueDate={editCardDueDate}
                   remove={removeCard}
+                  isAutoTitleEditEnabled={autoEditCardId === cardId}
+                  autoTitleEditUsed={() => setAutoEditCardId(0)}
                 />
               </div>
               <CardDropIndicator

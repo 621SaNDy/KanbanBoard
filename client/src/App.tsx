@@ -11,6 +11,7 @@ import type { BoardRequest } from "./types/requests";
 function App() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [currentBoardId, setCurrentBoardId] = useState(0);
+  const [autoEditBoardId, setAutoEditBoardId] = useState(0);
 
   const loadBoards = async () => {
     const newBoards: BoardModel[] = await ServerConnection.get("/boards");
@@ -23,6 +24,7 @@ function App() {
       "/boards",
       boardData,
     );
+    setAutoEditBoardId(newBoard.id);
     setCurrentBoardId(newBoard.id);
     loadBoards();
   };
@@ -67,6 +69,8 @@ function App() {
                   board={board}
                   editBoardName={editBoardName}
                   removeBoard={removeBoard}
+                  isAutoEditEnabled={autoEditBoardId === board.id}
+                  setAutoEditUsed={() => setAutoEditBoardId(0)}
                 />
                 <Board id={board.id} name={board.name} remove={removeBoard} />
               </>

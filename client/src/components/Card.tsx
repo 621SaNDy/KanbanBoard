@@ -22,6 +22,8 @@ type CardProps = CardModel & {
   editDescription: (id: number, description: string) => void;
   editDueDate: (id: number, dueDate: string) => void;
   remove: (id: number) => void;
+  isAutoTitleEditEnabled?: boolean;
+  autoTitleEditUsed?: () => void;
 };
 
 export function Card({
@@ -36,6 +38,8 @@ export function Card({
   editDescription,
   editDueDate,
   remove,
+  isAutoTitleEditEnabled,
+  autoTitleEditUsed,
 }: CardProps) {
   const [isEditingTitle, setEditingTitle] = useState(false);
   const [isEditingDescription, setEditingDescription] = useState(false);
@@ -189,6 +193,13 @@ export function Card({
       setNewDueDate(dueDate ?? "");
     }
   }, [isEditingTitle, isEditingDescription, isEditingDueDate]);
+
+  useEffect(() => {
+    if (isAutoTitleEditEnabled) {
+      setEditingTitle(true);
+      autoTitleEditUsed?.();
+    }
+  }, [isAutoTitleEditEnabled, autoTitleEditUsed]);
 
   return (
     <div

@@ -19,6 +19,7 @@ export function Board({ id, name, remove }: BoardProps) {
   const [newLabelName, setNewLabelName] = useState("");
   const [newLabelColor, setNewLabelColor] = useState("");
   const [cardsRefreshToken, setCardsRefreshToken] = useState(0);
+  const [autoEditColumnId, setAutoEditColumnId] = useState(0);
 
   const loadColumns = async () => {
     const newColumns = await ServerConnection.get(`/boards/${id}/columns`);
@@ -32,7 +33,11 @@ export function Board({ id, name, remove }: BoardProps) {
 
   const addColumn = async () => {
     const columnData: ColumnRequest = { name: "New column" };
-    await ServerConnection.post(`/boards/${id}/columns`, columnData);
+    const newColumn: ColumnModel = await ServerConnection.post(
+      `/boards/${id}/columns`,
+      columnData,
+    );
+    setAutoEditColumnId(newColumn.id);
     loadColumns();
   };
 
@@ -86,6 +91,8 @@ export function Board({ id, name, remove }: BoardProps) {
             remove={removeColumn}
             refreshBoard={refreshColumns}
             refreshToken={cardsRefreshToken}
+            isAutoNameEditEnabled={autoEditColumnId === id}
+            autoNameEditUsed={() => setAutoEditColumnId(0)}
           />
         ))}
 

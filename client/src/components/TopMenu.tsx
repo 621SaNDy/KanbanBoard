@@ -7,9 +7,17 @@ type TopMenuProps = {
   board: BoardModel;
   editBoardName: (id: number, name: string) => void;
   removeBoard: (id: number) => void;
+  isAutoEditEnabled?: boolean;
+  setAutoEditUsed?: () => void;
 };
 
-export function TopMenu({ board, editBoardName, removeBoard }: TopMenuProps) {
+export function TopMenu({
+  board,
+  editBoardName,
+  removeBoard,
+  isAutoEditEnabled,
+  setAutoEditUsed,
+}: TopMenuProps) {
   const [isEditingBoardName, setEditingBoardName] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
   const boardNameInputRef = useRef<HTMLInputElement>(null);
@@ -34,6 +42,13 @@ export function TopMenu({ board, editBoardName, removeBoard }: TopMenuProps) {
       setNewBoardName(board.name);
     }
   }, [isEditingBoardName]);
+
+  useEffect(() => {
+    if (isAutoEditEnabled) {
+      setEditingBoardName(true);
+      setAutoEditUsed?.();
+    }
+  }, [isAutoEditEnabled, setAutoEditUsed]);
 
   return (
     <div className="shadow-border-rounded inset-shadow-border m-border flex items-center pl-4 pr-4 min-h-12">
