@@ -1,11 +1,17 @@
 import { Card } from "./Card";
-import { useDrop } from "react-dnd";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useDrag, useDrop } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import type { CardModel, ColumnModel, LabelModel } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
 import { AutoResizeTextArea } from "./AutoResizeTextArea";
 import { CardDropIndicator } from "./CardDropIndicator";
-import { type DragCardItem, CARD_DND_TYPE } from "../types/dnd";
+import {
+  type DragCardItem,
+  type DragColumnItem,
+  CARD_DND_TYPE,
+  COLUMN_DND_TYPE,
+} from "../types/dnd";
 import type {
   CardRequest,
   CardUpdateRequest,
@@ -18,6 +24,7 @@ type BoardColumnProps = ColumnModel & {
   editName: (id: number, name: string) => void;
   remove: (id: number) => void;
   refreshBoard: () => void;
+  columnIndex: number;
 };
 
 export function BoardColumn({
@@ -28,13 +35,41 @@ export function BoardColumn({
   editName,
   remove,
   refreshBoard,
+  columnIndex,
 }: BoardColumnProps) {
   const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
   const [closestDropIndex, setClosestDropIndex] = useState<number | null>(null);
   const nameTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const columnContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef(new Map<number, HTMLDivElement | null>());
+  const columnHeaderRef = useRef<HTMLHeadingElement>(null);
+  const [{ isDragging: isColumnDragging }, dragRef, previewRef] = useDrag<
+    DragColumnItem,
+    void,
+    { isDragging: boolean }
+  >(
+    () => ({
+      type: COLUMN_DND_TYPE,
+      item: () => {
+        const rect = columnContainerRef.current?.getBoundingClientRect();
+
+        return {
+          type: COLUMN_DND_TYPE,
+          columnId: id,
+          fromIndex: columnIndex,
+          name: name,
+          width: rect?.width,
+          height: rect?.height,
+        };
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    [id, columnIndex, name],
+  );
 
   const loadCards = async () => {
     const newCards = await ServerConnection.get(`/columns/${id}/cards`);
@@ -178,9 +213,24 @@ export function BoardColumn({
     [cards, id, refreshBoard],
   );
 
-  const dropTargetRef = (node: HTMLDivElement | null) => {
-    dropRef(node);
-  };
+  const dropTargetRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      dropRef(node);
+    },
+    [dropRef],
+  );
+
+  useEffect(() => {
+    previewRef(getEmptyImage(), { captureDraggingState: true });
+  }, [previewRef]);
+
+  const columnHandleRef = useCallback(
+    (node: HTMLHeadingElement | null) => {
+      columnHeaderRef.current = node;
+      dragRef(node);
+    },
+    [dragRef],
+  );
 
   const setCardRef = (cardId: number) => (node: HTMLDivElement | null) => {
     if (node) {
@@ -210,7 +260,11 @@ export function BoardColumn({
   }, [isEditingName]);
 
   return (
-    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1">
+    <div
+      className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1"
+      ref={columnContainerRef}
+      style={isColumnDragging ? { opacity: 0.5 } : undefined}
+    >
       <div className="flex flex-col gap-2 text-center">
         {isEditingName ? (
           <AutoResizeTextArea
@@ -224,7 +278,13 @@ export function BoardColumn({
             onBlur={() => setEditingName(false)}
           />
         ) : (
-          <h2 onDoubleClick={() => setEditingName(true)}>{name}</h2>
+          <h2
+            className="cursor-grab active:cursor-grabbing"
+            ref={columnHandleRef}
+            onDoubleClick={() => setEditingName(true)}
+          >
+            {name}
+          </h2>
         )}
         <button onClick={() => remove(id)}>kolum ziuuu</button>
         <button

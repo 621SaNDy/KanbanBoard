@@ -2,6 +2,7 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import { Board } from "./components/Board";
 import { CardDragLayer } from "./components/CardDragLayer";
+import { ColumnDragLayer } from "./components/ColumnDragLayer";
 import { SideMenu } from "./components/SideMenu";
 import { TopMenu } from "./components/TopMenu";
 import type { BoardModel } from "./types/models";
@@ -49,7 +50,7 @@ function App() {
   }, [boards]);
 
   return (
-    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
+    <div className="h-full w-full flex gap-3 p-5 text-fg bg-bg">
       <SideMenu
         boards={boards}
         currentBoard={currentBoardId}
@@ -75,6 +76,7 @@ function App() {
         );
       })()}
       <CardDragLayer />
+      <ColumnDragLayer />
     </div>
   );
 }
