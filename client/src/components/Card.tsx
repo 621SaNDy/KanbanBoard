@@ -47,6 +47,7 @@ export function Card({
   const [isEditingTitle, setEditingTitle] = useState(false);
   const [isEditingDescription, setEditingDescription] = useState(false);
   const [isEditingDueDate, setEditingDueDate] = useState(false);
+  const [isEditingLabels, setEditingLabels] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
@@ -269,23 +270,24 @@ export function Card({
             </p>
           ))}
 
-        <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
-          {availableLabels
-            .filter(
-              (available) =>
-                !labels.map((current) => current.id).includes(available.id),
-            )
-            .map(({ id, name, color }) => (
-              <CardLabelButton
-                key={id}
-                id={id}
-                name={name}
-                color={color}
-                icon="plus"
-                click={addLabel}
-              />
-            ))}
-          {labels.map(({ id, name, color }) => (
+        {isEditingLabels && (
+          <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
+            {availableLabels
+              .filter(
+                (available) =>
+                  !labels.map((current) => current.id).includes(available.id),
+              )
+              .map(({ id, name, color }) => (
+                <CardLabelButton
+                  key={id}
+                  id={id}
+                  name={name}
+                  color={color}
+                  icon="plus"
+                  click={addLabel}
+                />
+              ))}
+            {labels.map(({ id, name, color }) => (
               <CardLabelButton
                 key={id}
                 id={id}
@@ -295,31 +297,42 @@ export function Card({
                 click={removeLabel}
               />
             ))}
-        </div>
+            <a
+              className="flex items-center"
+              onClick={() => setEditingLabels(false)}
+            >
+              <HoverableIcon name="save" />
+            </a>
+          </div>
+        )}
 
-        {dueDate && labels && (
-          <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
+        {!isEditingLabels && dueDate && labels && (
+          <div
+            className="flex flex-wrap gap-2 flex-1 pl-1 pr-1"
+            onDoubleClick={() => setEditingLabels(true)}
+          >
+            {labels.length === 0 && (
+              <a
+              className="flex items-center gap-1 pb-1"
+              onClick={() => setEditingLabels(true)}
+            >
+              <HoverableIcon name="tag" />
+            </a>
+            )}
             {labels.map(({ id, name, color }) => (
-              <CardLabel
-                key={id}
-                id={id}
-                name={name}
-                color={color}
-              />
+              <CardLabel key={id} id={id} name={name} color={color} />
             ))}
           </div>
         )}
 
         <div className="flex justify-end gap-1 pl-1 pr-1">
-          {!dueDate && labels && (
-            <div className="flex flex-wrap flex-1">
+          {!isEditingLabels && !dueDate && labels && (
+            <div
+              className="flex flex-wrap flex-1"
+              onDoubleClick={() => setEditingLabels(true)}
+            >
               {labels.map(({ id, name, color }) => (
-                <CardLabel
-                  key={id}
-                  id={id}
-                  name={name}
-                  color={color}
-                />
+                <CardLabel key={id} id={id} name={name} color={color} />
               ))}
             </div>
           )}

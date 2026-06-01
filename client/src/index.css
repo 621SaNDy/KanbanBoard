@@ -148,7 +148,6 @@ p {
 .p-input {
   font-family: "Ruler 9", monospace;
   line-height: 1.2;
-  text-shadow: 0.5px 0.5px 0 var(--color-fg-semi-trans);
   box-shadow: none !important;
   border: none;
 }
@@ -169,6 +168,10 @@ textarea::placeholder {
 button:hover {
   color: var(--color-bg);
   background-color: var(--color-fg);
+}
+
+input {
+  text-shadow: 0.5px 0.5px 0 var(--color-fg-semi-trans);
 }
 
 textarea {

@@ -129,7 +129,7 @@ export function Board({
         setAutoEditUsed={setAutoEditUsed}
       />
       <div className="relative flex gap-5 flex-1 min-h-0 min-w-0">
-        <div className="flex gap-5 flex-1 min-h-0 min-w-0 overflow-x-scroll">
+        <div className="flex gap-5 flex-1 min-h-0 min-w-0 h-full overflow-x-auto">
           {columns.map(({ id, name, position }) => (
             <Column
               key={id}
