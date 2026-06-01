@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BoardColumn } from "./BoardColumn";
+import { Column } from "./Column";
 import {
   type LabelModel,
   type BoardModel,
@@ -78,10 +78,10 @@ export function Board({ id, name, remove }: BoardProps) {
   }, [id]);
 
   return (
-    <div className="flex flex-col gap-3 h-full">
-      <div className="flex gap-5 flex-1">
+    <div className="flex flex-col gap-3 flex-1 min-h-0">
+      <div className="flex gap-5 flex-1 min-h-0">
         {columns.map(({ id, name, position }) => (
-          <BoardColumn
+          <Column
             key={id}
             id={id}
             name={name}
@@ -104,7 +104,7 @@ export function Board({ id, name, remove }: BoardProps) {
         </button>
       </div>
 
-      <div className="flex">
+      {/* <div className="flex">
         <div className="flex flex-col">
           <input
             type="text"
@@ -129,7 +129,7 @@ export function Board({ id, name, remove }: BoardProps) {
             />
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

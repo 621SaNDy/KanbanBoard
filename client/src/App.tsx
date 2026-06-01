@@ -51,7 +51,7 @@ function App() {
   }, [boards]);
 
   return (
-    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
+    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg overflow-hidden">
       <SideMenu
         boards={boards}
         currentBoard={currentBoardId}
@@ -62,7 +62,7 @@ function App() {
       {(() => {
         const board = boards.find(({ id }) => id === currentBoardId);
         return (
-          <div className="flex flex-col gap-5 h-full w-full">
+          <div className="flex flex-col gap-5 h-full w-full min-h-0">
             {board ? (
               <>
                 <TopMenu

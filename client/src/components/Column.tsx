@@ -12,7 +12,7 @@ import type {
   CardMoveRequest,
 } from "../types/requests";
 
-type BoardColumnProps = ColumnModel & {
+type ColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
   refreshToken: number;
   editName: (id: number, name: string) => void;
@@ -22,7 +22,7 @@ type BoardColumnProps = ColumnModel & {
   autoNameEditUsed?: () => void;
 };
 
-export function BoardColumn({
+export function Column({
   id,
   name,
   availableLabels,
@@ -32,7 +32,7 @@ export function BoardColumn({
   refreshBoard,
   isAutoNameEditEnabled,
   autoNameEditUsed,
-}: BoardColumnProps) {
+}: ColumnProps) {
   const [isEditingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [cards, setCards] = useState<CardModel[]>([]);
@@ -226,11 +226,11 @@ export function BoardColumn({
   }, [isAutoNameEditEnabled, autoNameEditUsed]);
 
   return (
-    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1">
+    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1 min-h-0">
       <div className="flex flex-col gap-2 text-center">
         {isEditingName ? (
           <AutoResizeTextArea
-            className="h2-input"
+            className="h2-input w-full min-w-0"
             rows={1}
             ref={nameTextAreaRef}
             placeholder={name}
@@ -240,7 +240,7 @@ export function BoardColumn({
             onBlur={() => setEditingName(false)}
           />
         ) : (
-          <h2 onDoubleClick={() => setEditingName(true)}>{name}</h2>
+          <h2 className="w-full min-w-0" onDoubleClick={() => setEditingName(true)}>{name}</h2>
         )}
         <button onClick={() => remove(id)}>kolum ziuuu</button>
         <button
@@ -251,7 +251,10 @@ export function BoardColumn({
         </button>
       </div>
 
-      <div ref={dropTargetRef} className="flex flex-col flex-1 gap-1">
+      <div
+        ref={dropTargetRef}
+        className="flex flex-col flex-1 gap-1 overflow-auto"
+      >
         <CardDropIndicator active={isOver && closestDropIndex === 0} />
         {cards.map(
           (

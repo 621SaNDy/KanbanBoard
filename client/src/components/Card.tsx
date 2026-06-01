@@ -204,13 +204,13 @@ export function Card({
   return (
     <div
       ref={cardContainerRef}
-      className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative"
+      className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative min-w-0"
       style={isDragging ? { opacity: 0.5 } : undefined}
     >
-      <div className="flex flex-col p-3 relative gap-2 w-full">
+      <div className="flex flex-col p-3 relative gap-2 w-full min-w-0">
         {isEditingTitle ? (
           <AutoResizeTextArea
-            className="h3-input"
+            className="h3-input w-full min-w-0"
             rows={1}
             ref={titleTextAreaRef}
             placeholder={title}
@@ -231,7 +231,7 @@ export function Card({
         {description &&
           (isEditingDescription ? (
             <AutoResizeTextArea
-              className="p-input"
+              className="p-input w-full min-w-0"
               rows={1}
               ref={descriptionTextAreaRef}
               placeholder={description}
@@ -302,7 +302,7 @@ export function Card({
               {isEditingDueDate ? (
                 <input
                   type="date"
-                  className="p-input"
+                  className="p-input w-full min-w-0"
                   style={{ border: "none" }}
                   ref={dueDateInputRef}
                   placeholder={dueDate}
