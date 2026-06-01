@@ -36,7 +36,7 @@
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #1b0f0e;
+  --color-bg: #180d0c;
   --color-bg-dark: #140b0a;
   --color-bg-warning: #48280580;
   --color-bg-error: #560b0b80;
