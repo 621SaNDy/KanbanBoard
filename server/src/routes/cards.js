@@ -8,13 +8,9 @@ const resequenceColumn = async (client, columnId, cardIds) => {
     return;
   }
 
-  await client.query('UPDATE cards SET position = position + 1000000 WHERE column_id = $1', [
-    columnId,
-  ]);
-
   for (let index = 0; index < cardIds.length; index += 1) {
     await client.query('UPDATE cards SET position = $1 WHERE id = $2 AND column_id = $3', [
-      index + 1,
+      (index + 1) * 100,
       cardIds[index],
       columnId,
     ]);
@@ -39,12 +35,13 @@ router.post('/columns/:columnId/cards', async (req, res) => {
     const { columnId } = req.params;
     const { title, description, dueDate, due_date } = req.body;
 
-    const positionResult = await pool.query(
-      'SELECT COALESCE(MAX(position), 0) + 1 AS next_position FROM cards WHERE column_id = $1',
+    const countResult = await pool.query(
+      'SELECT COUNT(*) as count FROM cards WHERE column_id = $1',
       [columnId]
     );
 
-    const nextPosition = positionResult.rows[0].next_position;
+    const count = countResult.rows[0].count;
+    const nextPosition = (count + 1) * 100;
     const result = await pool.query(
       'INSERT INTO cards (column_id, title, description, due_date, position) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [columnId, title, description, dueDate ?? due_date ?? null, nextPosition]
@@ -152,14 +149,9 @@ router.patch('/cards/:cardId/move', async (req, res) => {
 
       targetCardIds.splice(targetPosition - 1, 0, currentCard.id);
 
-      await client.query('UPDATE cards SET column_id = $1, position = 0 WHERE id = $2', [
+      await client.query('UPDATE cards SET column_id = $1 WHERE id = $2', [
         targetColumnId,
         currentCard.id,
-      ]);
-
-      await client.query('UPDATE cards SET position = position + 1000000 WHERE column_id IN ($1, $2)', [
-        sourceColumnId,
-        targetColumnId,
       ]);
 
       await resequenceColumn(client, sourceColumnId, sourceCardIds);

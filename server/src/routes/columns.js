@@ -22,12 +22,13 @@ router.post('/boards/:boardId/columns', async (req, res) => {
     const { boardId } = req.params;
     const { name } = req.body;
 
-    const positionResult = await pool.query(
-      'SELECT COALESCE(MAX(position), 0) + 1 AS next_position FROM "columns" WHERE board_id = $1',
+    const countResult = await pool.query(
+      'SELECT COUNT(*) as count FROM "columns" WHERE board_id = $1',
       [boardId]
     );
 
-    const nextPosition = positionResult.rows[0].next_position;
+    const count = countResult.rows[0].count;
+    const nextPosition = (count + 1) * 100;
     const result = await pool.query(
       'INSERT INTO "columns" (board_id, name, position) VALUES ($1, $2, $3) RETURNING *',
       [boardId, name, nextPosition]
@@ -83,16 +84,13 @@ router.patch('/boards/:boardId/columns/reorder', async (req, res) => {
 
     await client.query('BEGIN');
 
-    await client.query(
-      `
-      UPDATE "columns" AS c
-      SET position = o.position
-      FROM unnest($1::int[]) WITH ORDINALITY AS o(id, position)
-      WHERE c.id = o.id
-        AND c.board_id = $2
-      `,
-      [order, boardId]
-    );
+    for (let index = 0; index < order.length; index += 1) {
+      await client.query('UPDATE "columns" SET position = $1 WHERE id = $2 AND board_id = $3', [
+        (index + 1) * 100,
+        order[index],
+        boardId,
+      ]);
+    }
 
     const result = await client.query(
       'SELECT * FROM "columns" WHERE board_id = $1 ORDER BY position ASC',

@@ -8,7 +8,7 @@ CREATE TABLE columns (
   id SERIAL PRIMARY KEY,
   board_id INTEGER NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
   name VARCHAR(120) NOT NULL,
-  position INTEGER NOT NULL,
+  position BIGINT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   UNIQUE (board_id, position)
 );
@@ -19,7 +19,7 @@ CREATE TABLE cards (
   title VARCHAR(200) NOT NULL,
   description TEXT,
   due_date DATE,
-  position INTEGER NOT NULL,
+  position BIGINT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   UNIQUE (column_id, position)
 );
