@@ -103,7 +103,7 @@ export function Column({
   ) => {
     const cardData: CardMoveRequest = {
       columnId: columnId,
-      position: position * 100,
+      position: position,
     };
     await ServerConnection.patch(`/cards/${cardId}/move`, cardData);
     refreshBoard();
