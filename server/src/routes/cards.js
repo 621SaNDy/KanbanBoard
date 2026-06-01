@@ -74,11 +74,32 @@ router.get('/cards/:cardId', async (req, res) => {
 router.patch('/cards/:cardId', async (req, res) => {
   try {
     const { cardId } = req.params;
-    const { title, description, dueDate, due_date, position } = req.body;
+
+    const fieldMap = {
+      title:       req.body.title,
+      description: req.body.description,
+      due_date:    req.body.dueDate ?? req.body.due_date,
+      position:    req.body.position,
+    };
+
+    const allowedFields = ['title', 'description', 'due_date', 'position'];
+    const presentFields = allowedFields.filter(field => {
+      if (field === 'due_date') {
+        return 'dueDate' in req.body || 'due_date' in req.body;
+      }
+      return field in req.body;
+    });
+
+    if (presentFields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const setClauses = presentFields.map((field, i) => `${field} = $${i + 1}`);
+    const values     = presentFields.map(field => fieldMap[field]);
 
     const result = await pool.query(
-      'UPDATE cards SET title = COALESCE($1, title), description = COALESCE($2, description), due_date = COALESCE($3, due_date), position = COALESCE($4, position) WHERE id = $5 RETURNING *',
-      [title, description, dueDate ?? due_date ?? null, position, cardId]
+      `UPDATE cards SET ${setClauses.join(', ')} WHERE id = $${presentFields.length + 1} RETURNING *`,
+      [...values, cardId]
     );
 
     if (result.rows.length === 0) {
