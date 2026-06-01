@@ -18,7 +18,7 @@ function App() {
   };
 
   const addBoard = async () => {
-    const boardData: BoardRequest = { name: "New board" };
+    const boardData: BoardRequest = { name: "New board, how exciting!" };
     const newBoard: BoardModel = await ServerConnection.post(
       "/boards",
       boardData,

@@ -26,6 +26,7 @@ type CardProps = CardModel & {
   isDragDisabled?: boolean;
   isAutoTitleEditEnabled?: boolean;
   autoTitleEditUsed?: () => void;
+  isDueSoonWarningEnabled?: boolean;
 };
 
 export function Card({
@@ -43,6 +44,7 @@ export function Card({
   isDragDisabled = false,
   isAutoTitleEditEnabled,
   autoTitleEditUsed,
+  isDueSoonWarningEnabled = false,
 }: CardProps) {
   const [isEditingTitle, setEditingTitle] = useState(false);
   const [isEditingDescription, setEditingDescription] = useState(false);
@@ -190,6 +192,26 @@ export function Card({
     loadComments();
   }, []);
 
+  const { isOverdue, isDueSoon } = (() => {
+    let overdue = false;
+    let soon = false;
+    if (!dueDate || !isDueSoonWarningEnabled) {
+      return { isOverdue: false, isDueSoon: false };
+    }
+    try {
+      const due = new Date(dueDate);
+      const now = new Date();
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const diffMs = due.getTime() - now.getTime();
+      if (diffMs < 0) {
+        overdue = true;
+      } else if (diffMs <= 3 * msPerDay) {
+        soon = true;
+      }
+    } catch {}
+    return { isOverdue: overdue, isDueSoon: soon };
+  })();
+
   useEffect(() => {
     if (isEditingTitle && titleTextAreaRef.current) {
       titleTextAreaRef.current.value = title;
@@ -221,7 +243,13 @@ export function Card({
   return (
     <div
       ref={cardContainerRef}
-      className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative min-w-0"
+      className={`shadow-border-rounded m-border inset-shadow-border ${
+        isOverdue
+          ? "bg-bg-error"
+          : isDueSoon
+            ? "bg-bg-warning"
+            : "bg-bg-secondary"
+      } flex flex-col relative min-w-0`}
       style={isDragging ? { opacity: 0.5 } : undefined}
     >
       <div className="flex flex-col p-3 relative gap-2 w-full min-w-0">
@@ -313,11 +341,11 @@ export function Card({
           >
             {labels.length === 0 && (
               <a
-              className="flex items-center gap-1 pb-1"
-              onClick={() => setEditingLabels(true)}
-            >
-              <HoverableIcon name="tag" />
-            </a>
+                className="flex items-center gap-1"
+                onClick={() => setEditingLabels(true)}
+              >
+                <HoverableIcon name="tag" />
+              </a>
             )}
             {labels.map(({ id, name, color }) => (
               <CardLabel key={id} id={id} name={name} color={color} />

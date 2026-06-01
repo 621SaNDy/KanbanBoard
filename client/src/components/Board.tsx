@@ -33,6 +33,7 @@ export function Board({
   const [newLabelColor, setNewLabelColor] = useState("");
   const [cardsRefreshToken, setCardsRefreshToken] = useState(0);
   const [autoEditColumnId, setAutoEditColumnId] = useState(0);
+  const [isWarningEnabled, setWarningEnabled] = useState(false);
   const [isLabelMenuOpen, setLabelMenuOpen] = useState(false);
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [filterLabelIds, setFilterLabelIds] = useState<number[]>([]);
@@ -47,12 +48,20 @@ export function Board({
     setLabels(newLabels);
   };
 
+  const forceColumnReorder = async () => {
+    // Force a position refresh as the server doesn't perform it and breaks column state
+    await ServerConnection.patch(`/boards/${id}/columns/reorder`, {
+      order: [],
+    });
+  }
+
   const addColumn = async () => {
-    const columnData: ColumnRequest = { name: "New column" };
+    const columnData: ColumnRequest = { name: "More stages of work? Great!" };
     const newColumn: ColumnModel = await ServerConnection.post(
       `/boards/${id}/columns`,
       columnData,
     );
+    await forceColumnReorder();
     setAutoEditColumnId(newColumn.id);
     loadColumns();
   };
@@ -65,10 +74,7 @@ export function Board({
 
   const removeColumn = async (columnId: number) => {
     await ServerConnection.delete(`/columns/${columnId}`);
-    // Force a position refresh as the server doesn't perform it on delete
-    await ServerConnection.patch(`/boards/${id}/columns/reorder`, {
-      order: [],
-    });
+    await forceColumnReorder();
     loadColumns();
   };
 
@@ -125,6 +131,8 @@ export function Board({
         toggleLabelMenu={() => setLabelMenuOpen(!isLabelMenuOpen)}
         isFilterMenuOpen={isFilterMenuOpen}
         toggleFilterMenu={() => setFilterMenuOpen(!isFilterMenuOpen)}
+        isWarningEnabled={isWarningEnabled}
+        toggleWarning={() => setWarningEnabled((v) => !v)}
         isAutoEditEnabled={isAutoEditEnabled}
         setAutoEditUsed={setAutoEditUsed}
       />
@@ -145,6 +153,7 @@ export function Board({
               isFilteringActive={isFilteringActive}
               isAutoNameEditEnabled={autoEditColumnId === id}
               autoNameEditUsed={() => setAutoEditColumnId(0)}
+              isWarningEnabled={isWarningEnabled}
             />
           ))}
         </div>

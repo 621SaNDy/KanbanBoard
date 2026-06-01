@@ -17,6 +17,8 @@
 @theme {
   --color-bg: #aab38a;
   --color-bg-secondary: #a5ad87;
+  --color-bg-warning: #ba9d7c;
+  --color-bg-error: #c17d7d;
   --color-fg: #1e2210;
   --color-fg-semi-trans: #1e221080;
   --color-fg-secondary: #1b1e0e;
@@ -32,6 +34,8 @@
 :root[data-theme="dark"] {
   --color-bg: #1e2210;
   --color-bg-secondary: #1b1e0e;
+  --color-bg-warning: #45300e;
+  --color-bg-error: #491a1a;
   --color-fg: #aab38a;
   --color-fg-semi-trans: #aab38a80;
   --color-fg-secondary: #a5ad87;
@@ -103,7 +107,9 @@ p {
   line-height: 1.2;
 }
 
-.column-title, .card-title, .card-description {
+.column-title,
+.card-title,
+.card-description {
   overflow-wrap: anywhere;
   word-break: break-word;
   hyphens: auto;

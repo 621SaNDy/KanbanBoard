@@ -21,6 +21,7 @@ type ColumnProps = ColumnModel & {
   refreshBoard: () => void;
   filterLabelIds: number[];
   isFilteringActive: boolean;
+  isWarningEnabled?: boolean;
   isAutoNameEditEnabled?: boolean;
   autoNameEditUsed?: () => void;
 };
@@ -35,6 +36,7 @@ export function Column({
   refreshBoard,
   filterLabelIds,
   isFilteringActive,
+  isWarningEnabled,
   isAutoNameEditEnabled,
   autoNameEditUsed,
 }: ColumnProps) {
@@ -59,10 +61,13 @@ export function Column({
     if (isFilteringActive) {
       return;
     }
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    const dueDate = date.toISOString().split("T")[0];
     const cardData: CardRequest = {
-      title: "New card",
-      description: "New card description",
-      due_date: "2026-04-21",
+      title: "A new task, yay!",
+      description: "May the retro gothic 8-bit brutalist UI be with you!",
+      due_date: dueDate,
     };
     const newCard: CardModel = await ServerConnection.post(
       `/columns/${id}/cards`,
@@ -380,7 +385,8 @@ export function Column({
                   remove={removeCard}
                   isDragDisabled={isFilteringActive}
                   isAutoTitleEditEnabled={autoEditCardId === cardId}
-                  autoTitleEditUsed={() => setAutoEditCardId(0)}
+                    autoTitleEditUsed={() => setAutoEditCardId(0)}
+                    isDueSoonWarningEnabled={isWarningEnabled}
                 />
               </div>
               <CardDropIndicator

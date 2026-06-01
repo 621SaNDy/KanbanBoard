@@ -11,6 +11,8 @@ type TopMenuProps = {
   toggleLabelMenu?: () => void;
   isFilterMenuOpen?: boolean;
   toggleFilterMenu?: () => void;
+  isWarningEnabled?: boolean;
+  toggleWarning?: () => void;
   isAutoEditEnabled?: boolean;
   setAutoEditUsed?: () => void;
 };
@@ -23,6 +25,8 @@ export function TopMenu({
   toggleLabelMenu,
   isFilterMenuOpen,
   toggleFilterMenu,
+  isWarningEnabled,
+  toggleWarning,
   isAutoEditEnabled,
   setAutoEditUsed,
 }: TopMenuProps) {
@@ -80,7 +84,7 @@ export function TopMenu({
       )}
 
       <div className="flex justify-end gap-2 pr-4">
-        <TopMenuItem icon="exclamation-triangle" click={() => {}} />
+        <TopMenuItem icon="exclamation-triangle" active={isWarningEnabled} click={() => toggleWarning?.()} />
         <TopMenuItem icon="tag" active={isLabelMenuOpen} click={() => toggleLabelMenu?.()} />
         <TopMenuItem icon="filter" active={isFilterMenuOpen} click={() => toggleFilterMenu?.()} />
         <TopMenuItem icon="trash-alt" click={() => removeBoard(board.id)} />
