@@ -37,6 +37,7 @@ export function Board({
   const [isLabelMenuOpen, setLabelMenuOpen] = useState(false);
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [filterLabelIds, setFilterLabelIds] = useState<number[]>([]);
+  const [searchedText, setSearchedText] = useState("");
 
   const loadColumns = async () => {
     const newColumns = await ServerConnection.get(`/boards/${id}/columns`);
@@ -133,6 +134,8 @@ export function Board({
         toggleFilterMenu={() => setFilterMenuOpen(!isFilterMenuOpen)}
         isWarningEnabled={isWarningEnabled}
         toggleWarning={() => setWarningEnabled((v) => !v)}
+        searchedText={searchedText}
+        setSearchedText={setSearchedText}
         isAutoEditEnabled={isAutoEditEnabled}
         setAutoEditUsed={setAutoEditUsed}
       />
@@ -151,6 +154,7 @@ export function Board({
               refreshToken={cardsRefreshToken}
               filterLabelIds={filterLabelIds}
               isFilteringActive={isFilteringActive}
+              searchedText={searchedText}
               isAutoNameEditEnabled={autoEditColumnId === id}
               autoNameEditUsed={() => setAutoEditColumnId(0)}
               isWarningEnabled={isWarningEnabled}

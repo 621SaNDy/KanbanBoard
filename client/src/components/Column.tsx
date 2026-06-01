@@ -12,6 +12,7 @@ import type {
   CardMoveRequest,
 } from "../types/requests";
 import { HoverableIcon } from "./HoverableIcon";
+import { DateUtility } from "../utilities/DateUtility";
 
 type ColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
@@ -22,6 +23,7 @@ type ColumnProps = ColumnModel & {
   filterLabelIds: number[];
   isFilteringActive: boolean;
   isWarningEnabled?: boolean;
+  searchedText?: string;
   isAutoNameEditEnabled?: boolean;
   autoNameEditUsed?: () => void;
 };
@@ -37,6 +39,7 @@ export function Column({
   filterLabelIds,
   isFilteringActive,
   isWarningEnabled,
+  searchedText = "",
   isAutoNameEditEnabled,
   autoNameEditUsed,
 }: ColumnProps) {
@@ -252,7 +255,7 @@ export function Column({
     }
   }, [isAutoNameEditEnabled, autoNameEditUsed]);
 
-  const visibleCards =
+  const filteredCards =
     isFilteringActive && isFilterReady
       ? cards.filter((card: CardModel) => {
           if (filterLabelIds.length === 0) {
@@ -264,6 +267,22 @@ export function Column({
           );
         })
       : cards;
+
+  const visibleCards = searchedText
+    ? filteredCards.filter((card: CardModel) => {
+        return (
+          card.title.toLowerCase().includes(searchedText.toLowerCase()) ||
+          card.description
+            ?.toLowerCase()
+            .includes(searchedText.toLowerCase()) ||
+          (card.due_date
+            ? DateUtility.getAbsoluteDate(card.due_date)
+                .toLowerCase()
+                .includes(searchedText.toLowerCase())
+            : false)
+        );
+      })
+    : filteredCards;
 
   useEffect(() => {
     if (!isFilteringActive) {

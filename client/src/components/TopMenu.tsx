@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { BoardModel } from "../types/models";
 import { TopMenuItem } from "./TopMenuItem";
-import { TopMenuSearchBar } from "./TopMenuSearchBar";
 
 type TopMenuProps = {
   board: BoardModel;
@@ -13,6 +12,8 @@ type TopMenuProps = {
   toggleFilterMenu?: () => void;
   isWarningEnabled?: boolean;
   toggleWarning?: () => void;
+  searchedText: string;
+  setSearchedText: (text: string) => void;
   isAutoEditEnabled?: boolean;
   setAutoEditUsed?: () => void;
 };
@@ -27,6 +28,8 @@ export function TopMenu({
   toggleFilterMenu,
   isWarningEnabled,
   toggleWarning,
+  searchedText,
+  setSearchedText,
   isAutoEditEnabled,
   setAutoEditUsed,
 }: TopMenuProps) {
@@ -90,7 +93,7 @@ export function TopMenu({
           click={() => toggleWarning?.()}
         />
         <TopMenuItem
-          icon="tag"
+          icon="hashtag"
           active={isLabelMenuOpen}
           click={() => toggleLabelMenu?.()}
         />
@@ -101,7 +104,13 @@ export function TopMenu({
         />
         <TopMenuItem icon="trash-alt" click={() => removeBoard(board.id)} />
       </div>
-      <TopMenuSearchBar />
+      <input
+      className="border-3 border-fg border-solid"
+      type="text"
+      placeholder="Search..."
+      value={searchedText}
+      onChange={(e) => setSearchedText(e.target.value)}
+    />
     </div>
   );
 }

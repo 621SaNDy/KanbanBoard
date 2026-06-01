@@ -340,7 +340,7 @@ export function Card({
                 className="flex items-center gap-1"
                 onClick={() => setEditingLabels(true)}
               >
-                <HoverableIcon name="tag" />
+                <HoverableIcon name="hashtag" />
               </a>
             )}
             {labels.map(({ id, name, color }) => (
