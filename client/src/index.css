@@ -103,6 +103,20 @@ p {
   line-height: 1.2;
 }
 
+.column-title, .card-title, .card-description {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  hyphenate-character: "-";
+}
+
+.label-text {
+  overflow-wrap: normal;
+  word-break: normal;
+  white-space: normal;
+  hyphens: manual;
+}
+
 .h1-input {
   font-family: "Jacquard 24", sans-serif;
   line-height: 0.9;

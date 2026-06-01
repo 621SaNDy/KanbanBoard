@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { SideMenuItem } from "./SideMenuItem";
 import type { BoardModel } from "../types/models";
 
 type SideMenuBoardListProps = {
-  listIcon: string;
-  listTitle: string;
   boardIcon: string;
   boards: BoardModel[];
   expanded?: boolean;
@@ -13,8 +10,6 @@ type SideMenuBoardListProps = {
 };
 
 export function SideMenuBoardList({
-  listIcon,
-  listTitle,
   boardIcon,
   boards,
   expanded = true,

@@ -235,7 +235,7 @@ export function Column({
           </a>
           {isEditingName ? (
             <AutoResizeTextArea
-              className="h2-input w-full min-w-0 flex-1"
+              className="h2-input column-title w-full min-w-0 flex-1"
               rows={1}
               ref={nameTextAreaRef}
               placeholder={name}
@@ -246,7 +246,7 @@ export function Column({
             />
           ) : (
             <h2
-              className="pl-1 pr-1 w-full min-w-0 flex-1"
+              className="column-title pl-1 pr-1 w-full min-w-0 flex-1"
               onDoubleClick={() => setEditingName(true)}
             >
               {name}

@@ -214,7 +214,7 @@ export function Card({
       <div className="flex flex-col p-3 relative gap-2 w-full min-w-0">
         {isEditingTitle ? (
           <AutoResizeTextArea
-            className="h3-input w-full min-w-0"
+            className="h3-input card-title w-full min-w-0"
             rows={1}
             ref={titleTextAreaRef}
             placeholder={title}
@@ -225,7 +225,7 @@ export function Card({
           />
         ) : (
           <h3
-            className="pl-1 pr-1 select-none cursor-grab active:cursor-grabbing"
+            className="card-title pl-1 pr-1 select-none cursor-grab active:cursor-grabbing"
             ref={dragHandleRef}
             onDoubleClick={() => setEditingTitle(true)}
           >
@@ -235,7 +235,7 @@ export function Card({
         {description &&
           (isEditingDescription ? (
             <AutoResizeTextArea
-              className="p-input w-full min-w-0"
+              className="p-input card-description w-full min-w-0"
               rows={1}
               ref={descriptionTextAreaRef}
               placeholder={description}
@@ -246,7 +246,7 @@ export function Card({
             />
           ) : (
             <p
-              className="pl-1 pr-1 whitespace-pre-wrap"
+              className="pl-1 pr-1 card-description whitespace-pre-wrap"
               onDoubleClick={() => setEditingDescription(true)}
             >
               {description}

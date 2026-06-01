@@ -61,7 +61,7 @@ function App() {
       {(() => {
         const board = boards.find(({ id }) => id === currentBoardId);
         return (
-          <div className="flex flex-col gap-5 h-full w-full min-h-0">
+          <div className="flex flex-col gap-5 h-full w-full min-h-0 min-w-0">
             {board ? (
               <Board
                 id={board.id}

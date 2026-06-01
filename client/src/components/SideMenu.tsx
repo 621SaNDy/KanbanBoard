@@ -42,9 +42,7 @@ export function SideMenu({
       />
       <SideMenuBoardList
         expanded={isExpanded}
-        listIcon="bars"
-        boardIcon="notebook"
-        listTitle="Board list"
+        boardIcon="table"
         boards={boards}
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}

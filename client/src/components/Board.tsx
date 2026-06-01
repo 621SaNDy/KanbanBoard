@@ -6,12 +6,11 @@ import {
   type ColumnModel,
 } from "../types/models";
 import { ServerConnection } from "../utilities/ServerConnection";
-import { CardLabel } from "./CardLabel";
 import type { ColumnRequest, LabelRequest } from "../types/requests";
 import { HoverableIcon } from "./HoverableIcon";
 import { TopMenu } from "./TopMenu";
-import { ContextMenu } from "./ContextMenu";
-import { CardLabelButton } from "./CardLabelButton";
+import { BoardLabelMenu } from "./BoardLabelMenu";
+import { BoardFilterMenu } from "./BoardFilterMenu";
 
 type BoardProps = BoardModel & {
   editBoardName: (id: number, name: string) => void;
@@ -65,6 +64,10 @@ export function Board({
 
   const removeColumn = async (columnId: number) => {
     await ServerConnection.delete(`/columns/${columnId}`);
+    // Force a position refresh as the server doesn't perform it on delete
+    await ServerConnection.patch(`/boards/${id}/columns/reorder`, {
+      order: [],
+    });
     loadColumns();
   };
 
@@ -94,7 +97,7 @@ export function Board({
   }, [id]);
 
   return (
-    <div className="flex flex-col gap-5 flex-1 min-h-0">
+    <div className="flex flex-col gap-5 flex-1 min-h-0 min-w-0">
       <TopMenu
         board={{ id, name }}
         editBoardName={editBoardName}
@@ -106,11 +109,8 @@ export function Board({
         isAutoEditEnabled={isAutoEditEnabled}
         setAutoEditUsed={setAutoEditUsed}
       />
-      <div className="relative flex flex-col gap-3 flex-1 min-h-0">
-        <div
-          className="flex gap-5 flex-1 min-h-0 overflow-x-auto"
-          style={isLabelMenuOpen || isFilterMenuOpen ? { opacity: 0.1 } : {}}
-        >
+      <div className="relative flex gap-5 flex-1 min-h-0 min-w-0">
+        <div className="flex gap-5 flex-1 min-h-0 min-w-0 overflow-x-scroll">
           {columns.map(({ id, name, position }) => (
             <Column
               key={id}
@@ -126,86 +126,31 @@ export function Board({
               autoNameEditUsed={() => setAutoEditColumnId(0)}
             />
           ))}
-
-          <button
-            className="shadow-border-rounded inset-shadow-border m-border p-2"
-            onClick={addColumn}
-          >
-            <HoverableIcon name="plus" useHover={false} />
-          </button>
         </div>
+        <button
+          className="shadow-border-rounded inset-shadow-border m-border p-2"
+          onClick={addColumn}
+        >
+          <HoverableIcon name="plus" useHover={false} />
+        </button>
 
-        <div className="absolute z-1000 flex justify-end gap-5 flex-1 w-full h-full min-h-0">
-          {isLabelMenuOpen && (
-            <ContextMenu>
-              <div className="flex flex-col p-3 gap-3">
-                <h2 className="text-center">Board labels</h2>
-                <div className="flex flex-col gap-1">
-                  <input
-                    className="border-3 border-fg border-solid w-full"
-                    type="text"
-                    placeholder="Label name..."
-                    value={newLabelName}
-                    onChange={(e) => setNewLabelName(e.target.value)}
-                  />
-                  <input
-                    className="border-3 border-fg border-solid w-full"
-                    type="color"
-                    placeholder="Label color..."
-                    value={newLabelColor}
-                    onChange={(e) => setNewLabelColor(e.target.value)}
-                  />
-                  <button
-                    className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-1"
-                    onClick={addLabel}
-                  >
-                    <HoverableIcon name="plus" useHover={false} />
-                  </button>
-                </div>
-                <div className="flex flex-col gap-1">
-                  {labels.map(({ id, name, color }) => (
-                    <CardLabel
-                      key={id}
-                      id={id}
-                      name={name}
-                      color={color}
-                      remove={removeLabel}
-                    />
-                  ))}
-                </div>
-              </div>
-            </ContextMenu>
-          )}
-          {isFilterMenuOpen && (
-            <ContextMenu>
-              <div className="flex flex-col p-3 gap-3">
-                <h2 className="text-center">Filters</h2>
-                <div className="flex flex-col gap-1">
-                  {labels.map(({ id, name, color }) => (
-                    <CardLabelButton
-                      key={id}
-                      id={id}
-                      name={name}
-                      color={color}
-                      click={() => {}}
-                    />
-                  ))}
-                </div>
-                <div className="flex flex-col gap-1">
-                  {labels.map(({ id, name, color }) => (
-                    <CardLabel
-                      key={id}
-                      id={id}
-                      name={name}
-                      color={color}
-                      remove={removeLabel}
-                    />
-                  ))}
-                </div>
-              </div>
-            </ContextMenu>
-          )}
-        </div>
+        {isLabelMenuOpen && (
+          <BoardLabelMenu
+            labels={labels}
+            newLabelName={newLabelName}
+            newLabelColor={newLabelColor}
+            setNewLabelName={setNewLabelName}
+            setNewLabelColor={setNewLabelColor}
+            addLabel={addLabel}
+            removeLabel={removeLabel}
+          />
+        )}
+        {isFilterMenuOpen && (
+          <BoardFilterMenu
+            labels={labels}
+            removeLabel={removeLabel}
+          />
+        )}
       </div>
     </div>
   );
