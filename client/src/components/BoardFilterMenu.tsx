@@ -38,7 +38,12 @@ export function BoardFilterMenu({
             />
           ))}
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full">
+          {selectedLabels.length === 0 && availableLabels.length === 0 && (
+            <div className="flex justify-center items-center w-full text-center">
+              <p>No labels yet!</p>
+            </div>
+          )}
           {availableLabels.map(({ id, name, color }) => (
             <CardLabelButton
               key={id}

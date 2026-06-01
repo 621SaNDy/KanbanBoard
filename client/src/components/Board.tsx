@@ -138,6 +138,16 @@ export function Board({
       />
       <div className="relative flex gap-4 flex-1 min-h-0 min-w-0">
         <div className="flex gap-3 flex-1 min-h-0 min-w-0 h-full overflow-x-auto">
+          {columns.length === 0 && (
+            <div className="flex justify-center items-center w-full text-center">
+              <p>
+                No columns yet!
+                <br />
+                Use the "+" button on the right to create one.
+              </p>
+            </div>
+          )}
+
           {columns.map(({ id, name, position }) => (
             <Column
               key={id}

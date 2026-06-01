@@ -392,7 +392,7 @@ export function Card({
                 className="flex items-center gap-1"
                 onClick={() => setEditingDescription(true)}
               >
-                <HoverableIcon name="align-left" />
+                <HoverableIcon name="paragraph" />
               </a>
             )}
             {!isEditingDueDate && !dueDate && (
@@ -403,12 +403,12 @@ export function Card({
                 <HoverableIcon name="clock" />
               </a>
             )}
-            <a
+            {availableLabels.length > 0 && (<a
               className="flex items-center gap-1"
               onClick={() => setEditingLabels(!isEditingLabels)}
             >
               <HoverableIcon name="hashtag" alwaysHover={isEditingLabels} />
-            </a>
+            </a>)}
             <a
               className="flex items-center"
               onClick={() => setCommentsOpen(!areCommentsOpen)}

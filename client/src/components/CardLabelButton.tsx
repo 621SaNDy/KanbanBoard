@@ -17,7 +17,7 @@ export function CardLabelButton({
 }: LabelProps) {
   return (
     <div
-      className="border-3 border-fg border-solid inset-shadow-border-small flex items-center pl-1 pr-1 gap-1"
+      className="border-3 border-fg text-fg-label border-solid inset-shadow-border-small flex items-center pl-1 pr-1 gap-1"
       onClick={() => (iconOnlyButton ? {} : click(id))}
       style={{ backgroundColor: color + "66" }}
     >

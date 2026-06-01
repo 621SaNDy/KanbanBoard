@@ -71,7 +71,15 @@ function App() {
                 isAutoEditEnabled={autoEditBoardId === board.id}
                 setAutoEditUsed={() => setAutoEditBoardId(0)}
               />
-            ) : null}
+            ) : (
+              <div className="flex-1 flex justify-center items-center text-center">
+                <p>
+                  No boards yet!
+                  <br />
+                  Use the "+" button on the left to create one.
+                </p>
+              </div>
+            )}
           </>
         );
       })()}

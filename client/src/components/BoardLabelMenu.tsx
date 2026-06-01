@@ -69,6 +69,11 @@ export function BoardLabelMenu({
           </button>
         </div>
         <div className="flex flex-col gap-1">
+          {labels.length === 0 && (
+            <div className="flex justify-center items-center w-full text-center">
+              <p>No labels yet!</p>
+            </div>
+          )}
           {labels.map(({ id, name, color }) => (
             <CardLabelButton
               key={id}
