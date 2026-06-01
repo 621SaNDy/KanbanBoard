@@ -334,7 +334,6 @@ export function Card({
               <HoverableIcon name="comments" alwaysHover={areCommentsOpen} />
             </a>
             <a className="flex items-center" onClick={() => remove(id)}>
-              {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
               <HoverableIcon name="trash-alt" />
             </a>
           </div>
@@ -352,7 +351,7 @@ export function Card({
             />
           ))}
           <input
-          className="border-3 border-fg border-solid"
+            className="border-3 border-fg border-solid"
             placeholder="Write a comment..."
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}

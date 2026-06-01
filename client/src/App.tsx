@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Board } from "./components/Board";
 import { CardDragLayer } from "./components/CardDragLayer";
 import { SideMenu } from "./components/SideMenu";
-import { TopMenu } from "./components/TopMenu";
 import type { BoardModel } from "./types/models";
 import { ServerConnection } from "./utilities/ServerConnection";
 import type { BoardRequest } from "./types/requests";
@@ -64,16 +63,14 @@ function App() {
         return (
           <div className="flex flex-col gap-5 h-full w-full min-h-0">
             {board ? (
-              <>
-                <TopMenu
-                  board={board}
-                  editBoardName={editBoardName}
-                  removeBoard={removeBoard}
-                  isAutoEditEnabled={autoEditBoardId === board.id}
-                  setAutoEditUsed={() => setAutoEditBoardId(0)}
-                />
-                <Board id={board.id} name={board.name} remove={removeBoard} />
-              </>
+              <Board
+                id={board.id}
+                name={board.name}
+                editBoardName={editBoardName}
+                removeBoard={removeBoard}
+                isAutoEditEnabled={autoEditBoardId === board.id}
+                setAutoEditUsed={() => setAutoEditBoardId(0)}
+              />
             ) : null}
           </div>
         );

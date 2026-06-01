@@ -1,4 +1,5 @@
 import type { LabelModel } from "../types/models";
+import { HoverableIcon } from "./HoverableIcon";
 
 type CardLabelProps = LabelModel & {
   remove: (id: number) => void;
@@ -7,11 +8,13 @@ type CardLabelProps = LabelModel & {
 export function CardLabel({ id, name, color, remove }: CardLabelProps) {
   return (
     <div
-      className="border-3 border-fg border-solid inset-shadow-border-small flex pl-1"
+      className="border-3 border-fg border-solid inset-shadow-border-small flex items-center pl-1 pr-1"
       style={{ backgroundColor: color + "88" }}
     >
-      <p>{name}</p>
-      <button onClick={() => remove(id)}>X</button>
+      <p className="flex-1">{name}</p>
+      <a className="flex items-center text-[0.8em]" onClick={() => remove(id)}>
+        <HoverableIcon name="trash-alt" />
+      </a>
     </div>
   );
 }

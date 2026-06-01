@@ -3,10 +3,11 @@ import { HoverableIcon } from "./HoverableIcon";
 
 type TopMenuItemProps = {
   icon: string;
-  click: () => void;
+  active?: boolean;
+  click: (e: React.MouseEvent) => void;
 };
 
-export function TopMenuItem({ icon, click }: TopMenuItemProps) {
+export function TopMenuItem({ icon, active, click }: TopMenuItemProps) {
   const [isHovered, setHovered] = useState(false);
 
   return (
@@ -18,7 +19,7 @@ export function TopMenuItem({ icon, click }: TopMenuItemProps) {
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
     >
-      <HoverableIcon name={icon} alwaysHover={isHovered} />
+      <HoverableIcon name={icon} alwaysHover={isHovered || active} />
     </div>
   );
 }

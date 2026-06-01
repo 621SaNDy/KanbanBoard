@@ -230,6 +230,11 @@ textarea:focus,
   outline: 3px dashed transparent;
 }
 
+input:not(.h1-input, .h2-input, .h3-input, .p-input, :focus),
+textarea:not(.h1-input, .h2-input, .h3-input, .p-input, :focus) {
+  box-shadow: var(--inset-shadow-border-small);
+}
+
 input:not(.h1-input, .h2-input, .h3-input, .p-input):focus,
 textarea:not(.h1-input, .h2-input, .h3-input, .p-input):focus {
   border: 3px dashed transparent;

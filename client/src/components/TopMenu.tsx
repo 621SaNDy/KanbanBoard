@@ -7,6 +7,10 @@ type TopMenuProps = {
   board: BoardModel;
   editBoardName: (id: number, name: string) => void;
   removeBoard: (id: number) => void;
+  isLabelMenuOpen?: boolean;
+  toggleLabelMenu?: () => void;
+  isFilterMenuOpen?: boolean;
+  toggleFilterMenu?: () => void;
   isAutoEditEnabled?: boolean;
   setAutoEditUsed?: () => void;
 };
@@ -15,6 +19,10 @@ export function TopMenu({
   board,
   editBoardName,
   removeBoard,
+  isLabelMenuOpen,
+  toggleLabelMenu,
+  isFilterMenuOpen,
+  toggleFilterMenu,
   isAutoEditEnabled,
   setAutoEditUsed,
 }: TopMenuProps) {
@@ -73,8 +81,8 @@ export function TopMenu({
 
       <div className="flex justify-end gap-2 pr-4">
         <TopMenuItem icon="exclamation-triangle" click={() => {}} />
-        <TopMenuItem icon="tag" click={() => {}} />
-        <TopMenuItem icon="filter" click={() => {}} />
+        <TopMenuItem icon="tag" active={isLabelMenuOpen} click={() => toggleLabelMenu?.()} />
+        <TopMenuItem icon="filter" active={isFilterMenuOpen} click={() => toggleFilterMenu?.()} />
         <TopMenuItem icon="trash-alt" click={() => removeBoard(board.id)} />
       </div>
       <TopMenuSearchBar />
