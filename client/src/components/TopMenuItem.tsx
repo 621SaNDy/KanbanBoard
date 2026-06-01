@@ -12,7 +12,7 @@ export function TopMenuItem({ icon, active, click }: TopMenuItemProps) {
 
   return (
     <div
-      className="flex p-2 text-[1.1em]"
+      className="flex p-2"
       onClick={click}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

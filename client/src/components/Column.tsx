@@ -271,7 +271,7 @@ export function Column({
       return;
     }
     let isCurrent = true;
-    
+
     const loadCardLabelIds = async () => {
       if (cards.length === 0) {
         if (isCurrent) {
@@ -309,7 +309,7 @@ export function Column({
   }, [cards, isFilteringActive]);
 
   return (
-    <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1 min-h-0">
+    <div className="shadow-border-bg-dark-rounded m-border flex flex-col gap-1 p-2 flex-1 min-h-0 bg-bg-dark">
       <div className="flex flex-col gap-3 text-center">
         <div className="flex gap-2 items-start">
           <a className="flex items-center opacity-0">
@@ -385,8 +385,8 @@ export function Column({
                   remove={removeCard}
                   isDragDisabled={isFilteringActive}
                   isAutoTitleEditEnabled={autoEditCardId === cardId}
-                    autoTitleEditUsed={() => setAutoEditCardId(0)}
-                    isDueSoonWarningEnabled={isWarningEnabled}
+                  autoTitleEditUsed={() => setAutoEditCardId(0)}
+                  isDueSoonWarningEnabled={isWarningEnabled}
                 />
               </div>
               <CardDropIndicator

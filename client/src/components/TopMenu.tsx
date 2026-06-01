@@ -63,10 +63,10 @@ export function TopMenu({
   }, [isAutoEditEnabled, setAutoEditUsed]);
 
   return (
-    <div className="shadow-border-rounded inset-shadow-border m-border flex items-center pr-4 min-h-12">
+    <div className="shadow-border-rounded inset-shadow-border m-border bg-bg-dark flex items-center pr-2 min-h-12">
       {isEditingBoardName ? (
         <input
-          className="pl-2 h1-input flex-1"
+          className="pl-3 h1-input flex-1"
           ref={boardNameInputRef}
           placeholder={board.name}
           value={newBoardName}
@@ -76,17 +76,29 @@ export function TopMenu({
         />
       ) : (
         <h1
-          className="pl-2 pr-1 flex-1 overflow-hidden w-0 whitespace-nowrap text-ellipsis"
+          className="pl-3 pr-1 flex-1 overflow-hidden w-0 whitespace-nowrap text-ellipsis"
           onDoubleClick={() => setEditingBoardName(true)}
         >
           {board.name}
         </h1>
       )}
 
-      <div className="flex justify-end gap-2 pr-4">
-        <TopMenuItem icon="exclamation-triangle" active={isWarningEnabled} click={() => toggleWarning?.()} />
-        <TopMenuItem icon="tag" active={isLabelMenuOpen} click={() => toggleLabelMenu?.()} />
-        <TopMenuItem icon="filter" active={isFilterMenuOpen} click={() => toggleFilterMenu?.()} />
+      <div className="flex justify-end gap-1 pl-3 pr-3">
+        <TopMenuItem
+          icon="exclamation-triangle"
+          active={isWarningEnabled}
+          click={() => toggleWarning?.()}
+        />
+        <TopMenuItem
+          icon="tag"
+          active={isLabelMenuOpen}
+          click={() => toggleLabelMenu?.()}
+        />
+        <TopMenuItem
+          icon="filter"
+          active={isFilterMenuOpen}
+          click={() => toggleFilterMenu?.()}
+        />
         <TopMenuItem icon="trash-alt" click={() => removeBoard(board.id)} />
       </div>
       <TopMenuSearchBar />

@@ -244,15 +244,11 @@ export function Card({
     <div
       ref={cardContainerRef}
       className={`shadow-border-rounded m-border inset-shadow-border ${
-        isOverdue
-          ? "bg-bg-error"
-          : isDueSoon
-            ? "bg-bg-warning"
-            : "bg-bg-secondary"
+        isOverdue ? "bg-bg-error" : isDueSoon ? "bg-bg-warning" : "bg-bg-dark"
       } flex flex-col relative min-w-0`}
       style={isDragging ? { opacity: 0.5 } : undefined}
     >
-      <div className="flex flex-col p-3 relative gap-2 w-full min-w-0">
+      <div className="flex flex-col pt-2 pb-2 pl-2 pr-1 relative gap-2 w-full min-w-0">
         {isEditingTitle ? (
           <AutoResizeTextArea
             className="h3-input card-title w-full min-w-0"
@@ -407,15 +403,19 @@ export function Card({
       </div>
 
       {areCommentsOpen && (
-        <div className="flex flex-col items-stretch gap-2 w-full pl-3 pr-3 pb-3">
-          {comments.map(({ id, content }) => (
-            <CardComment
-              key={id}
-              id={id}
-              content={content}
-              remove={removeComment}
-            />
-          ))}
+        <div className="flex flex-col items-stretch gap-2 w-full pt-1 pl-2 pr-2 pb-2">
+          {comments.length > 0 && (
+            <div className="flex flex-col items-stretch gap-2 w-full pl-1">
+              {comments.map(({ id, content }) => (
+                <CardComment
+                  key={id}
+                  id={id}
+                  content={content}
+                  remove={removeComment}
+                />
+              ))}
+            </div>
+          )}
           <input
             className="border-3 border-fg border-solid"
             placeholder="Write a comment..."

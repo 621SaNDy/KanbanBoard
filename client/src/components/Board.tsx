@@ -122,7 +122,7 @@ export function Board({
   }, [labels]);
 
   return (
-    <div className="flex flex-col gap-5 flex-1 min-h-0 min-w-0">
+    <div className="flex flex-col gap-4 flex-1 min-h-0 min-w-0">
       <TopMenu
         board={{ id, name }}
         editBoardName={editBoardName}
@@ -136,8 +136,8 @@ export function Board({
         isAutoEditEnabled={isAutoEditEnabled}
         setAutoEditUsed={setAutoEditUsed}
       />
-      <div className="relative flex gap-5 flex-1 min-h-0 min-w-0">
-        <div className="flex gap-5 flex-1 min-h-0 min-w-0 h-full overflow-x-auto">
+      <div className="relative flex gap-4 flex-1 min-h-0 min-w-0">
+        <div className="flex gap-3 flex-1 min-h-0 min-w-0 h-full overflow-x-auto">
           {columns.map(({ id, name, position }) => (
             <Column
               key={id}

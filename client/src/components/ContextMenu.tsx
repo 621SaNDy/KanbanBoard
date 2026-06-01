@@ -4,7 +4,7 @@ type ToolBoxProps = {
 
 export function ContextMenu({ children }: ToolBoxProps) {
   return (
-    <div className="shadow-border-rounded inset-shadow-border m-border flex flex-col bg-bg-secondary">
+    <div className="shadow-border-rounded inset-shadow-border m-border flex flex-col bg-bg-dark">
       {children}
     </div>
   )

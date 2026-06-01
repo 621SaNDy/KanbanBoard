@@ -1,7 +1,6 @@
 import type { LabelModel } from "../types/models";
 import { CardLabelButton } from "./CardLabelButton";
 import { ContextMenu } from "./ContextMenu";
-import { HoverableIcon } from "./HoverableIcon";
 
 type BoardFilterMenuProps = {
   labels: LabelModel[];

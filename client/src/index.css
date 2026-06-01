@@ -16,7 +16,7 @@
 /* :root { */
 @theme {
   --color-bg: #aab38a;
-  --color-bg-secondary: #a5ad87;
+  --color-bg-dark: #a5ad87;
   --color-bg-warning: #ba9d7c;
   --color-bg-error: #c17d7d;
   --color-fg: #1e2210;
@@ -29,11 +29,14 @@
   --shadow-border-rounded:
     3px 0 0 var(--color-fg), -3px 0 0 var(--color-fg), 0 3px 0 var(--color-fg),
     0 -3px 0 var(--color-fg);
+  --shadow-border-bg-dark-rounded:
+    3px 0 0 var(--color-bg-dark), -3px 0 0 var(--color-bg-dark),
+    0 3px 0 var(--color-bg-dark), 0 -3px 0 var(--color-bg-dark);
 }
 
 :root[data-theme="dark"] {
   --color-bg: #1e2210;
-  --color-bg-secondary: #1b1e0e;
+  --color-bg-dark: #1b1e0e;
   --color-bg-warning: #45300e;
   --color-bg-error: #491a1a;
   --color-fg: #aab38a;
@@ -54,7 +57,7 @@ html,
 }
 
 body {
-  /* background: linear-gradient(45deg, var(--color-bg), var(--color-bg-secondary)); */
+  /* background: linear-gradient(45deg, var(--color-bg), var(--color-bg-darker)); */
   background-color: var(--color-bg);
   height: 100%;
 }
@@ -86,15 +89,15 @@ i {
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2.5em;
 }
 
 h2 {
-  font-size: 3em;
+  font-size: 2.5em;
 }
 
 h3 {
-  font-size: 2.5em;
+  font-size: 2em;
 }
 
 h1,
@@ -138,7 +141,7 @@ p {
   text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
   box-shadow: none;
   border: none;
-  font-size: 3em;
+  font-size: 2.5em;
   text-align: center;
 }
 
@@ -148,7 +151,7 @@ p {
   text-shadow: 1px 1px 0 var(--color-fg-semi-trans);
   box-shadow: none;
   border: none;
-  font-size: 2.5em;
+  font-size: 2em;
 }
 
 .p-input {

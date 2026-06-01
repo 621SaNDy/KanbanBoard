@@ -69,7 +69,7 @@ export function CardDragLayer() {
         }}
       >
         <div
-          className="shadow-border-rounded m-border inset-shadow-border bg-bg-secondary flex flex-col relative"
+          className="shadow-border-rounded m-border inset-shadow-border bg-bg-dark flex flex-col relative"
           style={{ outline: "5px solid var(--color-fg)" }}
         >
           <div className="flex flex-col p-3 relative gap-2 w-full">

@@ -20,7 +20,9 @@ export function SideMenuItem({
 
   return (
     <div
-      className={`flex items-center pl-4 pr-4 pt-2 pb-2 ${expanded ? "min-w-40" : null} max-w-[20vw] text-[1.1em] ${active || (isHovered && expanded) ? "bg-fg" : ""} ${active || (isHovered && expanded) ? "text-bg" : ""}`}
+      className={`flex items-center pl-4 pr-4 pt-2 pb-2 ${
+        active || (isHovered && expanded) ? "bg-fg" : ""
+      } ${active || (isHovered && expanded) ? "text-bg" : ""}`}
       onClick={click}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

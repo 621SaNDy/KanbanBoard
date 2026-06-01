@@ -27,7 +27,11 @@ export function SideMenu({
   };
 
   return (
-    <div className="shadow-border-rounded inset-shadow-border mt-border mr-border mb-border flex flex-col pt-2 pb-2">
+    <div
+      className={`shadow-border-rounded inset-shadow-border m-border bg-bg-dark flex flex-col pt-2 pb-2 max-w-[15vw] ${
+        isExpanded ? "min-w-40" : null
+      }`}
+    >
       <SideMenuItem
         expanded={isExpanded}
         icon={isExpanded ? "angle-left" : "bars"}

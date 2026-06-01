@@ -50,7 +50,7 @@ function App() {
   }, [boards]);
 
   return (
-    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
+    <div className="h-full w-full flex gap-4 p-4 text-fg bg-bg">
       <SideMenu
         boards={boards}
         currentBoard={currentBoardId}
@@ -61,7 +61,7 @@ function App() {
       {(() => {
         const board = boards.find(({ id }) => id === currentBoardId);
         return (
-          <div className="flex flex-col gap-5 h-full w-full min-h-0 min-w-0">
+          <>
             {board ? (
               <Board
                 id={board.id}
@@ -72,7 +72,7 @@ function App() {
                 setAutoEditUsed={() => setAutoEditBoardId(0)}
               />
             ) : null}
-          </div>
+          </>
         );
       })()}
       <CardDragLayer />
