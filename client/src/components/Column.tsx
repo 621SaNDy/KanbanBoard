@@ -11,6 +11,7 @@ import type {
   CardUpdateRequest,
   CardMoveRequest,
 } from "../types/requests";
+import { HoverableIcon } from "./HoverableIcon";
 
 type ColumnProps = ColumnModel & {
   availableLabels: LabelModel[];
@@ -102,7 +103,7 @@ export function Column({
   ) => {
     const cardData: CardMoveRequest = {
       columnId: columnId,
-      position: position,
+      position: position * 100,
     };
     await ServerConnection.patch(`/cards/${cardId}/move`, cardData);
     refreshBoard();
@@ -227,27 +228,39 @@ export function Column({
 
   return (
     <div className="shadow-border-rounded m-border inset-shadow-border flex flex-col gap-1 p-3 flex-1 min-h-0">
-      <div className="flex flex-col gap-2 text-center">
-        {isEditingName ? (
-          <AutoResizeTextArea
-            className="h2-input w-full min-w-0"
-            rows={1}
-            ref={nameTextAreaRef}
-            placeholder={name}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value.replaceAll("\n", ""))}
-            onKeyDown={handleNameTextAreaKeyDown}
-            onBlur={() => setEditingName(false)}
-          />
-        ) : (
-          <h2 className="w-full min-w-0" onDoubleClick={() => setEditingName(true)}>{name}</h2>
-        )}
-        <button onClick={() => remove(id)}>kolum ziuuu</button>
+      <div className="flex flex-col gap-3 text-center">
+        <div className="flex gap-2 items-start">
+          <a className="flex items-center opacity-0">
+            <HoverableIcon name="trash-alt" />
+          </a>
+          {isEditingName ? (
+            <AutoResizeTextArea
+              className="h2-input w-full min-w-0 flex-1"
+              rows={1}
+              ref={nameTextAreaRef}
+              placeholder={name}
+              value={newName}
+              onChange={(e) => setNewName(e.target.value.replaceAll("\n", ""))}
+              onKeyDown={handleNameTextAreaKeyDown}
+              onBlur={() => setEditingName(false)}
+            />
+          ) : (
+            <h2
+              className="pl-1 pr-1 w-full min-w-0 flex-1"
+              onDoubleClick={() => setEditingName(true)}
+            >
+              {name}
+            </h2>
+          )}
+          <a className="flex items-center" onClick={() => remove(id)}>
+            <HoverableIcon name="trash-alt" />
+          </a>
+        </div>
         <button
           className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-2"
           onClick={addCard}
         >
-          <i className="hn hn-plus" />
+          <HoverableIcon name="plus" useHover={false} />
         </button>
       </div>
 

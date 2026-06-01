@@ -21,19 +21,9 @@ export function SideMenuBoardList({
   currentBoard,
   setCurrentBoard,
 }: SideMenuBoardListProps) {
-  const [isShowingList, setShowingList] = useState(false);
-
   return (
-    <>
-      <SideMenuItem
-        icon={isShowingList && expanded ? "angle-down" : listIcon}
-        title={listTitle}
-        expanded={expanded}
-        click={() => setShowingList(!isShowingList)}
-      />
-      <div className={`flex-1 overflow-y-auto ${expanded && "pl-2"}`}>
-        {isShowingList &&
-          expanded &&
+      <div className={`flex-1 overflow-y-auto`}>
+        {
           boards.map(({ id, name }) => (
             <SideMenuItem
               key={id}
@@ -45,6 +35,5 @@ export function SideMenuBoardList({
             />
           ))}
       </div>
-    </>
   );
 }

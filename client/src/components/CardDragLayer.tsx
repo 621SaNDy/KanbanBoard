@@ -1,6 +1,7 @@
 import { useDragLayer } from "react-dnd";
 import { DateUtility } from "../utilities/DateUtility";
 import type { DragCardItem } from "../types/dnd";
+import { HoverableIcon } from "./HoverableIcon";
 
 const layerStyles: React.CSSProperties = {
   position: "fixed",
@@ -17,12 +18,18 @@ const getItemStyles = (
   currentClientOffset: { x: number; y: number } | null,
   initialSourceClientOffset: { x: number; y: number } | null,
 ) => {
-  if (!initialClientOffset || !currentClientOffset || !initialSourceClientOffset) {
+  if (
+    !initialClientOffset ||
+    !currentClientOffset ||
+    !initialSourceClientOffset
+  ) {
     return { display: "none" } as React.CSSProperties;
   }
 
-  const x = currentClientOffset.x - initialClientOffset.x + initialSourceClientOffset.x;
-  const y = currentClientOffset.y - initialClientOffset.y + initialSourceClientOffset.y;
+  const x =
+    currentClientOffset.x - initialClientOffset.x + initialSourceClientOffset.x;
+  const y =
+    currentClientOffset.y - initialClientOffset.y + initialSourceClientOffset.y;
 
   return {
     transform: `translate(${x}px, ${y}px)`,
@@ -30,14 +37,19 @@ const getItemStyles = (
 };
 
 export function CardDragLayer() {
-  const { item, isDragging, initialClientOffset, currentClientOffset, initialSourceClientOffset } =
-    useDragLayer((monitor) => ({
-      item: monitor.getItem() as DragCardItem | null,
-      isDragging: monitor.isDragging(),
-      initialClientOffset: monitor.getInitialClientOffset(),
-      currentClientOffset: monitor.getClientOffset(),
-      initialSourceClientOffset: monitor.getInitialSourceClientOffset(),
-    }));
+  const {
+    item,
+    isDragging,
+    initialClientOffset,
+    currentClientOffset,
+    initialSourceClientOffset,
+  } = useDragLayer((monitor) => ({
+    item: monitor.getItem() as DragCardItem | null,
+    isDragging: monitor.isDragging(),
+    initialClientOffset: monitor.getInitialClientOffset(),
+    currentClientOffset: monitor.getClientOffset(),
+    initialSourceClientOffset: monitor.getInitialSourceClientOffset(),
+  }));
 
   if (!isDragging || !item || item.type !== "CARD") {
     return null;
@@ -47,7 +59,11 @@ export function CardDragLayer() {
     <div style={layerStyles}>
       <div
         style={{
-          ...getItemStyles(initialClientOffset, currentClientOffset, initialSourceClientOffset),
+          ...getItemStyles(
+            initialClientOffset,
+            currentClientOffset,
+            initialSourceClientOffset,
+          ),
           width: item.width,
           height: item.height,
         }}
@@ -76,7 +92,7 @@ export function CardDragLayer() {
             ) : null}
             {item.dueDate ? (
               <div className="flex gap-1 items-center">
-                <i className="hn hn-clock" />
+                <HoverableIcon name="clock" useHover={false} />
                 <p className="flex items-center gap-1 select-none">
                   {DateUtility.getAbsoluteDate(item.dueDate)}
                 </p>

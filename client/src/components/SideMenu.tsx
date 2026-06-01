@@ -12,22 +12,34 @@ type SideMenuProps = {
   setCurrentBoard: (id: number) => void;
 };
 
-export function SideMenu({ boards, currentBoard, addBoard, setCurrentBoard }: SideMenuProps) {
+export function SideMenu({
+  boards,
+  currentBoard,
+  addBoard,
+  setCurrentBoard,
+}: SideMenuProps) {
   const [isExpanded, setExpanded] = useState(false);
   const { theme, toggleTheme } = useDarkMode();
   const { isFullscreen, toggleFullScreen } = useFullScreen();
 
   const handleGitHubLink = () => {
-    window.open("https://github.com/621SaNDy/KanbanBoard", '_blank')?.focus();
-  }
+    window.open("https://github.com/621SaNDy/KanbanBoard", "_blank")?.focus();
+  };
 
   return (
-    <div
-      onPointerEnter={() => setExpanded(true)}
-      onPointerLeave={() => setExpanded(false)}
-      className="shadow-border-rounded inset-shadow-border mt-border mr-border mb-border flex flex-col pt-2 pb-2"
-    >
-      <SideMenuItem expanded={isExpanded} icon="plus" title="New board" click={addBoard} />
+    <div className="shadow-border-rounded inset-shadow-border mt-border mr-border mb-border flex flex-col pt-2 pb-2">
+      <SideMenuItem
+        expanded={isExpanded}
+        icon={isExpanded ? "angle-left" : "bars"}
+        title="Collapse menu"
+        click={() => setExpanded(!isExpanded)}
+      />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon="plus"
+        title="New board"
+        click={addBoard}
+      />
       <SideMenuBoardList
         expanded={isExpanded}
         listIcon="bars"
@@ -37,11 +49,36 @@ export function SideMenu({ boards, currentBoard, addBoard, setCurrentBoard }: Si
         currentBoard={currentBoard}
         setCurrentBoard={setCurrentBoard}
       />
-      <SideMenuItem expanded={isExpanded} icon={isFullscreen ? "collapse" : "expand"} title={`${isFullscreen ? "Exit full" : "Full"} screen`} click={toggleFullScreen} />
-      <SideMenuItem expanded={isExpanded} icon={theme === "light" ? "sun" : "moon"} title="Toggle theme" click={toggleTheme} />
-      <SideMenuItem expanded={isExpanded} icon="cog" title="Settings" click={() => {}} />
-      <SideMenuItem expanded={isExpanded} icon="info-circle" title="About" click={() => {}} />
-      <SideMenuItem expanded={isExpanded} icon="github" title="Our GitHub" click={handleGitHubLink} />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon={isFullscreen ? "collapse" : "expand"}
+        title={`${isFullscreen ? "Exit full" : "Full"} screen`}
+        click={toggleFullScreen}
+      />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon={theme === "light" ? "sun" : "moon"}
+        title="Toggle theme"
+        click={toggleTheme}
+      />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon="cog"
+        title="Settings"
+        click={() => {}}
+      />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon="info-circle"
+        title="About"
+        click={() => {}}
+      />
+      <SideMenuItem
+        expanded={isExpanded}
+        icon="github"
+        title="Our GitHub"
+        click={handleGitHubLink}
+      />
     </div>
   );
 }

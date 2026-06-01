@@ -14,6 +14,7 @@ import { CardComment } from "./CardComment";
 import { AutoResizeTextArea } from "./AutoResizeTextArea";
 import { type DragCardItem, CARD_DND_TYPE } from "../types/dnd";
 import type { LabelBindRequest } from "../types/requests";
+import { HoverableIcon } from "./HoverableIcon";
 
 type CardProps = CardModel & {
   columnId: number;
@@ -166,6 +167,9 @@ export function Card({
       setNewCommentContent("");
       loadComments();
     }
+    if (e.key === "Escape") {
+      (e.target as HTMLInputElement).blur();
+    }
   };
 
   useEffect(() => {
@@ -221,7 +225,7 @@ export function Card({
           />
         ) : (
           <h3
-            className="select-none cursor-grab active:cursor-grabbing"
+            className="pl-1 pr-1 select-none cursor-grab active:cursor-grabbing"
             ref={dragHandleRef}
             onDoubleClick={() => setEditingTitle(true)}
           >
@@ -242,14 +246,14 @@ export function Card({
             />
           ) : (
             <p
-              className="whitespace-pre-wrap"
+              className="pl-1 pr-1 whitespace-pre-wrap"
               onDoubleClick={() => setEditingDescription(true)}
             >
               {description}
             </p>
           ))}
 
-        <div className="flex flex-wrap gap-2 flex-1">
+        <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
           {availableLabels
             .filter(
               (available) =>
@@ -267,7 +271,7 @@ export function Card({
         </div>
 
         {dueDate && labels && (
-          <div className="flex flex-wrap gap-2 flex-1">
+          <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
             {labels.map(({ id, name, color }) => (
               <CardLabel
                 key={id}
@@ -280,7 +284,7 @@ export function Card({
           </div>
         )}
 
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 pl-1 pr-1">
           {!dueDate && labels && (
             <div className="flex flex-wrap flex-1">
               {labels.map(({ id, name, color }) => (
@@ -296,9 +300,8 @@ export function Card({
           )}
 
           {dueDate && (
-            <div className="flex gap-1">
-              <i className="hn hn-clock" />
-
+            <div className="flex">
+              <HoverableIcon name="clock" useHover={false} />
               {isEditingDueDate ? (
                 <input
                   type="date"
@@ -315,7 +318,7 @@ export function Card({
                 />
               ) : (
                 <p
-                  className="flex items-center gap-1 flex-1 select-none"
+                  className="pl-1 pr-1 flex items-center gap-1 flex-1 select-none"
                   onDoubleClick={() => setEditingDueDate(true)}
                 >
                   {DateUtility.getAbsoluteDate(dueDate)}
@@ -328,11 +331,11 @@ export function Card({
               className="flex items-center"
               onClick={() => setCommentsOpen(!areCommentsOpen)}
             >
-              <i className="hn hn-comments" />
+              <HoverableIcon name="comments" alwaysHover={areCommentsOpen} />
             </a>
             <a className="flex items-center" onClick={() => remove(id)}>
               {/* Temporary, TODO implement a drag-to-delete recycle bin under the last column (or not?) */}
-              <i className="hn hn-trash-alt" />
+              <HoverableIcon name="trash-alt" />
             </a>
           </div>
         </div>
@@ -349,6 +352,7 @@ export function Card({
             />
           ))}
           <input
+          className="border-3 border-fg border-solid"
             placeholder="Write a comment..."
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}

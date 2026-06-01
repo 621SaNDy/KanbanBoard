@@ -51,7 +51,7 @@ function App() {
   }, [boards]);
 
   return (
-    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg overflow-hidden">
+    <div className="h-full w-full flex gap-5 p-5 text-fg bg-bg">
       <SideMenu
         boards={boards}
         currentBoard={currentBoardId}

@@ -51,10 +51,10 @@ export function TopMenu({
   }, [isAutoEditEnabled, setAutoEditUsed]);
 
   return (
-    <div className="shadow-border-rounded inset-shadow-border m-border flex items-center pl-4 pr-4 min-h-12">
+    <div className="shadow-border-rounded inset-shadow-border m-border flex items-center pr-4 min-h-12">
       {isEditingBoardName ? (
         <input
-          className="h1-input flex-1"
+          className="pl-2 h1-input flex-1"
           ref={boardNameInputRef}
           placeholder={board.name}
           value={newBoardName}
@@ -64,7 +64,7 @@ export function TopMenu({
         />
       ) : (
         <h1
-          className="flex-1 overflow-hidden w-0 whitespace-nowrap text-ellipsis"
+          className="pl-2 pr-1 flex-1 overflow-hidden w-0 whitespace-nowrap text-ellipsis"
           onDoubleClick={() => setEditingBoardName(true)}
         >
           {board.name}

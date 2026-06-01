@@ -93,7 +93,9 @@ h3 {
   font-size: 2.5em;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   line-height: 0.9;
 }
 
@@ -145,16 +147,6 @@ textarea {
   font-family: "Ruler 9", monospace;
 }
 
-input:not(.h1-input) {
-  padding-inline: 4px;
-  border: 3px solid var(--color-fg);
-  box-shadow: var(--inset-shadow-border-small);
-}
-
-input:focus {
-  outline: 2px solid var(--color-fg);
-}
-
 input::placeholder,
 textarea::placeholder {
   color: var(--color-fg-dimmed);
@@ -167,8 +159,95 @@ button:hover {
 
 textarea {
   resize: none;
+  line-height: 0.9;
 }
 
+input:focus,
 textarea:focus {
-  outline: 3px dashed var(--color-fg);
+  outline: none;
+}
+
+input:not(.h1-input),
+textarea {
+  padding-inline: 4px;
+}
+
+input:focus,
+textarea:focus,
+.h1-input,
+.h2-input,
+.h3-input,
+.p-input {
+  background-origin: border-box;
+  background-clip: border-box;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--color-fg) 0,
+      var(--color-fg) 6px,
+      transparent 6px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--color-fg) 0,
+      var(--color-fg) 6px,
+      transparent 6px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      var(--color-fg) 0,
+      var(--color-fg) 6px,
+      transparent 6px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      var(--color-fg) 0,
+      var(--color-fg) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  background-size:
+    100% 3px,
+    100% 3px,
+    3px 100%,
+    3px 100%;
+  background-position:
+    0 0,
+    0 100%,
+    0 0,
+    100% 0;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  animation: marching-ants 1s steps(2) infinite;
+}
+
+.h1-input,
+.h2-input,
+.h3-input,
+.p-input {
+  outline: 3px dashed transparent;
+}
+
+input:not(.h1-input, .h2-input, .h3-input, .p-input):focus,
+textarea:not(.h1-input, .h2-input, .h3-input, .p-input):focus {
+  border: 3px dashed transparent;
+}
+
+@keyframes marching-ants {
+  0% {
+    background-position:
+      0 0,
+      0 100%,
+      0 0,
+      100% 0;
+  }
+  100% {
+    background-position:
+      12px 0,
+      -12px 100%,
+      0 -12px,
+      100% 12px;
+  }
 }

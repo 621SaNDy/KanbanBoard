@@ -8,6 +8,7 @@ import {
 import { ServerConnection } from "../utilities/ServerConnection";
 import { CardLabel } from "./CardLabel";
 import type { ColumnRequest, LabelRequest } from "../types/requests";
+import { HoverableIcon } from "./HoverableIcon";
 
 type BoardProps = BoardModel & {
   remove: (id: number) => void;
@@ -100,11 +101,11 @@ export function Board({ id, name, remove }: BoardProps) {
           className="shadow-border-rounded inset-shadow-border m-border p-2"
           onClick={addColumn}
         >
-          <i className="hn hn-plus" />
+          <HoverableIcon name="plus" useHover={false} />
         </button>
       </div>
 
-      {/* <div className="flex">
+      <div className="flex">
         <div className="flex flex-col">
           <input
             type="text"
@@ -129,7 +130,7 @@ export function Board({ id, name, remove }: BoardProps) {
             />
           ))}
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
