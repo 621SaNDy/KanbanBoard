@@ -64,13 +64,9 @@ export function Column({
     if (isFilteringActive) {
       return;
     }
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    const dueDate = date.toISOString().split("T")[0];
     const cardData: CardRequest = {
       title: "A new task, yay!",
       description: "May the retro gothic 8-bit brutalist UI be with you!",
-      due_date: dueDate,
     };
     const newCard: CardModel = await ServerConnection.post(
       `/columns/${id}/cards`,
@@ -86,13 +82,16 @@ export function Column({
     loadCards();
   };
 
-  const editCardDescription = async (cardId: number, description: string) => {
+  const editCardDescription = async (
+    cardId: number,
+    description: string | null,
+  ) => {
     const cardData: CardUpdateRequest = { description: description };
     await ServerConnection.patch(`/cards/${cardId}`, cardData);
     loadCards();
   };
 
-  const editCardDueDate = async (cardId: number, dueDate: string) => {
+  const editCardDueDate = async (cardId: number, dueDate: string | null) => {
     const cardData: CardUpdateRequest = { due_date: dueDate };
     await ServerConnection.patch(`/cards/${cardId}`, cardData);
     loadCards();
@@ -328,7 +327,7 @@ export function Column({
   }, [cards, isFilteringActive]);
 
   return (
-    <div className="shadow-border-bg-dark-rounded m-border flex flex-col gap-1 p-2 flex-1 min-h-0 bg-bg-dark">
+    <div className="shadow-border-bg-dark-rounded m-border flex flex-col gap-1 pl-2 pr-2 pb-2 pt-1 flex-1 min-h-0 bg-bg-dark">
       <div className="flex flex-col gap-3 text-center">
         <div className="flex gap-2 items-start">
           <a className="flex items-center opacity-0">

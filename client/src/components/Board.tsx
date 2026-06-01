@@ -29,8 +29,6 @@ export function Board({
 }: BoardProps) {
   const [columns, setColumns] = useState<ColumnModel[]>([]);
   const [labels, setLabels] = useState<LabelModel[]>([]);
-  const [newLabelName, setNewLabelName] = useState("");
-  const [newLabelColor, setNewLabelColor] = useState("");
   const [cardsRefreshToken, setCardsRefreshToken] = useState(0);
   const [autoEditColumnId, setAutoEditColumnId] = useState(0);
   const [isWarningEnabled, setWarningEnabled] = useState(false);
@@ -54,7 +52,7 @@ export function Board({
     await ServerConnection.patch(`/boards/${id}/columns/reorder`, {
       order: [],
     });
-  }
+  };
 
   const addColumn = async () => {
     const columnData: ColumnRequest = { name: "More stages of work? Great!" };
@@ -79,14 +77,12 @@ export function Board({
     loadColumns();
   };
 
-  const addLabel = async () => {
+  const addLabel = async (name: string, color: string) => {
     const label: LabelRequest = {
-      name: newLabelName,
-      color: newLabelColor,
+      name: name,
+      color: color,
     };
     await ServerConnection.post(`/boards/${id}/labels`, label);
-    setNewLabelName("");
-    setNewLabelColor("");
     loadLabels();
   };
 
@@ -109,7 +105,8 @@ export function Board({
     setFilterLabelIds((current) => current.filter((id) => id !== labelId));
   };
 
-  const isFilteringActive = isFilterMenuOpen && filterLabelIds.length > 0;
+  const isFilteringActive =
+    (isFilterMenuOpen && filterLabelIds.length > 0) || searchedText !== "";
 
   useEffect(() => {
     loadColumns();
@@ -174,14 +171,11 @@ export function Board({
         {isLabelMenuOpen && (
           <BoardLabelMenu
             labels={labels}
-            newLabelName={newLabelName}
-            newLabelColor={newLabelColor}
-            setNewLabelName={setNewLabelName}
-            setNewLabelColor={setNewLabelColor}
             addLabel={addLabel}
             removeLabel={removeLabel}
           />
         )}
+
         {isFilterMenuOpen && (
           <BoardFilterMenu
             labels={labels}

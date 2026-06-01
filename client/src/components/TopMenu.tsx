@@ -105,12 +105,12 @@ export function TopMenu({
         <TopMenuItem icon="trash-alt" click={() => removeBoard(board.id)} />
       </div>
       <input
-      className="border-3 border-fg border-solid"
-      type="text"
-      placeholder="Search..."
-      value={searchedText}
-      onChange={(e) => setSearchedText(e.target.value)}
-    />
+        className="border-3 border-fg border-solid"
+        type="text"
+        placeholder="Search..."
+        value={searchedText}
+        onChange={(e) => setSearchedText(e.target.value)}
+      />
     </div>
   );
 }

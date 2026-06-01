@@ -65,18 +65,6 @@ export function SideMenu({
       />
       <SideMenuItem
         expanded={isExpanded}
-        icon="cog"
-        title="Settings"
-        click={() => {}}
-      />
-      <SideMenuItem
-        expanded={isExpanded}
-        icon="info-circle"
-        title="About"
-        click={() => {}}
-      />
-      <SideMenuItem
-        expanded={isExpanded}
         icon="github"
         title="Our GitHub"
         click={handleGitHubLink}

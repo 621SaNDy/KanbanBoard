@@ -2,6 +2,7 @@ import { useDragLayer } from "react-dnd";
 import { DateUtility } from "../utilities/DateUtility";
 import type { DragCardItem } from "../types/dnd";
 import { HoverableIcon } from "./HoverableIcon";
+import { CardLabel } from "./CardLabel";
 
 const layerStyles: React.CSSProperties = {
   position: "fixed",
@@ -68,25 +69,16 @@ export function CardDragLayer() {
           height: item.height,
         }}
       >
-        <div
-          className="shadow-border-rounded m-border inset-shadow-border bg-bg-dark flex flex-col relative"
-          style={{ outline: "5px solid var(--color-fg)" }}
-        >
-          <div className="flex flex-col p-3 relative gap-2 w-full">
+        <div className="shadow-border-rounded m-border inset-shadow-border bg-bg-dark flex flex-col relative">
+          <div className="flex flex-col pl-3 pr-3 pt-2 pb-2 relative gap-2 w-full">
             <h3 className="select-none">{item.title}</h3>
             {item.description ? (
               <p className="whitespace-pre-wrap">{item.description}</p>
             ) : null}
             {item.labels.length ? (
               <div className="flex flex-wrap gap-2">
-                {item.labels.map((label) => (
-                  <div
-                    key={label.id}
-                    className="border-3 border-fg border-solid inset-shadow-border-small flex pl-1"
-                    style={{ backgroundColor: `${label.color}88` }}
-                  >
-                    <p>{label.name}</p>
-                  </div>
+                {item.labels.map(({ id, name, color }) => (
+                  <CardLabel key={id} id={id} name={name} color={color} />
                 ))}
               </div>
             ) : null}

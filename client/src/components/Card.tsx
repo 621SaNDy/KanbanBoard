@@ -20,8 +20,8 @@ type CardProps = CardModel & {
   columnId: number;
   availableLabels: LabelModel[];
   editTitle: (id: number, title: string) => void;
-  editDescription: (id: number, description: string) => void;
-  editDueDate: (id: number, dueDate: string) => void;
+  editDescription: (id: number, description: string | null) => void;
+  editDueDate: (id: number, dueDate: string | null) => void;
   remove: (id: number) => void;
   isDragDisabled?: boolean;
   isAutoTitleEditEnabled?: boolean;
@@ -51,8 +51,8 @@ export function Card({
   const [isEditingDueDate, setEditingDueDate] = useState(false);
   const [isEditingLabels, setEditingLabels] = useState(false);
   const [newTitle, setNewTitle] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-  const [newDueDate, setNewDueDate] = useState("");
+  const [newDescription, setNewDescription] = useState<string | null>(null);
+  const [newDueDate, setNewDueDate] = useState<string | null>(null);
   const [labels, setLabels] = useState<LabelModel[]>([]);
   const [comments, setComments] = useState<CommentModel[]>([]);
   const [areCommentsOpen, setCommentsOpen] = useState(false);
@@ -150,37 +150,40 @@ export function Card({
   const handleDescriptionTextAreaKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       setEditingDescription(false);
-      if (
-        (e.target as HTMLTextAreaElement).value.trim().replaceAll("\n", "") !==
-        ""
-      ) {
-        editDescription(id, newDescription);
-      }
+      editDescription(id, newDescription);
     }
     if (e.key === "Escape") {
       setEditingDescription(false);
+    }
+    if (e.key === "Delete" || (e.ctrlKey && e.key === "Backspace")) {
+      setEditingDescription(false);
+      editDescription(id, null);
     }
   };
 
   const handleDueDateInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       setEditingDueDate(false);
-      if ((e.target as HTMLInputElement).value.trim() !== "") {
-        editDueDate(id, newDueDate);
-      }
+      editDueDate(id, newDueDate);
     }
     if (e.key === "Escape") {
       setEditingDueDate(false);
+    }
+    if (e.key === "Delete" || (e.ctrlKey && e.key === "Backspace")) {
+      setEditingDueDate(false);
+      editDueDate(id, null);
     }
   };
 
   const handleNewComment = async (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      await ServerConnection.post(`/cards/${id}/comments`, {
-        content: newCommentContent,
-      });
-      setNewCommentContent("");
-      loadComments();
+      if (newCommentContent.trim() !== "") {
+        await ServerConnection.post(`/cards/${id}/comments`, {
+          content: newCommentContent,
+        });
+        setNewCommentContent("");
+        loadComments();
+      }
     }
     if (e.key === "Escape") {
       (e.target as HTMLInputElement).blur();
@@ -273,26 +276,27 @@ export function Card({
             {title}
           </h3>
         )}
-        {description &&
-          (isEditingDescription ? (
-            <AutoResizeTextArea
-              className="p-input card-description w-full min-w-0"
-              rows={1}
-              ref={descriptionTextAreaRef}
-              placeholder={description}
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              onKeyDown={handleDescriptionTextAreaKeyDown}
-              onBlur={() => setEditingDescription(false)}
-            />
-          ) : (
+        {isEditingDescription ? (
+          <AutoResizeTextArea
+            className="p-input card-description w-full min-w-0"
+            rows={1}
+            ref={descriptionTextAreaRef}
+            placeholder={description}
+            value={newDescription ?? ""}
+            onChange={(e) => setNewDescription(e.target.value)}
+            onKeyDown={handleDescriptionTextAreaKeyDown}
+            onBlur={() => setEditingDescription(false)}
+          />
+        ) : (
+          description && (
             <p
               className="pl-1 pr-1 card-description whitespace-pre-wrap"
               onDoubleClick={() => setEditingDescription(true)}
             >
               {description}
             </p>
-          ))}
+          )
+        )}
 
         {isEditingLabels && (
           <div className="flex flex-wrap gap-2 flex-1 pl-1 pr-1">
@@ -321,38 +325,14 @@ export function Card({
                 click={removeLabel}
               />
             ))}
-            <a
-              className="flex items-center"
-              onClick={() => setEditingLabels(false)}
-            >
-              <HoverableIcon name="save" />
-            </a>
           </div>
         )}
 
-        {!isEditingLabels && dueDate && labels && (
-          <div
-            className="flex flex-wrap gap-2 flex-1 pl-1 pr-1"
-            onDoubleClick={() => setEditingLabels(true)}
-          >
-            {labels.length === 0 && (
-              <a
-                className="flex items-center gap-1"
-                onClick={() => setEditingLabels(true)}
-              >
-                <HoverableIcon name="hashtag" />
-              </a>
-            )}
-            {labels.map(({ id, name, color }) => (
-              <CardLabel key={id} id={id} name={name} color={color} />
-            ))}
-          </div>
-        )}
-
-        <div className="flex justify-end gap-1 pl-1 pr-1">
-          {!isEditingLabels && !dueDate && labels && (
+        {!isEditingLabels &&
+          (dueDate || isEditingDueDate) &&
+          labels.length > 0 && (
             <div
-              className="flex flex-wrap flex-1"
+              className="flex flex-wrap gap-2 flex-1 pl-1 pr-1"
               onDoubleClick={() => setEditingLabels(true)}
             >
               {labels.map(({ id, name, color }) => (
@@ -361,39 +341,82 @@ export function Card({
             </div>
           )}
 
-          {dueDate && (
-            <div className="flex">
+        <div className="flex justify-end gap-1 pl-1 pr-1">
+          {!isEditingLabels &&
+            !isEditingDueDate &&
+            !dueDate &&
+            labels.length > 0 && (
+              <div
+                className="flex flex-wrap flex-1 gap-2"
+                onDoubleClick={() => setEditingLabels(true)}
+              >
+                {labels.map(({ id, name, color }) => (
+                  <CardLabel key={id} id={id} name={name} color={color} />
+                ))}
+              </div>
+            )}
+
+          <div className="flex flex-1 w-full justify-start">
+            {(dueDate || isEditingDueDate) && (
               <HoverableIcon name="clock" useHover={false} />
-              {isEditingDueDate ? (
-                <input
-                  type="date"
-                  className="p-input w-full min-w-0"
-                  style={{ border: "none" }}
-                  ref={dueDateInputRef}
-                  placeholder={dueDate}
-                  value={newDueDate}
-                  onChange={(e) =>
-                    setNewDueDate(e.target.value.replaceAll("\n", ""))
-                  }
-                  onKeyDown={handleDueDateInputKeyDown}
-                  onBlur={() => setEditingDueDate(false)}
-                />
-              ) : (
+            )}
+            {isEditingDueDate ? (
+              <input
+                type="date"
+                className="p-input w-full flex-1 min-w-0 mr-1"
+                style={{ border: "none" }}
+                ref={dueDateInputRef}
+                placeholder={dueDate}
+                value={newDueDate ?? ""}
+                onChange={(e) =>
+                  setNewDueDate(e.target.value.replaceAll("\n", ""))
+                }
+                onKeyDown={handleDueDateInputKeyDown}
+                onBlur={() => setEditingDueDate(false)}
+              />
+            ) : (
+              dueDate && (
                 <p
                   className="pl-1 pr-1 flex items-center gap-1 flex-1 select-none"
                   onDoubleClick={() => setEditingDueDate(true)}
                 >
                   {DateUtility.getAbsoluteDate(dueDate)}
                 </p>
-              )}
-            </div>
-          )}
-          <div className={`${dueDate ? "flex-1" : ""} flex justify-end gap-1`}>
+              )
+            )}
+          </div>
+
+          <div className="flex justify-end gap-1">
+            {!isEditingDescription && !description && (
+              <a
+                className="flex items-center gap-1"
+                onClick={() => setEditingDescription(true)}
+              >
+                <HoverableIcon name="align-left" />
+              </a>
+            )}
+            {!isEditingDueDate && !dueDate && (
+              <a
+                className="flex items-center gap-1"
+                onClick={() => setEditingDueDate(true)}
+              >
+                <HoverableIcon name="clock" />
+              </a>
+            )}
+            <a
+              className="flex items-center gap-1"
+              onClick={() => setEditingLabels(!isEditingLabels)}
+            >
+              <HoverableIcon name="hashtag" alwaysHover={isEditingLabels} />
+            </a>
             <a
               className="flex items-center"
               onClick={() => setCommentsOpen(!areCommentsOpen)}
             >
-              <HoverableIcon name="comments" alwaysHover={areCommentsOpen} />
+              <HoverableIcon
+                name="comment-dots"
+                alwaysHover={areCommentsOpen}
+              />
             </a>
             <a className="flex items-center" onClick={() => remove(id)}>
               <HoverableIcon name="trash-alt" />

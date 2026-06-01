@@ -8,20 +8,20 @@ export type ColumnRequest = {
 
 export type CardRequest = {
   title: string;
-  description?: string;
-  due_date?: string;
+  description?: string | null;
+  due_date?: string | null;
 };
 
 export type CardUpdateRequest = {
   title?: string;
-  description?: string;
-  due_date?: string;
+  description?: string | null;
+  due_date?: string | null;
 };
 
 export type CardMoveRequest = {
   columnId: number;
   position: number;
-}
+};
 
 export type LabelRequest = {
   name: string;

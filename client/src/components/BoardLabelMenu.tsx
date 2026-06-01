@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import type { LabelModel } from "../types/models";
 import { ContextMenu } from "./ContextMenu";
 import { HoverableIcon } from "./HoverableIcon";
@@ -6,46 +6,49 @@ import { CardLabelButton } from "./CardLabelButton";
 
 type BoardLabelMenuProps = {
   labels: LabelModel[];
-  newLabelName: string;
-  newLabelColor: string;
-  setNewLabelName: (value: string) => void;
-  setNewLabelColor: (value: string) => void;
-  addLabel: () => void;
+  addLabel: (name: string, color: string) => void;
   removeLabel: (labelId: number) => void;
 };
 
 export function BoardLabelMenu({
   labels,
-  newLabelName,
-  newLabelColor,
-  setNewLabelName,
-  setNewLabelColor,
   addLabel,
   removeLabel,
 }: BoardLabelMenuProps) {
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewLabelName(event.target.value);
+  const [newLabelName, setNewLabelName] = useState("");
+  const [newLabelColor, setNewLabelColor] = useState("");
+
+  const handleAddLabel = () => {
+    if (newLabelName.trim() !== "") {
+      addLabel(newLabelName, newLabelColor);
+    }
+    setNewLabelName("");
+    setNewLabelColor("");
   };
 
-  const handleColorChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewLabelColor(event.target.value);
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewLabelName(e.target.value);
+  };
+
+  const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewLabelColor(e.target.value);
   };
 
   const handleBlur = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       (e.target as HTMLInputElement).blur();
     }
-  }
+  };
 
   return (
     <ContextMenu>
-      <div className="flex flex-col p-3 gap-3 min-w-40 max-w-[15vw]">
+      <div className="flex flex-col pl-3 pr-3 pb-3 pt-2 gap-2 min-w-40 max-w-[15vw]">
         <h2 className="text-center">Labels</h2>
         <div className="flex flex-col gap-1">
           <input
             className="border-3 border-fg border-solid w-full min-w-0"
             type="text"
-            placeholder="New label name..."
+            placeholder="Enter the label name..."
             value={newLabelName}
             onChange={handleNameChange}
             onKeyDown={handleBlur}
@@ -53,14 +56,14 @@ export function BoardLabelMenu({
           <input
             className="border-3 border-fg border-solid w-full min-w-0"
             type="color"
-            placeholder="Label color..."
+            placeholder="Enter the label color..."
             value={newLabelColor}
             onChange={handleColorChange}
             onKeyDown={handleBlur}
           />
           <button
             className="shadow-border-rounded inset-shadow-border m-border flex justify-center p-1"
-            onClick={addLabel}
+            onClick={handleAddLabel}
           >
             <HoverableIcon name="plus" useHover={false} />
           </button>

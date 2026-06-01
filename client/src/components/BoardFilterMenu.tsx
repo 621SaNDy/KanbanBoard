@@ -24,7 +24,7 @@ export function BoardFilterMenu({
 
   return (
     <ContextMenu>
-      <div className="flex flex-col p-3 gap-3 min-w-40 max-w-[15vw]">
+      <div className="flex flex-col pl-3 pr-3 pb-3 pt-2 gap-3 min-w-40 max-w-[15vw]">
         <h2 className="text-center">Filters</h2>
         <div className="outline-3 outline-fg outline-dashed min-h-2 flex flex-col gap-1 p-1">
           {selectedLabels.map(({ id, name, color }) => (

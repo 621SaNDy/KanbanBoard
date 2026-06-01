@@ -12,4 +12,3 @@ export function CardLabel({ id, name, color }: CardLabelProps) {
     </div>
   );
 }
-  

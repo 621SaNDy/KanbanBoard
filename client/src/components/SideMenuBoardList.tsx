@@ -17,18 +17,17 @@ export function SideMenuBoardList({
   setCurrentBoard,
 }: SideMenuBoardListProps) {
   return (
-      <div className={`flex-1 overflow-y-auto`}>
-        {
-          boards.map(({ id, name }) => (
-            <SideMenuItem
-              key={id}
-              icon={boardIcon}
-              title={name}
-              expanded={expanded}
-              active={id === currentBoard}
-              click={() => setCurrentBoard(id)}
-            />
-          ))}
-      </div>
+    <div className={`flex-1 overflow-y-auto`}>
+      {boards.map(({ id, name }) => (
+        <SideMenuItem
+          key={id}
+          icon={boardIcon}
+          title={name}
+          expanded={expanded}
+          active={id === currentBoard}
+          click={() => setCurrentBoard(id)}
+        />
+      ))}
+    </div>
   );
 }
