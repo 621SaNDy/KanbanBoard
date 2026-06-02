@@ -12,7 +12,6 @@
   "dependencies": {
     "@hackernoon/pixel-icon-library": "^1.1.0",
     "@tailwindcss/vite": "^4.3.0",
-    "motion": "^12.38.0",
     "react": "^19.2.6",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
