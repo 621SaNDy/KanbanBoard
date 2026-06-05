@@ -2,7 +2,7 @@ import type { LabelModel } from "../types/models";
 
 type CardLabelProps = LabelModel;
 
-export function CardLabel({ id, name, color }: CardLabelProps) {
+export function CardLabel({ name, color }: CardLabelProps) {
   return (
     <div
       className="border-3 border-fg border-solid inset-shadow-border-small flex items-center pl-1 pr-1"

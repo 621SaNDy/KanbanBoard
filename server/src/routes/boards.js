@@ -8,6 +8,8 @@ router.get('/boards', async (req, res) => {
     const result = await pool.query('SELECT * FROM boards ORDER BY id ASC');
     res.json(result.rows);
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -20,7 +22,7 @@ router.post('/boards', async (req, res) => {
       [name]
     );
     res.status(201).json(result.rows[0]);
-  } catch (error) {
+  } catch (error) {    
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
